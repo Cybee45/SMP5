@@ -1,0 +1,46 @@
+@import "tailwindcss";
+
+:root {
+  /* Brand palette (biru toska sekolah) */
+  --color-brand:        #008080;
+  --color-brand-light:  #64cbc2;
+  --color-brand-dark:   #005e5e;
+
+  /* Supporting palette */
+  --color-sidebar:      #0B192C;
+  --color-button-blue:  #00022C;
+  --color-bg-light:     #1E3E62;
+  --color-text-light:   #EEF6FF;
+  --color-card-bg:      #B7D6F2;
+  --color-card-secondary:#82A9DF;
+}
+
+/* ▼▼▼ TEMPEL KODE ANIMASI DI SINI ▼▼▼ */
+
+/* CSS untuk Animasi Marquee (Pita Berjalan) */
+.scroller {
+    max-width: 100%;
+    -webkit-mask: linear-gradient(90deg, transparent, white 20%, white 80%, transparent);
+    mask: linear-gradient(90deg, transparent, white 20%, white 80%, transparent);
+}
+
+.scroller__inner {
+    width: max-content; 
+    display: flex;
+    flex-wrap: nowrap;
+    animation: scroll 30s linear infinite;
+}
+
+.scroller__inner > div {
+    margin-right: 1.5rem; /* Memberi jarak antar gambar */
+}
+
+.scroller:hover .scroller__inner {
+    animation-play-state: paused;
+}
+
+@keyframes scroll {
+    to {
+        transform: translate(calc(-50%));
+    }
+}
