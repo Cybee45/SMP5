@@ -4,7 +4,7 @@
     @include('components.home.keunggulan')
     @include('components.home.stats')
     @include('components.home.profil')
-    @include('components.home.galery')
+    @include('components.home.gallery')
     @include('components.home.berita')
 
 </x-app-layout>
