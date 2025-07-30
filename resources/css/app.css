@@ -1,46 +1,72 @@
-@import "tailwindcss";
+    @import "tailwindcss";
 
-:root {
-  /* Brand palette (biru toska sekolah) */
-  --color-brand:        #008080;
-  --color-brand-light:  #64cbc2;
-  --color-brand-dark:   #005e5e;
+    :root {
+    /* Brand palette (biru toska sekolah) */
+    --color-brand:        #008080;
+    --color-brand-light:  #64cbc2;
+    --color-brand-dark:   #005e5e;
 
-  /* Supporting palette */
-  --color-sidebar:      #0B192C;
-  --color-button-blue:  #00022C;
-  --color-bg-light:     #1E3E62;
-  --color-text-light:   #EEF6FF;
-  --color-card-bg:      #B7D6F2;
-  --color-card-secondary:#82A9DF;
-}
-
-/* ▼▼▼ TEMPEL KODE ANIMASI DI SINI ▼▼▼ */
-
-/* CSS untuk Animasi Marquee (Pita Berjalan) */
-.scroller {
-    max-width: 100%;
-    -webkit-mask: linear-gradient(90deg, transparent, white 20%, white 80%, transparent);
-    mask: linear-gradient(90deg, transparent, white 20%, white 80%, transparent);
-}
-
-.scroller__inner {
-    width: max-content; 
-    display: flex;
-    flex-wrap: nowrap;
-    animation: scroll 30s linear infinite;
-}
-
-.scroller__inner > div {
-    margin-right: 1.5rem; /* Memberi jarak antar gambar */
-}
-
-.scroller:hover .scroller__inner {
-    animation-play-state: paused;
-}
-
-@keyframes scroll {
-    to {
-        transform: translate(calc(-50%));
+    /* Supporting palette */
+    --color-sidebar:      #0B192C;
+    --color-button-blue:  #00022C;
+    --color-bg-light:     #1E3E62;
+    --color-text-light:   #EEF6FF;
+    --color-card-bg:      #B7D6F2;
+    --color-card-secondary:#82A9DF;
+    --color-carbon:        #111;
     }
-}
+
+ /* 1. Kontainer utama untuk marquee */
+        .scroller {
+            max-width: 100%;
+            -webkit-mask: linear-gradient(90deg, transparent, white 20%, white 80%, transparent);
+            mask: linear-gradient(90deg, transparent, white 20%, white 80%, transparent);
+            /* PERBAIKAN: Menambahkan padding vertikal untuk memberi ruang pada efek hover */
+            padding-top: 1rem;
+            padding-bottom: 1rem;
+        }
+
+        /* 2. Pembungkus dalam yang akan bergerak */
+        .scroller__inner {
+            width: max-content; 
+            display: flex;
+            flex-wrap: nowrap;
+            animation: scroll 40s linear infinite;
+        }
+
+        /* 3. Memberi jarak antar kartu dengan margin */
+        .scroller__inner > div {
+            margin-right: 1.5rem; /* 24px */
+        }
+
+        /* 4. Jeda animasi saat kursor diarahkan */
+        .scroller:hover .scroller__inner {
+            animation-play-state: paused;
+        }
+
+        /* 5. Definisi animasi pergeseran */
+        @keyframes scroll {
+            to {
+                transform: translate(-50%);
+            }
+        }
+
+        /* === CSS UNTUK BAYANGAN DI BAWAH GALERI === */
+
+        /* 6. Memberi posisi relatif pada section utama */
+        .gallery-section {
+            position: relative;
+        }
+
+        /* 7. Membuat elemen semu untuk gradasi bayangan */
+        .gallery-section::after {
+            content: '';
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            width: 100%;
+            height: 5rem; /* 80px, tinggi bayangan */
+            background: linear-gradient(to top, rgb(248 250 252), transparent);
+            pointer-events: none;
+            z-index: 2; /* Memastikan bayangan di atas galeri */
+        }

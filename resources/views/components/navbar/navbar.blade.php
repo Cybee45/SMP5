@@ -5,13 +5,13 @@
       <!-- Logo -->
       <a href="{{ route('home') }}" class="flex items-center gap-3">
         {{-- -<img src="{{ Vite::asset('resources/images/logo.png') }}" alt="Logo" class="h-10" /> --}}
-        <span class="hidden sm:inline-block font-heading text-base font-semibold tracking-wide text-[var(--color-brand-dark)]">
+        <span class="hidden sm:inline-block font-heading text-base font-semibold tracking-wide text-[var(--color-black, #000)]">
           SMP 5 SANGATTA UTARA
         </span>
       </a>
 
       <!-- Desktop Menu -->
-      <div class="hidden md:flex items-center gap-8">
+      <div class="hidden md:flex items-center gap-8 text-[var(--color-button-blue)]">
         <x-nav-link href="{{ route('home') }}"
                     :active="request()->routeIs('home')">
           HOME
@@ -36,7 +36,7 @@
 
       <!-- Mobile Toggle -->
       <button @click="open = !open"
-              class="md:hidden p-2 rounded-md text-[var(--color-brand-dark)] hover:text-[var(--color-brand)]">
+              class="md:hidden p-2 rounded-md text-[var(--color-black, #000)] hover:text-[var(--color-brand)]">
         <svg x-show="!open" …>…</svg>
         <svg x-show="open" …>…</svg>
       </button>
@@ -44,7 +44,7 @@
   </div>
 
   <!-- Mobile Menu -->
-  <div x-show="open" x-transition class="md:hidden bg-white/90 backdrop-blur-md">
+  <div x-show="open" x-transition class="md:hidden bg-white/90 backdrop-blur-md text-[var(--color-button-blue)]">
     <div class="space-y-2 px-6 py-4">
       <x-nav-link href="{{ route('home') }}"
                   mobile

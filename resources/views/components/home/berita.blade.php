@@ -11,31 +11,26 @@
         </p>
     </div>
 
-    <!-- 
-      Grid Berita dengan Layout Dinamis
-      - `items-stretch` memastikan kedua kolom memiliki tinggi yang sama.
-    -->
     <div class="grid grid-cols-1 lg:grid-cols-2 gap-8 lg:gap-12 items-stretch">
       
       @php
-          // Data dummy untuk berita
           $beritaItems = [
               [
-                  'img' => 'https://placehold.co/600x400/0ea5e9/ffffff?text=Juara+OSN',
+                  'img' => asset('assets/berita/smp_5-12.jpg'),
                   'kategori' => 'Prestasi',
                   'tanggal' => '26 Juli 2025',
                   'judul' => 'Siswa SMPN 5 Raih Medali Emas di Olimpiade Sains Nasional',
                   'kutipan' => 'Sebuah pencapaian luar biasa yang mengharumkan nama sekolah di tingkat nasional, membuktikan kualitas pendidikan yang kami berikan.'
               ],
               [
-                  'img' => 'https://placehold.co/600x400/10b981/ffffff?text=PPDB+2025',
+                  'img' => asset('assets/berita/smp_5-20.jpg'),
                   'kategori' => 'Pengumuman',
                   'tanggal' => '22 Juli 2025',
                   'judul' => 'Jadwal dan Alur Pendaftaran Peserta Didik Baru (PPDB) 2025',
                   'kutipan' => 'Simak informasi lengkap mengenai jadwal, syarat, dan tata cara pendaftaran.'
               ],
               [
-                  'img' => 'https://placehold.co/600x400/f97316/ffffff?text=Studi+Tur',
+                  'img' => asset('assets/berita/smp_5-15.jpg'),
                   'kategori' => 'Kegiatan',
                   'tanggal' => '18 Juli 2025',
                   'judul' => 'Kegiatan Studi Tur Edukatif ke Museum Nasional',
@@ -45,14 +40,16 @@
       @endphp
 
       <!-- Kolom Kiri: Berita Utama (Featured) -->
-      <article class="group flex flex-col overflow-hidden rounded-xl bg-white shadow-lg transition-all duration-300 hover:shadow-2xl hover:-translate-y-2">
+      <article
+        class="group flex flex-col overflow-hidden rounded-xl bg-white shadow-lg transition-all duration-300 hover:shadow-2xl hover:-translate-y-2"
+        data-aos="fade-right"
+        data-aos-delay="100"
+        data-aos-duration="900"
+      >
         @php $featured = $beritaItems[0]; @endphp
-        <!-- Gambar Berita Utama -->
-        <!-- PERBAIKAN: Tinggi gambar diubah agar lebih pendek dan sejajar -->
         <div class="h-56 sm:h-64 overflow-hidden">
           <img src="{{ $featured['img'] }}" alt="{{ $featured['judul'] }}" class="h-full w-full object-cover transition-transform duration-500 group-hover:scale-110" />
         </div>
-        <!-- Konten Teks Berita Utama -->
         <div class="flex flex-1 flex-col p-6 lg:p-8">
           <div class="flex-1">
             <div class="mb-3 flex items-center justify-between text-sm">
@@ -75,14 +72,16 @@
 
       <!-- Kolom Kanan: Dua Berita Sekunder -->
       <div class="flex flex-col gap-8">
-        @foreach(array_slice($beritaItems, 1) as $item)
-          <!-- Kartu Berita Sekunder (Horizontal) -->
-          <article class="group flex flex-1 flex-col sm:flex-row overflow-hidden rounded-xl bg-white shadow-lg transition-all duration-300 hover:shadow-2xl hover:-translate-y-1">
-            <!-- Gambar -->
+        @foreach(array_slice($beritaItems, 1) as $i => $item)
+          <article
+            class="group flex flex-1 flex-col sm:flex-row overflow-hidden rounded-xl bg-white shadow-lg transition-all duration-300 hover:shadow-2xl hover:-translate-y-1"
+            data-aos="fade-left"
+            data-aos-delay="{{ 200 + ($i * 150) }}"
+            data-aos-duration="900"
+          >
             <div class="w-full sm:w-2/5 h-48 sm:h-full overflow-hidden">
               <img src="{{ $item['img'] }}" alt="{{ $item['judul'] }}" class="h-full w-full object-cover transition-transform duration-500 group-hover:scale-110" />
             </div>
-            <!-- Teks -->
             <div class="flex flex-1 flex-col p-5">
               <div class="flex-1">
                 <div class="mb-2 flex items-center justify-between text-xs">
@@ -107,11 +106,13 @@
     </div>
 
     <!-- Tombol Lihat Semua Berita -->
-    <div class="mt-16 text-center">
+    <div class="mt-16 text-center"
+        data-aos="zoom-in"
+        data-aos-delay="300"
+        data-aos-duration="2000">
         <a href="#" class="inline-block rounded-lg bg-slate-200 px-6 py-3 font-semibold text-slate-700 transition hover:bg-slate-300">
             Lihat Semua Berita
         </a>
     </div>
-
   </div>
-</section>  
+</section>
