@@ -1,4 +1,4 @@
-<section class="relative bg-white py-20 lg:py-24">
+<section class="relative bg-white py-20 lg:py-24 overflow-hidden">
     <!-- Efek Gradasi / Blur di Bagian Atas -->
     <div class="absolute top-0 left-0 z-20 h-32 w-full bg-gradient-to-b from-slate-50 to-transparent"></div>
 
