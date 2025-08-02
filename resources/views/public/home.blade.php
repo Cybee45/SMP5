@@ -6,5 +6,4 @@
     @include('components.home.profil')
     @include('components.home.gallery')
     @include('components.home.berita')
-
 </x-app-layout>

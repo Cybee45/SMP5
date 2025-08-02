@@ -11,7 +11,7 @@
     $activeClasses   = 'border-[var(--color-carbon)] text-[var(--color-carbon)]';
 
     // When inactive: text hitam (carbon), transparent border, hover ke brand
-    $inactiveClasses = 'border-transparent hover:text-[var(--color-brand)] hover:border-[var(--color-brand)]';
+    $inactiveClasses = 'border-transparent hover:text-[var(--color-carbon)] hover:border-[var(--color-carbon)]';
 
     $classes = $base.' '.(($active ?? false) ? $activeClasses : $inactiveClasses);
 @endphp

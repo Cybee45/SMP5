@@ -28,15 +28,19 @@
                     :active="request()->routeIs('media')">
           MEDIA
         </x-nav-link>
-        <x-nav-link href="{{ route('contact') }}"
-                    :active="request()->routeIs('contact')">
+        <x-nav-link href="{{ route('blog') }}"
+                    :active="request()->routeIs('blog')">
+          BLOG
+        </x-nav-link>
+        <x-nav-link href="{{ route('kontak') }}"
+                    :active="request()->routeIs('kontak')">
           KONTAK
         </x-nav-link>
       </div>
 
       <!-- Mobile Toggle -->
       <button @click="open = !open"
-              class="md:hidden p-2 rounded-md text-[var(--color-black, #000)] hover:text-[var(--color-brand)]">
+              class="md:hidden p-2 rounded-md text-[var(--color-black, #000)] hover:text-[var(--color-carbon)]">
         <svg x-show="!open" …>…</svg>
         <svg x-show="open" …>…</svg>
       </button>
@@ -44,7 +48,7 @@
   </div>
 
   <!-- Mobile Menu -->
-  <div x-show="open" x-transition class="md:hidden bg-white/90 backdrop-blur-md text-[var(--color-button-blue)]">
+  <div x-show="open" x-transition class="md:hidden bg-white/90 backdrop-blur-md text-[var(--color-button-carbon)]">
     <div class="space-y-2 px-6 py-4">
       <x-nav-link href="{{ route('home') }}"
                   mobile
@@ -66,9 +70,14 @@
                   :active="request()->routeIs('media')">
         MEDIA
       </x-nav-link>
-      <x-nav-link href="{{ route('contact') }}"
+      <x-nav-link href="{{ route('blog') }}"
                   mobile
-                  :active="request()->routeIs('contact')">
+                  :active="request()->routeIs('blog')">
+        BLOG
+      </x-nav-link>
+      <x-nav-link href="{{ route('kontak') }}"
+                  mobile
+                  :active="request()->routeIs('kontak')">
         KONTAK
       </x-nav-link>
     </div>

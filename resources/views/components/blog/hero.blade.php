@@ -1,0 +1,54 @@
+{{-- resources/views/blog.blade.php --}}
+<section id="hero-blog" class="relative bg-white overflow-hidden">
+  {{-- 1. Wave background --}}
+  <img src="{{ asset('assets/blog/wave.png') }}"
+       alt="Wave background"
+       class="absolute top-0 right-0
+              w-full sm:w-3/4 md:w-2/3 lg:w-1/2
+              max-w-none h-auto object-cover z-10 pointer-events-none" />
+
+  {{-- 2. Content wrapper --}}
+  <div class="relative z-20 mx-auto max-w-7xl
+              px-4 sm:px-6 md:px-8
+              pt-8 pb-16
+              lg:pt-16 lg:pb-24
+              lg:pl-20 xl:pl-32">
+    <div class="flex flex-col-reverse lg:flex-row items-center gap-y-9 lg:gap-x-16">
+      
+      {{-- Left column: text --}}
+      <div class="w-full lg:w-5/12 space-y-5 text-left relative
+                  -mt-16 sm:-mt-20 lg:-mt-32"
+           data-aos="fade-right" data-aos-delay="300" data-aos-duration="900">
+        <p class="text-sm font-semibold uppercase tracking-wide text-sky-800">
+          Blog Resmi SMP Negeri 5
+        </p>
+        <h1 class="text-3xl sm:text-4xl md:text-5xl lg:text-6xl font-black leading-tight text-gray-900">
+          Selamat datang di Blog Kami
+        </h1>
+        <p class="text-base md:text-lg text-slate-600">
+          Temukan cerita inspiratif, tips belajar, dan kabar terbaru seputar kegiatan sekolah di sini.
+        </p>
+      </div>
+
+      {{-- Right column: image + decorations --}}
+      <div class="w-full lg:w-7/12 relative flex justify-center lg:justify-end">
+        {{-- Main hero image --}}
+        <img src="{{ asset('assets/blog/hero.png') }}"
+             alt="Illustrasi Blog SMP"
+             class="w-full max-w-xs sm:max-w-sm md:max-w-md lg:max-w-lg xl:max-w-xl
+                    h-auto object-contain transform lg:translate-x-4" />
+
+        {{-- Decorative globe (desktop only) --}}
+        <img src="{{ asset('assets/blog/light.png') }}"
+             alt="Decorative Globe"
+             class="hidden lg:block absolute bottom-100 left-20
+                    w-32 h-32 sm:w-50 sm:h-50 drop-shadow-lg animate-float-slow rotate-[15deg]" />
+      </div>
+    </div>
+  </div>
+
+  {{-- 3. Bottom gradient --}}
+  <div class="absolute bottom-0 left-0 z-20 h-32 w-full
+              bg-gradient-to-t from-white to-transparent pointer-events-none"></div>
+</section>
+

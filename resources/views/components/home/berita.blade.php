@@ -1,5 +1,5 @@
-<section class="bg-white py-20 lg:py-24">
-  <div class="container mx-auto px-6 md:px-8">
+<section class="bg-white py-20 lg:py-24 overflow-x-hidden">
+  <div class="max-w-6xl w-full mx-auto px-4 sm:px-6 lg:px-8">
     
     <!-- Judul Section -->
     <div class="text-center max-w-3xl mx-auto mb-12 lg:mb-16">
@@ -23,7 +23,7 @@
                   'kutipan' => 'Sebuah pencapaian luar biasa yang mengharumkan nama sekolah di tingkat nasional, membuktikan kualitas pendidikan yang kami berikan.'
               ],
               [
-                  'img' => asset('assets/berita/smp_5-20.jpg'),
+                  'img' => asset('assets/berita/smp_5-20.jpg')  ,
                   'kategori' => 'Pengumuman',
                   'tanggal' => '22 Juli 2025',
                   'judul' => 'Jadwal dan Alur Pendaftaran Peserta Didik Baru (PPDB) 2025',
@@ -48,7 +48,7 @@
       >
         @php $featured = $beritaItems[0]; @endphp
         <div class="h-56 sm:h-64 overflow-hidden">
-          <img src="{{ $featured['img'] }}" alt="{{ $featured['judul'] }}" class="h-full w-full object-cover transition-transform duration-500 group-hover:scale-110" />
+          <img src="{{ $featured['img'] }}" alt="{{ $featured['judul'] }}" class="h-full w-full max-w-full object-cover transition-transform duration-500 group-hover:scale-110" />
         </div>
         <div class="flex flex-1 flex-col p-6 lg:p-8">
           <div class="flex-1">
@@ -80,7 +80,7 @@
             data-aos-duration="900"
           >
             <div class="w-full sm:w-2/5 h-48 sm:h-full overflow-hidden">
-              <img src="{{ $item['img'] }}" alt="{{ $item['judul'] }}" class="h-full w-full object-cover transition-transform duration-500 group-hover:scale-110" />
+              <img src="{{ $item['img'] }}" alt="{{ $item['judul'] }}" class="h-full w-full max-w-full object-cover transition-transform duration-500 group-hover:scale-110" />
             </div>
             <div class="flex flex-1 flex-col p-5">
               <div class="flex-1">

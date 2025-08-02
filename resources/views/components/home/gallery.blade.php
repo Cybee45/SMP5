@@ -37,7 +37,7 @@
 
           {{-- Loop galeri --}}
           @foreach($galleryItems as $item)
-              <div class="flex-shrink-0 w-80 bg-white rounded-xl shadow-lg overflow-hidden group transition-all duration-300 hover:scale-105 hover:shadow-2xl">
+              <div class="flex-shrink-0 w-80a bg-white rounded-xl shadow-lg overflow-hidden group transition-all duration-300 hover:scale-105 hover:shadow-2xl">
                   <div class="h-48 overflow-hidden">
                       <img src="{{ $item['img'] }}"
                            alt="{{ $item['title'] }}"

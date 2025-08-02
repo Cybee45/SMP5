@@ -16,11 +16,11 @@ use App\Http\Controllers\ProfileController;
 //  PUBLIC ROUTES (no auth)
 // ────────────────────────────
 Route::view('/',          'public.home')->name('home');
-Route::view('/about',     'about')->name('about');
-Route::view('/spmb',      'spmb')->name('spmb');        // PPDB page
-Route::view('/media',     'media')->name('media');
-Route::view('/contact',   'contact')->name('contact');
-Route::view('/prestasi', 'prestasi')->name('prestasi');
+Route::view('/about',     'public.about')->name('about');
+Route::view('/spmb',      'public.spmb')->name('spmb');        // PPDB page
+Route::view('/media',     'public.media')->name('media');
+Route::view('/kontak',    'public.kontak')->name('kontak');
+Route::view('/blog',      'public.blog')->name('blog');
 
 // ────────────────────────────
 //  AUTH-PROTECTED ROUTES

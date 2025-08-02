@@ -1,4 +1,5 @@
 {{-- resources/views/pages/home.blade.php --}}
 <x-app-layout>
-    @include('components.kontak.hero')
+    @include('components.blog.hero')
+    @include('components.blog.berita')
 </x-app-layout>

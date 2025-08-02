@@ -1,10 +1,10 @@
 <section class="bg-slate-50 py-20 lg:py-24">
   <div class="container mx-auto px-6 md:px-8">
-    <div class="grid grid-cols-1 items-center gap-y-12 lg:grid-cols-12 lg:gap-x-12">
+    <div class="grid grid-cols-1 items-left gap-y-12 lg:grid-cols-12 lg:gap-x-12">
 
       <!-- Kolom Kiri: Logo dan Judul -->
-      <div class="text-center lg:text-left lg:col-span-5 lg:col-start-2">
-        <div class="mx-auto lg:mx-0 mb-6 flex h-24 w-24 items-center justify-center rounded-2xl bg-white shadow-md">
+      <div class="text-left lg:text-left lg:col-span-5 lg:col-start-2">
+        <div class="mb-6 flex h-24 w-24 items-center justify-center rounded-2xl bg-white shadow-md">
             <img src="https://placehold.co/100x100/0D63C6/FFFFFF?text=SMPN5" alt="Logo SMPN 5 Sangatta Utara" class="rounded-2xl">
         </div>
         <h2 class="text-3xl md:text-4xl font-bold font-heading text-gray-900">
