@@ -110,7 +110,7 @@
         data-aos="zoom-in"
         data-aos-delay="300"
         data-aos-duration="2000">
-        <a href="#" class="inline-block rounded-lg bg-slate-200 px-6 py-3 font-semibold text-slate-700 transition hover:bg-slate-300">
+        <a href="/blog" class="inline-block rounded-lg bg-slate-200 px-6 py-3 font-semibold text-slate-700 transition hover:bg-slate-300">
             Lihat Semua Berita
         </a>
     </div>

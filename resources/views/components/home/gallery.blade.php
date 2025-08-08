@@ -41,7 +41,7 @@
                   <div class="h-48 overflow-hidden">
                       <img src="{{ $item['img'] }}"
                            alt="{{ $item['title'] }}"
-                           class="w-full h-full object-cover transition-transform duration-500 group-hover:scale-110" />
+                           class="w-full h-full object-cover transition-transform duration-300 group-hover:scale-110" />
                   </div>
                   <div class="p-5">
                       <p class="font-bold text-gray-900 text-lg truncate">{{ $item['title'] }}</p>

@@ -30,89 +30,91 @@ html, body {
 }
 
 /* ==============================================
-  Kelas Utilitas untuk Efek Hover
-==============================================
-*/
-.smooth-hover-lift {
-    /* Menerapkan properti transisi menggunakan sintaks Tailwind */
-    @apply transition-all duration-500 ease-in-out;
-    /* OPTIMASI: Memberi tahu browser untuk mempersiapkan animasi transform dan shadow */
-    will-change: transform, box-shadow;
-}
+  CATATAN PERBAIKAN:
+  Blok kode untuk kelas kustom `.smooth-hover-lift` telah dihapus dari sini.
+  Kelas ini menyebabkan konflik karena menerapkan `duration-300`, yang menimpa
+  kelas `duration-500` yang Anda terapkan langsung di HTML.
+  Dengan menghapusnya, Anda menghilangkan konflik dan membiarkan kelas utilitas
+  Tailwind bekerja sebagaimana mestinya.
+============================================== */
 
-.smooth-hover-lift:hover {
-    /* Menerapkan efek transform dan shadow saat hover */
-    @apply scale-105 shadow-2xl -translate-y-1;
-}
 
-/* --- Kode Anda yang sudah ada sebelumnya --- */
+/* ==============================================
+   ANIMASI SCROLLER KARTU
+   ============================================== */
 
 /* 1. Kontainer utama untuk marquee */
-    .scroller {
-        max-width: 100%;
-        -webkit-mask: linear-gradient(90deg, transparent, white 20%, white 80%, transparent);
-        mask: linear-gradient(90deg, transparent, white 20%, white 80%, transparent);
-        padding-top: 1rem;
-        padding-bottom: 1rem;
+.scroller {
+    max-width: 100%;
+    -webkit-mask: linear-gradient(90deg, transparent, white 20%, white 80%, transparent);
+    mask: linear-gradient(90deg, transparent, white 20%, white 80%, transparent);
+    padding-top: 1rem;
+    padding-bottom: 1rem;
+}
+
+/* 2. Pembungkus dalam yang akan bergerak */
+.scroller__inner {
+    width: max-content; 
+    display: flex;
+    flex-wrap: nowrap;
+    animation: scroll 40s linear infinite;
+}
+
+/* 3. Memberi jarak antar kartu dengan margin */
+.scroller__inner > div {
+    margin-right: 1.5rem; /* 24px */
+}
+
+/* 4. Jeda animasi saat kursor diarahkan */
+.scroller:hover .scroller__inner {
+    animation-play-state: paused;
+}
+
+/* 5. Penyesuaian untuk arah scroll ke kanan */
+.scroller[data-direction="right"] .scroller__inner {
+    animation-direction: reverse;
+}
+
+/* 6. Definisi animasi pergeseran */
+@keyframes scroll {
+    to {
+        transform: translate(-50%);
     }
+}
 
-    /* 2. Pembungkus dalam yang akan bergerak */
-    .scroller__inner {
-        width: max-content; 
-        display: flex;
-        flex-wrap: nowrap;
-        animation: scroll 30s linear infinite;
-    }
 
-    /* 3. Memberi jarak antar kartu dengan margin */
-    .scroller__inner > div {
-        margin-right: 1.5rem; /* 24px */
-    }
+/* === CSS UNTUK BAYANGAN DI BAWAH GALERI === */
 
-    /* 4. Jeda animasi saat kursor diarahkan */
-    .scroller:hover .scroller__inner {
-        animation-play-state: paused;
-    }
+/* 7. Memberi posisi relatif pada section utama */
+.gallery-section {
+    position: relative;
+}
 
-    /* 5. Definisi animasi pergeseran */
-    @keyframes scroll {
-        to {
-            transform: translate(-50%);
-        }
-    }
+/* 8. Membuat elemen semu untuk gradasi bayangan */
+.gallery-section::after {
+    content: '';
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    width: 100%;
+    height: 5rem; /* 80px, tinggi bayangan */
+    background: linear-gradient(to top, rgb(248 250 252), transparent);
+    pointer-events: none;
+    z-index: 2; /* Memastikan bayangan di atas galeri */
+}
 
-    /* === CSS UNTUK BAYANGAN DI BAWAH GALERI === */
-
-    /* 6. Memberi posisi relatif pada section utama */
-    .gallery-section {
+/* Custom class untuk aspect ratio gambar */
+    .aspect-w-16.aspect-h-9 {
         position: relative;
+        padding-bottom: 56.25%; /* 16:9 ratio */
     }
-
-    /* 7. Membuat elemen semu untuk gradasi bayangan */
-    .gallery-section::after {
-        content: '';
+    .aspect-w-16.aspect-h-9 > img {
         position: absolute;
+        height: 100%;
+        width: 100%;
+        top: 0;
+        right: 0;
         bottom: 0;
         left: 0;
-        width: 100%;
-        height: 5rem; /* 80px, tinggi bayangan */
-        background: linear-gradient(to top, rgb(248 250 252), transparent);
-        pointer-events: none;
-        z-index: 2; /* Memastikan bayangan di atas galeri */
+        object-fit: cover;
     }
-
-    /* Custom class untuk aspect ratio gambar */
-        .aspect-w-16.aspect-h-9 {
-            position: relative;
-            padding-bottom: 56.25%; /* 16:9 ratio */
-        }
-        .aspect-w-16.aspect-h-9 > img {
-            position: absolute;
-            height: 100%;
-            width: 100%;
-            top: 0;
-            right: 0;
-            bottom: 0;
-            left: 0;
-            object-fit: cover;
-        }

@@ -49,5 +49,6 @@
   </div>
 
   {{-- Bottom gradient --}}
-  <div class="absolute bottom-0 left-0 z-20 h-32 w-full bg-gradient-to-t from-white to-transparent"></div>
+  <div class="absolute bottom-0 left-0 z-20 h-32 w-full
+              bg-gradient-to-t from-slate-100 to-transparent pointer-events-none"></div>
 </section>

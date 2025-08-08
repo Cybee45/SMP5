@@ -17,10 +17,13 @@ use App\Http\Controllers\ProfileController;
 // ────────────────────────────
 Route::view('/',          'public.home')->name('home');
 Route::view('/about',     'public.about')->name('about');
-Route::view('/spmb',      'public.spmb')->name('spmb');        // PPDB page
+Route::view('/spmb',      'public.spmb')->name('spmb');
 Route::view('/media',     'public.media')->name('media');
 Route::view('/kontak',    'public.kontak')->name('kontak');
-Route::view('/blog',      'public.blog')->name('blog');
+Route::view('/blog',      'public.blog.index')->name('blog');
+
+// Bagian Controller untuk public
+Route::get('/blog/{slug}', [BlogController::class, 'show'])->name('blog.show');
 
 // ────────────────────────────
 //  AUTH-PROTECTED ROUTES

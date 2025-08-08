@@ -36,7 +36,7 @@
                     </p>
                 </div>
               </div>
-                <a href="#"
+                <a href="/about"
                    class="mt-8 inline-flex items-center gap-x-3 bg-[var(--color-brand)] text-white font-semibold rounded-lg px-6 py-3 shadow-lg hover:bg-[var(--color-brand-dark)] transition-all duration-300 transform hover:scale-105"
                    data-aos="fade-left"
                    data-aos-delay="300"
