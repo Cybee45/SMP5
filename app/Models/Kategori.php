@@ -25,20 +25,4 @@ class Kategori extends Model
     {
         return $this->hasMany(Artikel::class);
     }
-
-    /**
-     * Override getRouteKeyName untuk sementara tetap menggunakan ID
-     */
-    public function getRouteKeyName(): string
-    {
-        return 'id';
-    }
-
-    /**
-     * Override resolveRouteBinding untuk tetap menggunakan ID
-     */
-    public function resolveRouteBinding($value, $field = null)
-    {
-        return $this->where('id', $value)->first();
-    }
 }

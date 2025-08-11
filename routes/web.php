@@ -23,11 +23,6 @@ Route::view('/kontak',    'public.kontak')->name('kontak');
 Route::view('/blog',      'public.blog')->name('blog');
 
 // ────────────────────────────
-//  PUBLIC UUID ROUTES
-// ────────────────────────────
-require __DIR__.'/public-uuid.php';
-
-// ────────────────────────────
 //  AUTH-PROTECTED ROUTES
 // ────────────────────────────
 Route::middleware('auth')->group(function () {

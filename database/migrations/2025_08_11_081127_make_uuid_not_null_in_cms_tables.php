@@ -11,15 +11,9 @@ return new class extends Migration
      */
     public function up(): void
     {
-        $tables = ['heroes', 'statistiks', 'galeris', 'kategoris', 'keunggulans', 'profils'];
-
-        foreach ($tables as $table) {
-            if (Schema::hasTable($table)) {
-                Schema::table($table, function (Blueprint $table) {
-                    $table->uuid('uuid')->nullable(false)->change();
-                });
-            }
-        }
+        Schema::table('cms_tables', function (Blueprint $table) {
+            //
+        });
     }
 
     /**
@@ -27,14 +21,8 @@ return new class extends Migration
      */
     public function down(): void
     {
-        $tables = ['heroes', 'statistiks', 'galeris', 'kategoris', 'keunggulans', 'profils'];
-
-        foreach ($tables as $table) {
-            if (Schema::hasTable($table)) {
-                Schema::table($table, function (Blueprint $table) {
-                    $table->uuid('uuid')->nullable()->change();
-                });
-            }
-        }
+        Schema::table('cms_tables', function (Blueprint $table) {
+            //
+        });
     }
 };
