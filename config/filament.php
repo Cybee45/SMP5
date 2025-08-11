@@ -42,7 +42,7 @@ return [
         \Filament\Http\Middleware\DispatchServingFilamentEvent::class,
         \Filament\Http\Middleware\SetUpDefaultFilamentTheme::class,
         \Filament\Http\Middleware\BootFilamentTenancy::class,
-        App\Http\Middleware\EnsureRole::class, // jika kamu memakai middleware akses role
+        \App\Http\Middleware\EnsureUserIsAdmin::class,
     ],
 
     /*

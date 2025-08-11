@@ -2,7 +2,7 @@
 
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\ProfileController;
-
+use App\Http\Controllers\PublicController;
 /*
 |--------------------------------------------------------------------------
 | Web Routes
@@ -23,6 +23,11 @@ Route::view('/kontak',    'public.kontak')->name('kontak');
 Route::view('/blog',      'public.blog')->name('blog');
 
 // ────────────────────────────
+//  PUBLIC UUID ROUTES
+// ────────────────────────────
+require __DIR__.'/public-uuid.php';
+
+// ────────────────────────────
 //  AUTH-PROTECTED ROUTES
 // ────────────────────────────
 Route::middleware('auth')->group(function () {
@@ -36,6 +41,9 @@ Route::middleware('auth')->group(function () {
     Route::get('/dashboard', fn () => view('dashboard.index'))
          ->name('dashboard');
 });
+
+
+Route::get('/', [PublicController::class, 'home'])->name('home');
 
 // ────────────────────────────
 //  AUTH SCAFFOLDING (Breeze)

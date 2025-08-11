@@ -1,0 +1,84 @@
+<?php
+
+namespace App\Filament\Resources;
+
+use Filament\Forms;
+use Filament\Forms\Form;
+use Filament\Tables;
+use Filament\Tables\Table;
+use Filament\Resources\Resource;
+use Illuminate\Support\Facades\Auth;
+use Filament\Tables\Columns\TextColumn;
+use Filament\Forms\Components\TextInput;
+use Spatie\Permission\Models\Permission;
+use App\Filament\Resources\PermissionResource\Pages;
+
+class PermissionResource extends Resource
+{
+    protected static ?string $model = Permission::class;
+
+    protected static ?string $navigationIcon = 'heroicon-o-key';
+    protected static ?string $navigationLabel = 'Permission';
+    protected static ?string $navigationGroup = 'Manajemen Sistem';
+    protected static ?int $navigationSort = 3;
+
+    public static function canViewAny(): bool
+    {
+        return Auth::user()?->hasRole('super_admin') && Auth::user()?->can('system_manage');
+    }
+
+    public static function canCreate(): bool
+    {
+        return Auth::user()?->hasRole('super_admin') && Auth::user()?->can('system_manage');
+    }
+
+    public static function canEdit($record): bool
+    {
+        return Auth::user()?->hasRole('super_admin') && Auth::user()?->can('system_manage');
+    }
+
+    public static function canDelete($record): bool
+    {
+        return Auth::user()?->hasRole('super_admin') && Auth::user()?->can('system_manage');
+    }
+
+    public static function shouldRegisterNavigation(): bool
+    {
+        // Hanya superadmin yang bisa melihat menu Permission management
+        return Auth::user()?->hasRole('super_admin') && Auth::user()?->can('system_manage');
+    }
+
+    public static function form(Form $form): Form
+    {
+        return $form
+            ->schema([
+                TextInput::make('name')
+                    ->label('Nama Permission')
+                    ->required()
+                    ->unique(ignoreRecord: true),
+            ]);
+    }
+
+    public static function table(Table $table): Table
+    {
+        return $table
+            ->columns([
+                TextColumn::make('name')->label('Permission')->searchable(),
+            ])
+            ->actions([
+                Tables\Actions\EditAction::make(),
+            ])
+            ->bulkActions([
+                Tables\Actions\DeleteBulkAction::make(),
+            ]);
+    }
+
+    public static function getPages(): array
+    {
+        return [
+            'index' => Pages\ListPermissions::route('/'),
+            'create' => Pages\CreatePermission::route('/create'),
+            'edit' => Pages\EditPermission::route('/{record}/edit'),
+        ];
+    }
+}

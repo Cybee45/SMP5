@@ -28,6 +28,21 @@ class AuthenticatedSessionController extends Controller
 
         $request->session()->regenerate();
 
+        $user = Auth::user();
+
+        // Check if user is active
+        if (!$user->is_active) {
+            Auth::logout();
+            return redirect()->back()->withErrors([
+                'email' => 'Akun Anda tidak aktif. Silakan hubungi administrator.',
+            ]);
+        }
+
+        // Redirect based on user role
+        if ($user->canAccessPanel()) {
+            return redirect()->intended('/admin');
+        }
+
         return redirect()->intended(route('dashboard', absolute: false));
     }
 
