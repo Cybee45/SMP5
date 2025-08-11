@@ -1,5 +1,5 @@
 <!-- ===== Section Berita & Pengumuman Dimulai ===== -->
-    <section class="py-16 md:py-24" 
+    <section class="py-16 md:py-24 relative" 
              x-data="{
                 posts: [
                     { id: 1, slug: 'jadwal-dan-alur-pendaftaran-peserta-didik-baru-ppdb-2025', img: 'https://images.unsplash.com/photo-1542744173-8e7e53415bb0?q=80&w=2070&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D', category: 'Pengumuman', categoryColor: 'blue', date: '22 Juli 2025', title: 'Jadwal dan Alur Pendaftaran Peserta Didik Baru (PPDB) 2025', content: 'Berikut adalah jadwal lengkap dan alur pendaftaran untuk calon peserta didik baru tahun ajaran 2025/2026. Pastikan untuk membaca semua detail dengan saksama agar tidak ada informasi yang terlewat. Pendaftaran dibuka mulai tanggal 1 Agustus 2025.' },
@@ -20,10 +20,16 @@
                     return this.posts.slice(start, end);
                 }
              }">
+        <!-- Gradasi blur di atas agar transisi ke section hero lebih halus -->
+        <div class="absolute top-0 left-0 w-full h-24 md:h-32 z-10 bg-gradient-to-b from-white/90 via-white/60 to-transparent pointer-events-none"></div>
         <div class="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8">
             
             <!-- Section Header -->
-            <div class="text-center mb-12 lg:mb-16">
+            <div class="text-center mb-12 lg:mb-16"
+                 data-aos="fade-up"
+                 data-aos-duration="800"
+                 data-aos-delay="100"
+                 data-aos-anchor-placement="top-bottom">
                 <h2 class="text-3xl sm:text-4xl font-extrabold text-gray-900 tracking-tight">
                     Berita & Pengumuman Terkini
                 </h2>
@@ -34,8 +40,13 @@
 
             <!-- Blog Posts Container -->
             <div class="space-y-6">
-                <template x-for="post in paginatedPosts" :key="post.id">
-                    <div class="group bg-white rounded-xl shadow-lg hover:shadow-2xl hover:-translate-y-1.5 transition-all duration-300 ease-in-out overflow-hidden flex flex-col sm:flex-row sm:h-44">
+                <template x-for="(post, index) in paginatedPosts" :key="post.id">
+                    <div class="group bg-white rounded-xl shadow-lg hover:shadow-2xl hover:-translate-y-1.5 transition-all duration-300 ease-in-out overflow-hidden flex flex-col sm:flex-row sm:h-44"
+                         :data-aos="index % 2 === 0 ? 'fade-right' : 'fade-left'"
+                         :data-aos-duration="800"
+                         :data-aos-delay="200 + (index * 150)"
+                         data-aos-easing="ease-out-cubic"
+                         data-aos-anchor-placement="top-bottom">
                         <!-- Image -->
                         <div class="h-48 sm:h-full sm:w-2/5 flex-shrink-0">
                             <img :src="post.img" :alt="post.title" class="w-full h-full object-cover">
@@ -68,7 +79,8 @@
             </div>
 
             <!-- Pagination Controls -->
-            <nav class="mt-12 flex items-center justify-center space-x-2" x-show="totalPages > 1">
+            <nav class="mt-12 flex items-center justify-center space-x-2" 
+                 x-show="totalPages > 1">
                 <!-- Previous Button -->
                 <button @click="currentPage--" :disabled="currentPage === 1" class="p-2 text-sm font-medium text-gray-600 bg-white rounded-md hover:bg-gray-100 disabled:opacity-50 disabled:cursor-not-allowed transition-colors">
                     <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" viewBox="0 0 20 20" fill="currentColor">
@@ -89,7 +101,6 @@
                 </button>
             </nav>
         </div>
-
-        <!-- MODAL DIHAPUS DARI SINI -->
-
+        <!-- Gradasi blur di bawah agar transisi ke footer lebih halus -->
+        <div class="absolute bottom-0 left-0 w-full h-24 md:h-32 z-10 bg-gradient-to-t from-white/90 via-white/60 to-transparent pointer-events-none"></div>
     </section>

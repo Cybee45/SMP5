@@ -1,49 +1,56 @@
 @import "tailwindcss";
 
 /* ==============================================
-  PENYESUAIAN: Perbaikan untuk Scrollbar Ganda
-  ==============================================
-  Aturan ini memastikan tidak ada elemen yang bisa 'meluber' secara horizontal,
-  yang merupakan penyebab umum munculnya scrollbar kedua yang tidak diinginkan
-  dan footer yang terdorong ke bawah.
-*/
+   GLOBAL: PERBAIKAN & RESET
+   ============================================== */
 html, body {
     width: 100%;
-    overflow-x: hidden;
-}
-
-
-:root {
-/* Brand palette (biru toska sekolah) */
---color-brand:        #008080;
---color-brand-light:  #64cbc2;
---color-brand-dark:   #005e5e;
-
-/* Supporting palette */
---color-sidebar:      #0B192C;
---color-button-blue:  #00022C;
---color-bg-light:     #1E3E62;
---color-text-light:   #EEF6FF;
---color-card-bg:      #B7D6F2;
---color-card-secondary:#82A9DF;
---color-carbon:        #111;
+    overflow-x: hidden; /* Hilangkan scrollbar horizontal */
 }
 
 /* ==============================================
-  CATATAN PERBAIKAN:
-  Blok kode untuk kelas kustom `.smooth-hover-lift` telah dihapus dari sini.
-  Kelas ini menyebabkan konflik karena menerapkan `duration-300`, yang menimpa
-  kelas `duration-500` yang Anda terapkan langsung di HTML.
-  Dengan menghapusnya, Anda menghilangkan konflik dan membiarkan kelas utilitas
-  Tailwind bekerja sebagaimana mestinya.
-============================================== */
-
-
-/* ==============================================
-   ANIMASI SCROLLER KARTU
+   GLOBAL: ROOT VARIABLE WARNA & FONT
    ============================================== */
+:root {
+    /* ==== FONT ==== */
+    --font-heading: 'Merriweather', Georgia, 'Times New Roman', serif; /* Heading */
+    --font-body: 'Poppins', 'Open Sans', Arial, sans-serif;            /* Konten */
 
-/* 1. Kontainer utama untuk marquee */
+    /* ==== WARNA UTAMA & AKSEN (HOMEPAGE) ==== */
+    --color-primary: #2563eb;          /* Biru utama (hero, CTA) */
+    --color-primary-light: #60a5fa;    /* Biru muda (hover/gradient) */
+    --color-secondary: #22d3ee;        /* Cyan/sky accent */
+    --color-accent: #facc15;           /* Kuning/emas accent */
+
+    /* ==== WARNA TAMBAHAN HOMEPAGE ==== */
+    --color-indigo: #4338ca;           /* Indigo untuk badge/kategori */
+    --color-emerald: #059669;          /* Hijau icon/stats */
+    --color-rose: #e11d48;             /* Merah icon/stats */
+
+    /* ==== NETRAL ==== */
+    --bg-main: #ffffff;                /* Background putih */
+    --bg-section: #f1f5f9;             /* slate-100 section */
+    --text-main: #111827;               /* slate-900 heading */
+    --text-secondary: #334155;          /* slate-700 konten */
+    --text-muted: #64748b;              /* slate-400 subtext */
+    --text-accent: var(--color-primary);
+
+    /* ==== WARNA LAMA (TETAP DIPERTAHANKAN) ==== */
+    --color-brand:        #008080;  /* Biru toska sekolah */
+    --color-brand-light:  #64cbc2;
+    --color-brand-dark:   #005e5e;
+    --color-sidebar:      #0B192C;
+    --color-button-blue:  #00022C;
+    --color-bg-light:     #1E3E62;
+    --color-text-light:   #EEF6FF;
+    --color-card-bg:      #B7D6F2;
+    --color-card-secondary:#82A9DF;
+    --color-carbon:        #111;
+}
+
+/* ==============================================
+   BERANDA: ANIMASI SCROLLER KARTU GALERI
+   ============================================== */
 .scroller {
     max-width: 100%;
     -webkit-mask: linear-gradient(90deg, transparent, white 20%, white 80%, transparent);
@@ -52,69 +59,73 @@ html, body {
     padding-bottom: 1rem;
 }
 
-/* 2. Pembungkus dalam yang akan bergerak */
 .scroller__inner {
-    width: max-content; 
+    width: max-content;
     display: flex;
     flex-wrap: nowrap;
     animation: scroll 40s linear infinite;
 }
 
-/* 3. Memberi jarak antar kartu dengan margin */
 .scroller__inner > div {
-    margin-right: 1.5rem; /* 24px */
+    margin-right: 1.5rem; /* Jarak antar kartu */
 }
 
-/* 4. Jeda animasi saat kursor diarahkan */
 .scroller:hover .scroller__inner {
-    animation-play-state: paused;
+    animation-play-state: paused; /* Pause saat hover */
 }
 
-/* 5. Penyesuaian untuk arah scroll ke kanan */
 .scroller[data-direction="right"] .scroller__inner {
-    animation-direction: reverse;
+    animation-direction: reverse; /* Balik arah */
 }
 
-/* 6. Definisi animasi pergeseran */
 @keyframes scroll {
     to {
         transform: translate(-50%);
     }
 }
 
-
-/* === CSS UNTUK BAYANGAN DI BAWAH GALERI === */
-
-/* 7. Memberi posisi relatif pada section utama */
+/* ==============================================
+   BERANDA: GRADASI BAYANGAN DI BAWAH GALERI
+   ============================================== */
 .gallery-section {
     position: relative;
 }
-
-/* 8. Membuat elemen semu untuk gradasi bayangan */
 .gallery-section::after {
     content: '';
     position: absolute;
     bottom: 0;
     left: 0;
     width: 100%;
-    height: 5rem; /* 80px, tinggi bayangan */
+    height: 5rem;
     background: linear-gradient(to top, rgb(248 250 252), transparent);
     pointer-events: none;
-    z-index: 2; /* Memastikan bayangan di atas galeri */
+    z-index: 2;
 }
 
-/* Custom class untuk aspect ratio gambar */
-    .aspect-w-16.aspect-h-9 {
-        position: relative;
-        padding-bottom: 56.25%; /* 16:9 ratio */
-    }
-    .aspect-w-16.aspect-h-9 > img {
-        position: absolute;
-        height: 100%;
-        width: 100%;
-        top: 0;
-        right: 0;
-        bottom: 0;
-        left: 0;
-        object-fit: cover;
-    }
+/* ==============================================
+   GLOBAL: UTILITY RASIO ASPEK 16:9 UNTUK GAMBAR
+   ============================================== */
+.aspect-w-16.aspect-h-9 {
+    position: relative;
+    padding-bottom: 56.25%;
+}
+.aspect-w-16.aspect-h-9 > img {
+    position: absolute;
+    height: 100%;
+    width: 100%;
+    top: 0;
+    right: 0;
+    bottom: 0;
+    left: 0;
+    object-fit: cover;
+}
+
+/* ==============================================
+   MEDIA: SEMBUNYIKAN KONTROL VIDEO DEFAULT
+   ============================================== */
+video::-webkit-media-controls {
+    display: none !important;
+}
+video[controls]::-webkit-media-controls {
+    display: flex !important;
+}

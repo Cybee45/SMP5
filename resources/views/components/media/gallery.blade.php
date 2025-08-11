@@ -1,5 +1,5 @@
 <!-- Media Section -->
-    <section id="media" class="py-20 lg:py-24" 
+    <section id="media" class="relative py-20 lg:py-24 overflow-hidden" 
              x-data="{ 
                 modalOpen: false, 
                 modalImage: '', 
@@ -28,7 +28,10 @@
         <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
             
             <!-- Section Header -->
-            <div class="text-center mb-12 lg:mb-16">
+            <div class="text-center mb-12 lg:mb-16"
+                 data-aos="fade-up"
+                 data-aos-duration="600"
+                 data-aos-anchor-placement="top-bottom">
                 <h2 class="text-3xl sm:text-4xl font-extrabold text-gray-900 tracking-tight">
                     Galeri Aktivitas Sekolah
                 </h2>
@@ -38,11 +41,20 @@
             </div>
 
             <!-- Gallery Grid -->
-            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
-                <template x-for="item in paginatedItems" :key="item.title">
+            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8"
+                 data-aos="fade-up"
+                 data-aos-duration="800"
+                 data-aos-delay="200"
+                 data-aos-anchor-placement="top-bottom">
+                <template x-for="(item, index) in paginatedItems" :key="item.title">
                     <!-- Gallery Card -->
                     <div @click="modalOpen = true; modalImage = item.img; modalTitle = item.title" 
-                         class="group bg-white rounded-xl shadow-md hover:shadow-xl hover:-translate-y-1.5 transition-all duration-300 ease-in-out cursor-pointer overflow-hidden flex flex-col">
+                         class="group bg-white rounded-xl shadow-md hover:shadow-xl hover:-translate-y-1.5 transition-all duration-300 ease-in-out cursor-pointer overflow-hidden flex flex-col"
+                         :data-aos="'fade-in'"
+                         :data-aos-duration="800"
+                         :data-aos-delay="index * 200 + 400"
+                         :data-aos-anchor-placement="'top-bottom'"
+                         :data-aos-easing="'ease-out-cubic'">
                         <!-- Image Container -->
                         <div class="aspect-w-16 aspect-h-9">
                             <img :src="item.img" :alt="item.title" class="group-hover:scale-105 transition-transform duration-300">
@@ -80,15 +92,15 @@
 
         </div>
 
-        <!-- Image Modal -->
+        <!-- Image Modal -->    
         <div x-show="modalOpen" 
              x-transition:enter="ease-out duration-300" 
-             x-transition:enter-start="opacity-0" 
+             x-transition:enter-start="opacity-100" 
              x-transition:enter-end="opacity-100" 
              x-transition:leave="ease-in duration-200" 
              x-transition:leave-start="opacity-100" 
-             x-transition:leave-end="opacity-0" 
-             class="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black bg-opacity-75" 
+             x-transition:leave-end="opacity-100" 
+             class="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/40 backdrop-blur-sm md:backdrop-blur bg-opacity-60" 
              style="display: none;">
             
             <!-- Modal Container -->
@@ -101,8 +113,8 @@
                 <!-- Modal Content -->
                 <div class="bg-white rounded-lg shadow-xl w-full max-w-3xl max-h-[90vh] flex flex-col overflow-hidden">
                     <!-- Image Container -->
-                    <div class="p-4 flex-grow overflow-hidden flex items-center justify-center">
-                        <img :src="modalImage" :alt="modalTitle" class="max-w-full max-h-full object-contain rounded-md">
+                    <div class="flex-grow overflow-hidden flex items-center justify-center h-full w-full">
+                        <img :src="modalImage" :alt="modalTitle" class="max-w-full max-h-[60vh] w-auto h-auto object-contain rounded-md" style="object-fit:contain;">
                     </div>
                     
                     <!-- Title Caption -->
@@ -112,5 +124,7 @@
                 </div>
             </div>
         </div>
-
+        
+        <!-- Bottom gradient overlay -->
+        <div class="absolute bottom-0 left-0 right-0 h-20 sm:h-24 lg:h-32 bg-gradient-to-t from-white via-white/85 via-white/60 via-white/30 to-transparent pointer-events-none z-10"></div>
     </section>

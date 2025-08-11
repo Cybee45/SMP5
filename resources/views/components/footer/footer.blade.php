@@ -17,12 +17,12 @@
       <div>
         <h3 class="text-lg font-semibold mb-4">AKSES CEPAT</h3>
         <ul class="space-y-1">
-          <li><a href="#" class="hover:text-sky-700">HOME</a></li>
-          <li><a href="#" class="hover:text-sky-700">ABOUT US</a></li>
-          <li><a href="#" class="hover:text-sky-700">SPMB</a></li>
-          <li><a href="#" class="hover:text-sky-700">MEDIA</a></li>
-          <li><a href="#" class="hover:text-sky-700">BLOG</a></li>
-          <li><a href="#" class="hover:text-sky-700">KONTAK</a></li>
+          <li><a href="/" class="hover:text-sky-700">HOME</a></li>
+          <li><a href="/about" class="hover:text-sky-700">ABOUT US</a></li>
+          <li><a href="/spmb" class="hover:text-sky-700">SPMB</a></li>
+          <li><a href="/media" class="hover:text-sky-700">MEDIA</a></li>
+          <li><a href="/blog" class="hover:text-sky-700">BLOG</a></li>
+          <li><a href="/kontak" class="hover:text-sky-700">KONTAK</a></li>
         </ul>
       </div>
     </div>
