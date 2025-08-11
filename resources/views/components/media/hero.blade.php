@@ -1,26 +1,24 @@
 {{-- resources/views/media.blade.php --}}
 <section id="hero" class="relative bg-white overflow-hidden">
-  {{-- 1. Wave background: diperbesar dan dipindah ke pojok kanan atas --}}
+  {{-- 1) Wave background --}}
   <img src="{{ asset('assets/media/wave.png') }}"
        alt="Wave background"
        class="absolute top-0 right-0
               w-[180%] sm:w-[120%] md:w-[110%] lg:w-[90%]
               max-w-none h-auto object-cover z-10 pointer-events-none" />
 
-  {{-- 2. Content wrapper --}}
+  {{-- 2) Content wrapper --}}
   <div class="relative z-20 mx-auto max-w-7xl
               px-4 sm:px-6 md:px-8
-              pt-8 pb-16
+              pt-14 pb-16
               lg:pt-16 lg:pb-24
               lg:pl-20 xl:pl-32">
     <div class="flex flex-col-reverse lg:flex-row items-center gap-y-9 lg:gap-x-16">
 
-      {{-- Text Container --}}
+      {{-- Text Container (tetap) --}}
       <div class="w-full lg:w-5/12 space-y-5 text-left relative
-                  -mt-16 sm:-mt-20 lg:-mt-32"
-           data-aos="fade-right"
-           data-aos-delay="300"
-           data-aos-duration="900">
+                  mt-6 sm:mt-10 lg:-mt-32"
+           data-aos="fade-right" data-aos-delay="300" data-aos-duration="900">
         <p class="text-sm font-semibold uppercase tracking-wide text-sky-800">
           Sekolah Menengah Unggulan di Sangatta Utara
         </p>
@@ -32,24 +30,29 @@
         </p>
       </div>
 
-      {{-- Image Container --}}
-      <div class="w-full lg:w-7/12 relative flex justify-center lg:justify-end">
-        {{-- Main hero image --}}
-        <img src="{{ asset('assets/media/hero.png') }}"
-             alt="Siswa SMP 5 Sangatta Utara"
-             class="w-full max-w-xs sm:max-w-sm md:max-w-md lg:max-w-lg xl:max-w-xl h-auto object-contain transform lg:translate-x-4" />
+      {{-- Image Container (figure + clamp, komposisi stabil) --}}
+      <div class="w-full lg:w-7/12 relative flex justify-center lg:justify-end mb-6 sm:mb-8 lg:mb-0 overflow-visible">
+        <!-- Kanvas komposisi. Variabel untuk skala dekorasi -->
+        <figure class="relative inline-block isolate max-w-full"
+                style="--decorMinG:135px; --decorMaxG:340px; --decorMinT:110px; --decorMaxT:280px;">
 
-        {{-- Decorative tas --}}
-        <img src="{{ asset('assets/media/tas.png') }}"
-             alt="Tas decoration"
-             class="hidden lg:block absolute top-[20%] left-120
-                    w-50 h-50 sm:w-65 sm:h-65 drop-shadow-lg animate-float" />
+          {{-- Hero (anchor ukuran) --}}
+          <img src="{{ asset('assets/media/hero.png') }}"
+               alt="Siswa SMP 5 Sangatta Utara"
+               class="block h-auto object-contain select-none relative z-10
+                      w-[min(82vw,620px)] sm:w-[min(68vw,640px)] lg:w-[580px] xl:w-[620px]
+                      lg:translate-x-4" />
 
-        {{-- Decorative globe --}}
-        <img src="{{ asset('assets/media/globe.png') }}"
-             alt="Globe decoration"
-             class="hidden lg:block absolute bottom-10 right-70
-                    w-50 h-50 sm:w-100 sm:h-100 drop-shadow-lg animate-float-slow rotate-[330deg]" />
+          {{-- Globe (kiri–bawah) | dibuat lebih besar & responsif --}}
+    <img src="{{ asset('assets/media/globe.png') }}"
+      alt="Globe decoration" aria-hidden="true"
+      class="absolute z-20 pointer-events-none select-none drop-shadow-lg animate-float-slow rotate-[330deg]
+          bottom-[14%] right-[52%]
+          sm:bottom-[13%] sm:right-[50%]
+          md:bottom-[12%] md:right-[48%]
+          lg:bottom-[11%] lg:right-[46%]
+          w-[clamp(var(--decorMinG),28vw,var(--decorMaxG))] lg:w-[min(56vw,680px)]" />
+        </figure>
       </div>
     </div>
   </div>

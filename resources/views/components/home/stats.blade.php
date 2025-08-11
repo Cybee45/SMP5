@@ -1,4 +1,5 @@
 <section class="bg-slate-50 py-20 lg:py-24">
+  
   <div class="container mx-auto px-6 md:px-8">
     <div class="grid grid-cols-1 items-left gap-y-12 lg:grid-cols-12 lg:gap-x-12">
       <!-- Kolom Kiri -->

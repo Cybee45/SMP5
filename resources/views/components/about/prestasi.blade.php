@@ -1,4 +1,4 @@
-<section class="bg-slate-50 py-20 lg:py-24">
+<section class="relative overflow-hidden bg-slate-50 py-20 lg:py-24">
   <div class="container mx-auto px-6 md:px-8">
 
    <div class="max-w-3xl mx-auto text-center px-6 mb-12">
@@ -70,4 +70,8 @@
       </div>
     </div>
   </div>
+  
+  <!-- Bottom gradient overlay untuk blending dengan section bawah -->
+  <div class="pointer-events-none absolute inset-x-0 bottom-0 z-10 h-20 sm:h-24 lg:h-32 
+              bg-gradient-to-t from-white via-white/85 via-white/60 via-white/30 to-transparent"></div>
 </section>

@@ -1,77 +1,96 @@
-<section class="py-20 lg:py-24 bg-slate-50">
-    <div class="container mx-auto px-6 md:px-8">
-        
-        <!-- Judul Section dari SectionKeunggulan -->
-        @php
-            $sectionKeunggulan = \App\Models\SectionKeunggulan::where('aktif', true)->first();
-        @endphp
+<section class="py-12 sm:py-16 lg:py-24"
+         data-aos="fade-up"
+         data-aos-duration="800"
+         data-aos-easing="ease-out-cubic"
+         data-aos-once="true"
+         data-aos-anchor-placement="top-bottom">
+  <div class="px-4 sm:px-8 lg:px-12">
+    
+    <!-- Judul Section dari SectionKeunggulan atau fallback -->
+    @php
+        $sectionKeunggulan = \App\Models\SectionKeunggulan::where('aktif', true)->first();
+    @endphp
 
-        @if($sectionKeunggulan)
-        <div class="text-center max-w-3xl mx-auto mb-12 lg:mb-16"
-            data-aos="fade-up"
-            data-aos-duration="900"
-            data-aos-delay="100">
-            <h2 class="text-3xl md:text-4xl font-bold font-heading text-gray-900">
-                {{ $sectionKeunggulan->judul_section }}
-            </h2>
-            <p class="mt-4 text-base md:text-lg text-slate-600">
-                {{ $sectionKeunggulan->deskripsi_section }}
-            </p>
-        </div>
-        @endif
-
-        
-        <!-- Grid untuk Kartu Keunggulan dari data individual -->
-        <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-8">
-            @foreach($keunggulans as $index => $item)
-            <div 
-                class="bg-white rounded-xl shadow-lg p-6 lg:p-8 text-center transition-all duration-300 hover:-translate-y-2 hover:shadow-2xl"
-                data-aos="zoom-in"
-                data-aos-delay="{{ 100 + ($index * 150) }}"
-                data-aos-duration="700"
-            >
-                {{-- Icon statis berdasarkan urutan untuk konsistensi tampilan client --}}
-                <div class="mx-auto mb-6 flex h-16 w-16 items-center justify-center rounded-full 
-                    @switch($index)
-                        @case(0) bg-sky-100 @break
-                        @case(1) bg-indigo-100 @break
-                        @case(2) bg-emerald-100 @break
-                        @case(3) bg-rose-100 @break
-                        @default bg-gray-100
-                    @endswitch">
-                    @switch($index)
-                        @case(0)
-                            <svg xmlns="http://www.w3.org/2000/svg" class="h-8 w-8 text-sky-600" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
-                                <path stroke-linecap="round" stroke-linejoin="round" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
-                            </svg>
-                            @break
-                        @case(1)
-                            <svg xmlns="http://www.w3.org/2000/svg" class="h-8 w-8 text-indigo-600" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
-                                <path d="M12 14l9-5-9-5-9 5 9 5z" />
-                                <path d="M12 14l6.16-3.422a12.083 12.083 0 01.665 6.479A11.952 11.952 0 0012 20.055a11.952 11.952 0 00-6.824-5.998 12.078 12.078 0 01.665-6.479L12 14z" />
-                            </svg>
-                            @break
-                        @case(2)
-                            <svg xmlns="http://www.w3.org/2000/svg" class="h-8 w-8 text-emerald-600" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
-                                <path stroke-linecap="round" stroke-linejoin="round" d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-4h1m-1 4h1m-5 10v-5a1 1 0 011-1h2a1 1 0 011 1v5m-4 0h4" />
-                            </svg>
-                            @break
-                        @case(3)
-                            <svg xmlns="http://www.w3.org/2000/svg" class="h-8 w-8 text-rose-600" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
-                                <path stroke-linecap="round" stroke-linejoin="round" d="M5 3v4M3 5h4M6 17v4m-2-2h4m5-16l2.286 6.857L21 12l-5.714 2.143L13 21l-2.286-6.857L5 12l5.714-2.143L13 3z" />
-                            </svg>
-                            @break
-                        @default
-                            <svg xmlns="http://www.w3.org/2000/svg" class="h-8 w-8 text-gray-600" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
-                                <path stroke-linecap="round" stroke-linejoin="round" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
-                            </svg>
-                    @endswitch
-                </div>
-
-                <h3 class="font-bold text-lg mb-2 text-gray-900">{{ $item->judul }}</h3>
-                <p class="text-sm text-slate-600">{{ $item->deskripsi }}</p>
-            </div>
-            @endforeach
-        </div>
+    <div class="text-center mb-10 sm:mb-16"
+         data-aos="fade-up"
+         data-aos-delay="50"
+         data-aos-duration="800">
+      <h2 class="text-3xl font-bold tracking-tight text-gray-900 sm:text-4xl">
+        {{ $sectionKeunggulan->judul_section ?? 'Mengapa Memilih SMP 5 Sangatta Utara?' }}
+      </h2>
+      <p class="mt-4 max-w-2xl mx-auto text-base leading-relaxed text-gray-600 sm:text-lg">
+        {{ $sectionKeunggulan->deskripsi_section ?? 'Kami berkomitmen untuk menyediakan lingkungan belajar yang inspiratif dengan standar kualitas yang terjamin di setiap aspek.' }}
+      </p>
     </div>
+
+    <!-- Grid untuk Kartu Keunggulan dari data CMS -->
+    <div class="grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-4 sm:gap-8"
+         data-aos="fade-up"
+         data-aos-delay="80"
+         data-aos-duration="700">
+
+      @forelse($keunggulans as $index => $item)
+      <div class="group bg-white p-8 rounded-3xl shadow-lg transition-all duration-500 ease-in-out hover:shadow-2xl hover:-translate-y-2 flex flex-col items-center text-center will-change-transform transform-gpu"
+           data-aos="zoom-in"
+           data-aos-delay="{{ 120 + ($index * 60) }}"
+           data-aos-duration="650">
+        
+        <!-- Icon berdasarkan urutan dengan gradient yang berbeda -->
+        <div class="flex items-center justify-center h-20 w-20 rounded-full mb-6 ring-4 ring-white
+            @switch($index % 4)
+                @case(0) bg-gradient-to-br from-blue-200 to-blue-100 @break
+                @case(1) bg-gradient-to-br from-indigo-200 to-indigo-100 @break
+                @case(2) bg-gradient-to-br from-green-200 to-green-100 @break
+                @case(3) bg-gradient-to-br from-red-200 to-red-100 @break
+            @endswitch">
+          
+          @switch($index % 4)
+            @case(0)
+              <svg class="h-10 w-10 text-blue-700 transition-transform duration-300 ease-in-out group-hover:scale-110 group-hover:rotate-[-12deg]" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor">
+                <path stroke-linecap="round" stroke-linejoin="round" d="M9 12.75L11.25 15 15 9.75M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+              </svg>
+              @break
+              
+            @case(1)
+              <svg class="h-10 w-10 text-indigo-700 transition-transform duration-300 ease-in-out group-hover:scale-110 group-hover:rotate-[-12deg]" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor">
+                <path stroke-linecap="round" stroke-linejoin="round" d="M4.26 10.147a60.438 60.438 0 00-.491 6.347A48.627 48.627 0 0112 20.904a48.627 48.627 0 018.232-4.41 60.46 60.46 0 00-.491-6.347m-15.482 0a50.57 50.57 0 00-2.658-.813A59.906 59.906 0 0112 3.493a59.902 59.902 0 0110.399 5.84c-.896.248-1.783.52-2.658.814m-15.482 0l-.07.002z" />
+              </svg>
+              @break
+              
+            @case(2)
+              <svg class="h-10 w-10 text-green-700 transition-transform duration-300 ease-in-out group-hover:scale-110 group-hover:rotate-[-12deg]" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor">
+                <path stroke-linecap="round" stroke-linejoin="round" d="M2.25 21h19.5m-18-18v18m10.5-18v18m6-13.5V21M6.75 6.75h.75m-.75 3h.75m-.75 3h.75m3-6h.75m-.75 3h.75m-.75 3h.75M9 21v-3.375c0-.621.504-1.125 1.125-1.125h3.75c.621 0 1.125.504 1.125 1.125V21" />
+              </svg>
+              @break
+              
+            @case(3)
+              <svg class="h-10 w-10 text-red-700 transition-transform duration-300 ease-in-out group-hover:scale-110 group-hover:rotate-[-12deg]" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor">
+                <path stroke-linecap="round" stroke-linejoin="round" d="M11.48 3.499a.562.562 0 011.04 0l2.125 5.111a.563.563 0 00.475.345l5.518.442c.499.04.701.663.321.988l-4.204 3.602a.563.563 0 00-.182.557l1.285 5.385a.562.562 0 01-.84.61l-4.725-2.885a.563.563 0 00-.586 0L6.982 20.54a.562.562 0 01-.84-.61l1.285-5.386a.562.562 0 00-.182-.557l-4.204-3.602a.563.563 0 01.321-.988l5.518-.442a.563.563 0 00.475-.345L11.48 3.5z" />
+              </svg>
+              @break
+          @endswitch
+        </div>
+        
+        <div>
+          <h3 class="text-lg font-semibold text-gray-900 mb-2">{{ $item->judul }}</h3>
+          <p class="text-base text-gray-600">{{ $item->deskripsi }}</p>
+        </div>
+      </div>
+      @empty
+      <!-- Fallback jika tidak ada data CMS -->
+      <div class="group bg-white p-8 rounded-3xl shadow-lg transition-all duration-500 ease-in-out hover:shadow-2xl hover:-translate-y-2 flex flex-col items-center text-center">
+        <div class="flex items-center justify-center h-20 w-20 rounded-full bg-gradient-to-br from-blue-200 to-blue-100 mb-6 ring-4 ring-white">
+          <svg class="h-10 w-10 text-blue-700" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor">
+            <path stroke-linecap="round" stroke-linejoin="round" d="M9 12.75L11.25 15 15 9.75M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+          </svg>
+        </div>
+        <div>
+          <h3 class="text-lg font-semibold text-gray-900 mb-2">Akreditasi "B"</h3>
+          <p class="text-base text-gray-600">Sekolah telah terakreditasi B, memastikan mutu pendidikan yang terjamin dan diakui secara resmi.</p>
+        </div>
+      </div>
+      @endforelse
+
+    </div>
+  </div>
 </section>

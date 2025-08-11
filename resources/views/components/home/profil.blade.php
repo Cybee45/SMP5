@@ -43,8 +43,20 @@
                     @endif
                 </div>
               </div>
+              
                 @if($profil->link_selengkapnya)
                 <a href="{{ $profil->link_selengkapnya }}"
+                   class="mt-8 inline-flex items-center gap-x-3 bg-[var(--color-brand)] text-white font-semibold rounded-lg px-6 py-3 shadow-lg hover:bg-[var(--color-brand-dark)] transition-all duration-300 transform hover:scale-105"
+                   data-aos="fade-left"
+                   data-aos-delay="300"
+                   data-aos-duration="650">
+                    Selengkapnya Tentang Kami
+                    <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" viewBox="0 0 20 20" fill="currentColor">
+                        <path fill-rule="evenodd" d="M10.293 3.293a1 1 0 011.414 0l6 6a1 1 0 010 1.414l-6 6a1 1 0 01-1.414-1.414L14.586 11H3a1 1 0 110-2h11.586l-4.293-4.293a1 1 0 010-1.414z" clip-rule="evenodd" />
+                    </svg>
+                </a>
+                @else
+                <a href="/about"
                    class="mt-8 inline-flex items-center gap-x-3 bg-[var(--color-brand)] text-white font-semibold rounded-lg px-6 py-3 shadow-lg hover:bg-[var(--color-brand-dark)] transition-all duration-300 transform hover:scale-105"
                    data-aos="fade-left"
                    data-aos-delay="300"
