@@ -30,40 +30,45 @@ class UserResource extends Resource
 
     public static function canViewAny(): bool
     {
-        return Auth::user()?->can('system_manage');
+        return Auth::user()?->can('view_any_user') ?? false;
     }
 
-    public static function shouldRegisterNavigation(): bool
+    public static function canCreate(): bool
     {
-        $user = Auth::user();
-        if (!$user) return false;
-        
-        $hasRole = $user->hasRole('super_admin');
-        $hasPermission = $user->can('system_manage');
-        
-        // Debugging (hapus setelah testing)
-        Log::info('UserResource Navigation Check:', [
-            'user_id' => $user->id,
-            'email' => $user->email,
-            'roles' => $user->roles->pluck('name'),
-            'has_super_admin_role' => $hasRole,
-            'has_system_manage_permission' => $hasPermission,
-            'should_register' => $hasRole && $hasPermission
-        ]);
-        
-        return $hasRole && $hasPermission;
+        return Auth::user()?->can('create_user') ?? false;
+    }
+
+    public static function canEdit(Model $record): bool
+    {
+        return Auth::user()?->can('update_user') ?? false;
+    }
+
+    public static function canDelete(Model $record): bool
+    {
+        return Auth::user()?->can('delete_user') ?? false;
     }
 
     public static function form(Form $form): Form
     {
         return $form->schema([
             TextInput::make('name')
+                ->label('Nama Lengkap')
                 ->required()
                 ->maxLength(255),
 
+            TextInput::make('username')
+                ->label('Username')
+                ->required()
+                ->unique(User::class, 'username', ignoreRecord: true)
+                ->maxLength(255)
+                ->alphaDash()
+                ->helperText('Username hanya boleh berisi huruf, angka, dash, dan underscore'),
+
             TextInput::make('email')
+                ->label('Email')
                 ->email()
                 ->required()
+                ->unique(User::class, 'email', ignoreRecord: true)
                 ->maxLength(255),
 
             TextInput::make('password')
@@ -98,9 +103,27 @@ class UserResource extends Resource
     public static function table(Table $table): Table
     {
         return $table->columns([
-            TextColumn::make('name')->searchable(),
-            TextColumn::make('email')->searchable(),
-            BooleanColumn::make('is_active')->label('Aktif'),
+            TextColumn::make('name')->label('Nama')->searchable()->sortable(),
+            TextColumn::make('username')->label('Username')->searchable()->sortable(),
+            TextColumn::make('email')->label('Email')->searchable()->sortable(),
+            TextColumn::make('roles.name')
+                ->label('Role')
+                ->badge()
+                ->separator(', ')
+                ->color(fn (string $state): string => match ($state) {
+                    'super_admin' => 'danger',
+                    'admin' => 'warning',
+                    default => 'gray',
+                }),
+            BooleanColumn::make('is_active')->label('Aktif')->sortable(),
+            TextColumn::make('created_at')->label('Dibuat')->dateTime()->sortable(),
+            TextColumn::make('last_login_at')->label('Login Terakhir')->dateTime()->sortable(),
+        ])->filters([
+            Tables\Filters\SelectFilter::make('roles')
+                ->relationship('roles', 'name')
+                ->label('Filter by Role'),
+            Tables\Filters\TernaryFilter::make('is_active')
+                ->label('Status Aktif'),
         ]);
     }
 

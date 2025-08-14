@@ -1,3 +1,7 @@
+@php
+    $prestasiList = \App\Models\PrestasiAbout::where('aktif', true)->ordered()->get();
+@endphp
+
 <section class="relative overflow-hidden bg-slate-50 py-20 lg:py-24">
   <div class="container mx-auto px-6 md:px-8">
 
@@ -18,11 +22,32 @@
       <!-- Grid untuk Kartu-kartu Prestasi -->
     <div class="grid grid-cols-1 md:grid-cols-2 gap-8 lg:gap-12">
 
+        @forelse($prestasiList as $index => $prestasi)
+        <!-- Kartu Prestasi {{ $index + 1 }} -->
+        <div class="bg-white rounded-2xl shadow-lg overflow-hidden group smooth-hover-lift" 
+             data-aos="fade-up" 
+             data-aos-delay="{{ 300 + ($index * 100) }}">
+          <div class="overflow-hidden h-56">
+            <!-- PENYESUAIAN: Menambahkan style will-change untuk animasi yang lebih halus -->
+            <img src="{{ asset('storage/' . $prestasi->gambar) }}" 
+                 alt="{{ $prestasi->judul }}" 
+                 onerror="this.onerror=null;this.src='{{ asset('assets/about/smp_5-36.jpg') }}';"
+                 class="w-full h-full object-cover transition-transform duration-500 ease-in-out group-hover:scale-110" 
+                 style="will-change: transform;">
+          </div>
+          <div class="p-6">
+            <p class="text-slate-600">
+              {{ $prestasi->deskripsi }}
+            </p>
+          </div>
+        </div>
+        @empty
+        <!-- Fallback jika tidak ada data dari CMS -->
         <!-- Kartu 1 -->
         <div class="bg-white rounded-2xl shadow-lg overflow-hidden group smooth-hover-lift" data-aos="fade-up" data-aos-delay="300">
           <div class="overflow-hidden h-56">
             <!-- PENYESUAIAN: Menambahkan style will-change untuk animasi yang lebih halus -->
-            <img src="assets/about/smp_5-36.jpg" alt="Juara 1 Lomba Cerdas Cermat" class="w-full h-full object-cover transition-transform duration-500 ease-in-out group-hover:scale-110" style="will-change: transform;">
+            <img src="{{ asset('assets/about/smp_5-36.jpg') }}" alt="Juara 1 Lomba Cerdas Cermat" class="w-full h-full object-cover transition-transform duration-500 ease-in-out group-hover:scale-110" style="will-change: transform;">
           </div>
           <div class="p-6">
             <p class="text-slate-600">
@@ -34,7 +59,7 @@
         <!-- Kartu 2 -->
         <div class="bg-white rounded-2xl shadow-lg overflow-hidden group smooth-hover-lift" data-aos="fade-up" data-aos-delay="400">
           <div class="overflow-hidden h-56">
-            <img src="assets/about/smp_5-39.jpg" alt="Juara 2 Turnamen Futsal" class="w-full h-full object-cover transition-transform duration-500 ease-in-out group-hover:scale-110" style="will-change: transform;">
+            <img src="{{ asset('assets/about/smp_5-39.jpg') }}" alt="Juara 2 Turnamen Futsal" class="w-full h-full object-cover transition-transform duration-500 ease-in-out group-hover:scale-110" style="will-change: transform;">
           </div>
           <div class="p-6">
             <p class="text-slate-600">
@@ -46,7 +71,7 @@
         <!-- Kartu 3 -->
         <div class="bg-white rounded-2xl shadow-lg overflow-hidden group smooth-hover-lift" data-aos="fade-up" data-aos-delay="300">
           <div class="overflow-hidden h-56">
-            <img src="assets/about/smp_5-39.jpg" alt="Juara 2 Turnamen Futsal" class="w-full h-full object-cover transition-transform duration-500 ease-in-out group-hover:scale-110" style="will-change: transform;">
+            <img src="{{ asset('assets/about/smp_5-39.jpg') }}" alt="Juara 2 Turnamen Futsal" class="w-full h-full object-cover transition-transform duration-500 ease-in-out group-hover:scale-110" style="will-change: transform;">
           </div>
           <div class="p-6">
             <p class="text-slate-600">
@@ -58,7 +83,7 @@
         <!-- Kartu 4 -->
         <div class="bg-white rounded-2xl shadow-lg overflow-hidden group smooth-hover-lift" data-aos="fade-up" data-aos-delay="400">
           <div class="overflow-hidden h-56">
-            <img src="assets/about/smp_5-40.jpg" alt="Juara 1 Lomba Cerdas Cermat" class="w-full h-full object-cover transition-transform duration-500 ease-in-out group-hover:scale-110" style="will-change: transform;">
+            <img src="{{ asset('assets/about/smp_5-40.jpg') }}" alt="Juara 1 Lomba Cerdas Cermat" class="w-full h-full object-cover transition-transform duration-500 ease-in-out group-hover:scale-110" style="will-change: transform;">
           </div>
           <div class="p-6">
             <p class="text-slate-600">
@@ -66,6 +91,7 @@
             </p>
           </div>
         </div>
+        @endforelse
 
       </div>
     </div>

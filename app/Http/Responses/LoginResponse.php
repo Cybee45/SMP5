@@ -6,6 +6,7 @@ use Filament\Http\Responses\Auth\Contracts\LoginResponse as Responsable;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Support\Facades\Auth;
 use Livewire\Features\SupportRedirects\Redirector;
+use Filament\Notifications\Notification;
 
 class LoginResponse implements Responsable
 {
@@ -16,15 +17,27 @@ class LoginResponse implements Responsable
         // Check if user is active
         if (!$user->is_active) {
             Auth::logout();
-            return redirect()->route('filament.admin.auth.login')
-                ->withErrors(['email' => 'Akun Anda tidak aktif. Silakan hubungi administrator.']);
+            
+            Notification::make()
+                ->title('Akun Tidak Aktif')
+                ->body('Akun Anda tidak aktif. Silakan hubungi administrator.')
+                ->danger()
+                ->send();
+                
+            return redirect()->route('filament.admin.auth.login');
         }
 
         // Check if user can access panel
         if (!$user->canAccessPanel()) {
             Auth::logout();
-            return redirect()->route('filament.admin.auth.login')
-                ->withErrors(['email' => 'Anda tidak memiliki akses ke panel admin.']);
+            
+            Notification::make()
+                ->title('Akses Ditolak')
+                ->body('Anda tidak memiliki akses ke panel admin.')
+                ->danger()
+                ->send();
+                
+            return redirect()->route('filament.admin.auth.login');
         }
 
         // Redirect to admin panel

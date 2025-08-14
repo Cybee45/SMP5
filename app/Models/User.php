@@ -2,6 +2,8 @@
 
 namespace App\Models;
 use Spatie\Permission\Traits\HasRoles;
+use Filament\Models\Contracts\FilamentUser;
+use Filament\Panel;
 
 // use Illuminate\Contracts\Auth\MustVerifyEmail;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
@@ -12,7 +14,7 @@ use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\Log;
 
 
-class User extends Authenticatable
+class User extends Authenticatable implements FilamentUser
 {
     use HasRoles;
     
@@ -79,15 +81,17 @@ class User extends Authenticatable
      */
     public function isAdmin(): bool
     {
-        return $this->hasRole(['admin', 'super_admin']);
+        return $this->hasRole(['admin', 'superadmin']);
     }
 
     /**
-     * Check if user can access admin panel
+     * Check if user can access panel (backward compatibility)
      */
-    public function canAccessPanel(): bool
+    public function canAccessPanel(Panel $panel = null): bool
     {
-        return $this->is_active && $this->isAdmin() && !$this->isLocked();
+        return $this->is_active && 
+               $this->can('admin_access') && 
+               !$this->isLocked();
     }
 
     /**

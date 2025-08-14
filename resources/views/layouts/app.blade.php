@@ -5,11 +5,24 @@
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <meta name="csrf-token" content="{{ csrf_token() }}">
 
+    <!-- SEO Meta Tags -->
+    <meta name="description" content="SMP Negeri 5 Sangatta Utara - Sekolah Menengah Pertama berkualitas di Kalimantan Timur dengan akreditasi B. Menciptakan generasi unggul, berkarakter, dan berprestasi.">
+    <meta name="keywords" content="SMP Negeri 5 Sangatta Utara, sekolah menengah pertama, pendidikan berkualitas, Kalimantan Timur, akreditasi B">
+    <meta name="author" content="SMP Negeri 5 Sangatta Utara">
+    
+    <!-- Open Graph Meta Tags -->
+    <meta property="og:title" content="{{ $title ?? 'SMP Negeri 5 Sangatta Utara' }}">
+    <meta property="og:description" content="Sekolah Menengah Pertama berkualitas dengan akreditasi B di Sangatta Utara, Kalimantan Timur.">
+    <meta property="og:image" content="{{ asset('assets/logo/logo.png') }}">
+    <meta property="og:url" content="{{ url()->current() }}">
+    <meta property="og:type" content="website">
+
     <!-- Title -->
-    <title>{{ $title ?? config('app.name', 'SMP5') }}</title>
+    <title>{{ $title ?? 'SMP Negeri 5 Sangatta Utara' }}</title>
 
     <!-- Favicon -->
-    <link rel="icon" type="image/png" href="{{ asset('assets/logo/logo.png') }}">
+    <link rel="icon" type="image/png" href="{{ asset('favicon.png') }}">
+    <link rel="shortcut icon" href="{{ asset('favicon.png') }}">
 
     <!-- Fonts -->
     <link rel="preconnect" href="https://fonts.bunny.net">
@@ -17,6 +30,12 @@
 
     <!-- AOS CSS -->
     <link rel="stylesheet" href="https://unpkg.com/aos@next/dist/aos.css" />
+
+    <!-- Performance CSS -->
+    <link rel="stylesheet" href="{{ asset('css/performance.css') }}">
+
+    <!-- Alpine.js -->
+    <script defer src="https://unpkg.com/alpinejs@3.x.x/dist/cdn.min.js"></script>
 
     <!-- Scripts -->
     @vite(['resources/css/app.css', 'resources/js/app.js'])
@@ -35,6 +54,10 @@
 
     <!-- AOS Script -->
     <script src="https://unpkg.com/aos@next/dist/aos.js"></script>
+    
+    <!-- Performance Script -->
+    <script src="{{ asset('js/performance.js') }}"></script>
+    
     <script>
         document.addEventListener('DOMContentLoaded', function() {
             AOS.init({

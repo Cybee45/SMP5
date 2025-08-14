@@ -1,30 +1,49 @@
+@php
+    // Ambil data galeri dari database
+    $mediaGaleris = \App\Models\MediaGaleri::active()->ordered()->get();
+    
+    // Convert ke format yang dibutuhkan Alpine.js
+    $galeriData = $mediaGaleris->map(function($galeri) {
+        return [
+            'img' => $galeri->gambar_url,
+            'title' => $galeri->judul,
+            'desc' => $galeri->deskripsi ?? ucfirst($galeri->kategori),
+        ];
+    });
+
+    // Data fallback jika database kosong
+    $fallbackData = [
+        ['img' => 'https://images.unsplash.com/photo-1577896851231-70ef18881754?q=80&w=2070&auto=format&fit=crop', 'title' => 'Perkemahan Akbar', 'desc' => 'Pramuka Penggalang'],
+        ['img' => 'https://images.unsplash.com/photo-1523050854058-8df90110c9f1?q=80&w=2070&auto=format&fit=crop', 'title' => 'Juara 1 LKS Tingkat Kota', 'desc' => 'Kompetensi Siswa 2024'],
+        ['img' => 'https://images.unsplash.com/photo-1541339907198-e08756dedf3f?q=80&w=2070&auto=format&fit=crop', 'title' => 'Pentas Seni Tahunan', 'desc' => 'Ekspresi Bakat Siswa'],
+        ['img' => 'https://images.unsplash.com/photo-1524178232363-1fb2b075b655?q=80&w=2070&auto=format&fit=crop', 'title' => 'Final Cerdas Cermat', 'desc' => 'Tingkat Provinsi'],
+        ['img' => 'https://images.unsplash.com/photo-1531482615713-2c65776cf0ce?q=80&w=2070&auto=format&fit=crop', 'title' => 'Emas Olimpiade', 'desc' => 'Sains Nasional'],
+        ['img' => 'https://images.unsplash.com/photo-1594608661623-aa0bd3a69d98?q=80&w=1896&auto=format&fit=crop', 'title' => 'Kegiatan Bakti Sosial', 'desc' => 'Peduli Lingkungan Sekitar'],
+        ['img' => 'https://images.unsplash.com/photo-1556742502-ec7c0e9f34b1?q=80&w=2070&auto=format&fit=crop', 'title' => 'Workshop Kewirausahaan', 'desc' => 'Mencetak Generasi Kreatif'],
+        ['img' => 'https://images.unsplash.com/photo-1517048676732-d65bc937f952?q=80&w=2070&auto=format&fit=crop', 'title' => 'Pelatihan Kepemimpinan OSIS', 'desc' => 'Membangun Jiwa Pemimpin']
+    ];
+
+    $items = $galeriData->count() > 0 ? $galeriData->toArray() : $fallbackData;
+@endphp
+
 <!-- Media Section -->
-    <section id="media" class="relative py-20 lg:py-24 overflow-hidden" 
-             x-data="{ 
-                modalOpen: false, 
-                modalImage: '', 
-                modalTitle: '',
-                currentPage: 1,
-                itemsPerPage: 6,
-                items: [
-                    { img: 'https://images.unsplash.com/photo-1577896851231-70ef18881754?q=80&w=2070&auto=format&fit=crop', title: 'Perkemahan Akbar', desc: 'Pramuka Penggalang' },
-                    { img: 'https://images.unsplash.com/photo-1523050854058-8df90110c9f1?q=80&w=2070&auto=format&fit=crop', title: 'Juara 1 LKS Tingkat Kota', desc: 'Kompetensi Siswa 2024' },
-                    { img: 'https://images.unsplash.com/photo-1541339907198-e08756dedf3f?q=80&w=2070&auto=format&fit=crop', title: 'Pentas Seni Tahunan', desc: 'Ekspresi Bakat Siswa' },
-                    { img: 'https://images.unsplash.com/photo-1524178232363-1fb2b075b655?q=80&w=2070&auto=format&fit=crop', title: 'Final Cerdas Cermat', desc: 'Tingkat Provinsi' },
-                    { img: 'https://images.unsplash.com/photo-1531482615713-2c65776cf0ce?q=80&w=2070&auto=format&fit=crop', title: 'Emas Olimpiade', desc: 'Sains Nasional' },
-                    { img: 'https://images.unsplash.com/photo-1594608661623-aa0bd3a69d98?q=80&w=1896&auto=format&fit=crop', title: 'Kegiatan Bakti Sosial', desc: 'Peduli Lingkungan Sekitar' },
-                    { img: 'https://images.unsplash.com/photo-1556742502-ec7c0e9f34b1?q=80&w=2070&auto=format&fit=crop', title: 'Workshop Kewirausahaan', desc: 'Mencetak Generasi Kreatif' },
-                    { img: 'https://images.unsplash.com/photo-1517048676732-d65bc937f952?q=80&w=2070&auto=format&fit=crop', title: 'Pelatihan Kepemimpinan OSIS', desc: 'Membangun Jiwa Pemimpin' }
-                ],
-                get totalPages() {
-                    return Math.ceil(this.items.length / this.itemsPerPage);
-                },
-                get paginatedItems() {
-                    const start = (this.currentPage - 1) * this.itemsPerPage;
-                    const end = start + this.itemsPerPage;
-                    return this.items.slice(start, end);
-                }
-             }">
+<section id="media" class="relative py-20 lg:py-24 overflow-hidden" 
+         x-data="{ 
+            modalOpen: false, 
+            modalImage: '', 
+            modalTitle: '',
+            currentPage: 1,
+            itemsPerPage: 6,
+            items: {{ json_encode($items) }},
+            get totalPages() {
+                return Math.ceil(this.items.length / this.itemsPerPage);
+            },
+            get paginatedItems() {
+                const start = (this.currentPage - 1) * this.itemsPerPage;
+                const end = start + this.itemsPerPage;
+                return this.items.slice(start, end);
+            }
+         }">
         <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
             
             <!-- Section Header -->

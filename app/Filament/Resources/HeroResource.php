@@ -18,17 +18,16 @@ use Filament\Tables\Table;
 use Filament\Tables\Columns\TextColumn;
 use Filament\Tables\Columns\ToggleColumn;
 use Illuminate\Support\Facades\Auth;
-use BezhanSalleh\FilamentShield\Contracts\HasShieldPermissions;
 use Illuminate\Database\Eloquent\Builder;
 
-class HeroResource extends Resource implements HasShieldPermissions
+class HeroResource extends Resource
 {
     protected static ?string $model = Hero::class;
 
     protected static ?string $navigationIcon = 'heroicon-o-rectangle-stack';
     protected static ?string $navigationLabel = 'Hero Section';
     protected static ?string $pluralModelLabel = 'Hero Section';
-    protected static ?string $navigationGroup = 'CMS - Home';
+    protected static ?string $navigationGroup = 'CMS Home';
     protected static ?int $navigationSort = 1;
 
     public static function getEloquentQuery(): Builder
@@ -65,8 +64,16 @@ class HeroResource extends Resource implements HasShieldPermissions
 
             TextInput::make('tombol_link')
                 ->label('Link Tombol')
-                ->url()
-                ->placeholder('Contoh: /about'),
+                ->placeholder('Contoh: /spmb atau https://example.com')
+                ->helperText('Bisa menggunakan path relatif (/halaman) atau URL lengkap (https://...)')
+                ->rule('nullable')
+                ->rule(function () {
+                    return function (string $attribute, $value, \Closure $fail) {
+                        if ($value && !filter_var($value, FILTER_VALIDATE_URL) && !str_starts_with($value, '/')) {
+                            $fail('Link harus berupa URL lengkap (https://...) atau path relatif yang dimulai dengan /');
+                        }
+                    };
+                }),
 
             FileUpload::make('gambar')
                 ->label('Gambar Hero')
@@ -124,26 +131,21 @@ class HeroResource extends Resource implements HasShieldPermissions
 
     public static function canViewAny(): bool
     {
-        return Auth::user()?->can('cms_manage');
+        return Auth::user()?->can('view_any_hero') ?? false;
     }
 
     public static function canCreate(): bool
     {
-        return Auth::user()?->can('cms_manage');
+        return Auth::user()?->can('create_hero') ?? false;
     }
 
     public static function canEdit($record): bool
     {
-        return Auth::user()?->can('cms_manage');
+        return Auth::user()?->can('update_hero') ?? false;
     }
 
     public static function canDelete($record): bool
     {
-        return Auth::user()?->can('cms_manage');
-    }
-
-    public static function shouldRegisterNavigation(): bool
-    {
-        return Auth::user()?->can('cms_manage');
+        return Auth::user()?->can('delete_hero') ?? false;
     }
 }

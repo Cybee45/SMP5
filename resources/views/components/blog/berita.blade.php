@@ -1,14 +1,34 @@
+﻿@php
+    // Gunakan data dari controller atau fallback
+    $fallbackData = [
+        ['id' => 1, 'slug' => 'jadwal-dan-alur-pendaftaran-peserta-didik-baru-ppdb-2025', 'img' => 'https://images.unsplash.com/photo-1542744173-8e7e53415bb0?q=80&w=2070&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D', 'category' => 'Pengumuman', 'categoryColor' => 'blue', 'date' => '22 Juli 2025', 'title' => 'Jadwal dan Alur Pendaftaran Peserta Didik Baru (PPDB) 2025', 'content' => 'Berikut adalah jadwal lengkap dan alur pendaftaran untuk calon peserta didik baru tahun ajaran 2025/2026. Pastikan untuk membaca semua detail dengan saksama agar tidak ada informasi yang terlewat.'],
+        ['id' => 2, 'slug' => 'kegiatan-studi-tur-edukatif-ke-museum-nasional', 'img' => 'https://images.unsplash.com/photo-1556761175-5973dc0f32e7?q=80&w=2232&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D', 'category' => 'Kegiatan', 'categoryColor' => 'purple', 'date' => '18 Juli 2025', 'title' => 'Kegiatan Studi Tur Edukatif ke Museum Nasional', 'content' => 'Siswa-siswi kelas VIII telah berhasil melaksanakan studi tur yang sangat bermanfaat ke Museum Nasional. Mereka belajar banyak tentang sejarah dan warisan budaya bangsa.'],
+        ['id' => 3, 'slug' => 'siswa-raih-medali-emas-di-olimpiade-sains-tingkat-nasional', 'img' => 'https://images.unsplash.com/photo-1577896851231-70ef18881754?q=80&w=2070&auto=format&fit=crop', 'category' => 'Prestasi', 'categoryColor' => 'amber', 'date' => '15 Juli 2025', 'title' => 'Siswa Raih Medali Emas di Olimpiade Sains Tingkat Nasional', 'content' => 'Selamat kepada ananda Budi Hartono dari kelas IX-A yang berhasil membawa pulang medali emas dalam ajang Olimpiade Sains Nasional (OSN) bidang Fisika.']
+    ];
+
+    // Transformasi data artikel dari controller jika ada
+    if (isset($artikels) && $artikels->count() > 0) {
+        $postsData = $artikels->map(function($artikel) {
+            return [
+                'id' => $artikel->id,
+                'slug' => $artikel->slug ?? \Str::slug($artikel->judul),
+                'img' => $artikel->gambar ? asset('storage/' . $artikel->gambar) : 'https://images.unsplash.com/photo-1542744173-8e7e53415bb0?q=80&w=2070&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D',
+                'category' => $artikel->kategori ? $artikel->kategori->nama : 'Umum',
+                'categoryColor' => $artikel->kategori ? $artikel->kategori->warna : 'blue',
+                'date' => $artikel->created_at->format('d M Y'),
+                'title' => $artikel->judul,
+                'content' => \Str::limit(strip_tags($artikel->konten), 150)
+            ];
+        })->toArray();
+    } else {
+        $postsData = $fallbackData;
+    }
+@endphp
+
 <!-- ===== Section Berita & Pengumuman Dimulai ===== -->
     <section class="py-16 md:py-24 relative" 
              x-data="{
-                posts: [
-                    { id: 1, slug: 'jadwal-dan-alur-pendaftaran-peserta-didik-baru-ppdb-2025', img: 'https://images.unsplash.com/photo-1542744173-8e7e53415bb0?q=80&w=2070&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D', category: 'Pengumuman', categoryColor: 'blue', date: '22 Juli 2025', title: 'Jadwal dan Alur Pendaftaran Peserta Didik Baru (PPDB) 2025', content: 'Berikut adalah jadwal lengkap dan alur pendaftaran untuk calon peserta didik baru tahun ajaran 2025/2026. Pastikan untuk membaca semua detail dengan saksama agar tidak ada informasi yang terlewat. Pendaftaran dibuka mulai tanggal 1 Agustus 2025.' },
-                    { id: 2, slug: 'kegiatan-studi-tur-edukatif-ke-museum-nasional', img: 'https://images.unsplash.com/photo-1556761175-5973dc0f32e7?q=80&w=2232&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D', category: 'Kegiatan', categoryColor: 'purple', date: '18 Juli 2025', title: 'Kegiatan Studi Tur Edukatif ke Museum Nasional', content: 'Siswa-siswi kelas VIII telah berhasil melaksanakan studi tur yang sangat bermanfaat ke Museum Nasional. Mereka belajar banyak tentang sejarah dan warisan budaya bangsa. Kegiatan ini bertujuan untuk meningkatkan wawasan kebangsaan para siswa.' },
-                    { id: 3, slug: 'siswa-raih-medali-emas-di-olimpiade-sains-tingkat-nasional', img: 'https://images.unsplash.com/photo-1577896851231-70ef18881754?q=80&w=2070&auto=format&fit=crop', category: 'Prestasi', categoryColor: 'amber', date: '15 Juli 2025', title: 'Siswa Raih Medali Emas di Olimpiade Sains Tingkat Nasional', content: 'Selamat kepada ananda Budi Hartono dari kelas IX-A yang berhasil membawa pulang medali emas dalam ajang Olimpiade Sains Nasional (OSN) bidang Fisika. Prestasi ini membanggakan nama sekolah di kancah nasional.' },
-                    { id: 4, slug: 'bakti-sosial-dan-penanaman-pohon-di-lingkungan-sekolah', img: 'https://images.unsplash.com/photo-1594608661623-aa0bd3a69d98?q=80&w=1896&auto=format&fit=crop', category: 'Kegiatan', categoryColor: 'purple', date: '10 Juli 2025', title: 'Bakti Sosial dan Penanaman Pohon di Lingkungan Sekolah', content: 'Dalam rangka memperingati Hari Lingkungan Hidup, OSIS SMPN 5 Sangatta Utara mengadakan kegiatan bakti sosial dan penanaman 100 pohon di sekitar area sekolah untuk menciptakan lingkungan yang lebih hijau dan asri.' },
-                    { id: 5, slug: 'informasi-pembagian-rapor-semester-genap', img: 'https://images.unsplash.com/photo-1541339907198-e08756dedf3f?q=80&w=2070&auto=format&fit=crop', category: 'Pengumuman', categoryColor: 'blue', date: '05 Juli 2025', title: 'Informasi Pembagian Rapor Semester Genap', content: 'Diberitahukan kepada seluruh orang tua/wali murid bahwa pembagian rapor semester genap akan dilaksanakan pada hari Sabtu, 12 Juli 2025. Kehadiran orang tua/wali sangat diharapkan untuk berdiskusi mengenai perkembangan siswa.' },
-                    { id: 6, slug: 'tim-robotik-sekolah-juarai-kompetisi-tingkat-regional', img: 'https://images.unsplash.com/photo-1523050854058-8df90110c9f1?q=80&w=2070&auto=format&fit=crop', category: 'Prestasi', categoryColor: 'amber', date: '01 Juli 2025', title: 'Tim Robotik Sekolah Juarai Kompetisi Tingkat Regional', content: 'Tim robotik kebanggaan kita, \'Robo-5\', berhasil meraih Juara Umum dalam kompetisi robotik tingkat regional yang diadakan di Balikpapan. Mereka akan mewakili Kalimantan Timur di tingkat nasional.' },
-                ],
+                posts: {{ json_encode($postsData) }},
                 currentPage: 1,
                 itemsPerPage: 4,
                 get totalPages() {
@@ -20,6 +40,7 @@
                     return this.posts.slice(start, end);
                 }
              }">
+       
         <!-- Gradasi blur di atas agar transisi ke section hero lebih halus -->
         <div class="absolute top-0 left-0 w-full h-24 md:h-32 z-10 bg-gradient-to-b from-white/90 via-white/60 to-transparent pointer-events-none"></div>
         <div class="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8">
@@ -69,7 +90,7 @@
                             </div>
                             <div class="mt-3 text-right">
                                 <!-- TOMBOL DIUBAH MENJADI LINK (tag <a>) -->
-                                <a :href="'/blog/show/' + post.slug" class="text-sm font-semibold text-blue-600 hover:text-blue-700 transition-colors">
+                                <a :href="'/blog/' + post.slug" class="text-sm font-semibold text-blue-600 hover:text-blue-700 transition-colors">
                                     Baca Selengkapnya <span class="group-hover:ml-1 transition-all inline-block">&rarr;</span>
                                 </a>
                             </div>

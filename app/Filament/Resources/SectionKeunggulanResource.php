@@ -14,9 +14,8 @@ use Filament\Tables\Columns\TextColumn;
 use Filament\Tables\Columns\ToggleColumn;
 use Filament\Tables\Actions\EditAction;
 use Illuminate\Support\Facades\Auth;
-use BezhanSalleh\FilamentShield\Contracts\HasShieldPermissions;
 
-class SectionKeunggulanResource extends Resource implements HasShieldPermissions
+class SectionKeunggulanResource extends Resource
 {
     protected static ?string $model = SectionKeunggulan::class;
 
@@ -94,13 +93,28 @@ class SectionKeunggulanResource extends Resource implements HasShieldPermissions
         ];
     }
 
+    public static function canCreate(): bool
+    {
+        return Auth::user()?->can('sectionkeunggulan_create') ?? false;
+    }
+
+    public static function canEdit($record): bool
+    {
+        return Auth::user()?->can('sectionkeunggulan_edit') ?? false;
+    }
+
+    public static function canDelete($record): bool
+    {
+        return Auth::user()?->can('sectionkeunggulan_delete') ?? false;
+    }
+
     public static function canViewAny(): bool
     {
-        return Auth::user()?->can('cms_manage');
+        return Auth::user()?->can('sectionkeunggulan_view') ?? false;
     }
 
     public static function shouldRegisterNavigation(): bool
     {
-        return Auth::user()?->can('cms_manage');
+        return Auth::user()?->can('sectionkeunggulan_view') ?? false;
     }
 }

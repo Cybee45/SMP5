@@ -1,3 +1,10 @@
+@php
+    // Ambil data dari CMS
+    $persyaratan = \App\Models\SpmhContent::where('jenis', 'persyaratan')->where('aktif', true)->first();
+    $tataCara = \App\Models\SpmhContent::where('jenis', 'tata_cara')->where('aktif', true)->first();
+    $formulir = \App\Models\SpmhContent::where('jenis', 'formulir')->where('aktif', true)->first();
+@endphp
+
 <!-- SPMB Section (Tailwind v4.1 ready) -->
 <section id="spmb"
   class="relative overflow-hidden py-20 lg:py-24"
@@ -43,10 +50,12 @@
             </div>
           </div>
           <h3 class="mb-3 text-center text-xl font-bold text-gray-900"
-              data-aos="fade-up" data-aos-delay="160">Persyaratan Pendaftaran</h3>
+              data-aos="fade-up" data-aos-delay="160">
+              {{ $persyaratan->judul ?? 'Persyaratan Pendaftaran' }}
+          </h3>
           <p class="text-center text-sm leading-relaxed text-gray-600"
              data-aos="fade-up" data-aos-delay="180">
-            Pastikan semua dokumen yang diperlukan sudah lengkap sebelum mendaftar.
+            {{ $persyaratan->deskripsi ?? 'Pastikan semua dokumen yang diperlukan sudah lengkap sebelum mendaftar.' }}
           </p>
         </div>
         <div class="mt-auto p-6 bg-gray-50 rounded-b-xl">
@@ -72,10 +81,12 @@
             </div>
           </div>
           <h3 class="mb-3 text-center text-xl font-bold text-gray-900"
-              data-aos="fade-up" data-aos-delay="220">Tata Cara Pendaftaran</h3>
+              data-aos="fade-up" data-aos-delay="220">
+              {{ $tataCara->judul ?? 'Tata Cara Pendaftaran' }}
+          </h3>
           <p class="text-center text-sm leading-relaxed text-gray-600"
              data-aos="fade-up" data-aos-delay="240">
-            Ikuti alur pendaftaran dengan benar untuk memperlancar proses seleksi.
+            {{ $tataCara->deskripsi ?? 'Ikuti alur pendaftaran dengan benar untuk memperlancar proses seleksi.' }}
           </p>
         </div>
         <div class="mt-auto p-6 bg-gray-50 rounded-b-xl">
@@ -101,17 +112,27 @@
               </svg>
             </div>
           </div>
-          <h3 class="mb-3 text-center text-xl font-bold" data-aos="fade-up" data-aos-delay="280">Unduh Formulir</h3>
+          <h3 class="mb-3 text-center text-xl font-bold" data-aos="fade-up" data-aos-delay="280">
+            {{ $formulir->judul ?? 'Unduh Formulir' }}
+          </h3>
           <p class="text-center text-sm leading-relaxed text-indigo-100"
              data-aos="fade-up" data-aos-delay="300">
-            Silakan unduh, cetak, dan isi formulir pendaftaran secara lengkap.
+            {{ $formulir->deskripsi ?? 'Silakan unduh, cetak, dan isi formulir pendaftaran secara lengkap.' }}
           </p>
         </div>
         <div class="p-6 mt-auto">
-          <a href="#"
-             class="block w-full rounded-lg bg-white py-3 px-6 text-center font-semibold text-indigo-600 transition-all duration-300 hover:bg-gray-100 focus:outline-none focus:ring-2 focus:ring-white focus:ring-offset-2 focus:ring-offset-indigo-500">
-            Download Formulir (.pdf)
-          </a>
+          @if($formulir && $formulir->file_pdf)
+            <a href="{{ asset('storage/' . $formulir->file_pdf) }}"
+               download="{{ $formulir->nama_file ?? 'Formulir-Pendaftaran.pdf' }}"
+               class="block w-full rounded-lg bg-white py-3 px-6 text-center font-semibold text-indigo-600 transition-all duration-300 hover:bg-gray-100 focus:outline-none focus:ring-2 focus:ring-white focus:ring-offset-2 focus:ring-offset-indigo-500">
+              Download Formulir (.pdf)
+            </a>
+          @else
+            <a href="#"
+               class="block w-full rounded-lg bg-white py-3 px-6 text-center font-semibold text-indigo-600 transition-all duration-300 hover:bg-gray-100 focus:outline-none focus:ring-2 focus:ring-white focus:ring-offset-2 focus:ring-offset-indigo-500">
+              Download Formulir (.pdf)
+            </a>
+          @endif
         </div>
       </div>
     </div>
@@ -142,34 +163,56 @@
       <!-- Content dengan Scrollbar -->
       <div class="flex-1 overflow-y-auto p-6 space-y-6">
         <div class="text-gray-700">
-          <p class="mb-4 text-base leading-relaxed">Harap mempersiapkan dokumen-dokumen berikut dalam bentuk fisik dan digital untuk keperluan pendaftaran siswa baru tahun ajaran 2025/2026:</p>
+          @if($persyaratan && $persyaratan->deskripsi_pembuka)
+            <p class="mb-4 text-base leading-relaxed">{!! $persyaratan->deskripsi_pembuka !!}</p>
+          @else
+            <p class="mb-4 text-base leading-relaxed">Harap mempersiapkan dokumen-dokumen berikut dalam bentuk fisik dan digital untuk keperluan pendaftaran siswa baru tahun ajaran 2025/2026:</p>
+          @endif
           
           <h4 class="font-semibold text-lg text-gray-900 mb-3">A. Dokumen Wajib:</h4>
           <ul class="list-disc list-inside space-y-2 mb-6">
-            <li>Fotokopi Akta Kelahiran yang telah dilegalisir (2 lembar)</li>
-            <li>Fotokopi Kartu Keluarga (KK) terbaru yang telah dilegalisir (2 lembar)</li>
-            <li>Pas foto berwarna ukuran 3x4 dengan latar belakang biru (4 lembar)</li>
-            <li>Fotokopi Ijazah SD/MI yang telah dilegalisir oleh sekolah asal (2 lembar)</li>
-            <li>Surat Keterangan Lulus (SKL) asli dari sekolah asal</li>
-            <li>Fotokopi KTP kedua orang tua/wali yang masih berlaku (masing-masing 2 lembar)</li>
-            <li>Surat pernyataan orang tua/wali bermaterai 10.000</li>
+            @if($persyaratan && $persyaratan->dokumen_wajib)
+              @foreach($persyaratan->dokumen_wajib as $dokumen)
+                <li>{{ $dokumen['item'] ?? $dokumen }}</li>
+              @endforeach
+            @else
+              <li>Fotokopi Akta Kelahiran yang telah dilegalisir (2 lembar)</li>
+              <li>Fotokopi Kartu Keluarga (KK) terbaru yang telah dilegalisir (2 lembar)</li>
+              <li>Pas foto berwarna ukuran 3x4 dengan latar belakang biru (4 lembar)</li>
+              <li>Fotokopi Ijazah SD/MI yang telah dilegalisir oleh sekolah asal (2 lembar)</li>
+              <li>Surat Keterangan Lulus (SKL) asli dari sekolah asal</li>
+              <li>Fotokopi KTP kedua orang tua/wali yang masih berlaku (masing-masing 2 lembar)</li>
+              <li>Surat pernyataan orang tua/wali bermaterai 10.000</li>
+            @endif
           </ul>
 
           <h4 class="font-semibold text-lg text-gray-900 mb-3">B. Dokumen Pendukung:</h4>
           <ul class="list-disc list-inside space-y-2 mb-6">
-            <li>Fotokopi SHUN/Nilai UN SD/MI (jika ada)</li>
-            <li>Sertifikat prestasi akademik atau non-akademik (jika ada)</li>
-            <li>Surat keterangan tidak mampu dari kelurahan (untuk jalur khusus)</li>
-            <li>Surat keterangan sehat dari dokter</li>
-            <li>Surat keterangan kelakuan baik dari sekolah asal</li>
+            @if($persyaratan && $persyaratan->dokumen_pendukung)
+              @foreach($persyaratan->dokumen_pendukung as $dokumen)
+                <li>{{ $dokumen['item'] ?? $dokumen }}</li>
+              @endforeach
+            @else
+              <li>Fotokopi SHUN/Nilai UN SD/MI (jika ada)</li>
+              <li>Sertifikat prestasi akademik atau non-akademik (jika ada)</li>
+              <li>Surat keterangan tidak mampu dari kelurahan (untuk jalur khusus)</li>
+              <li>Surat keterangan sehat dari dokter</li>
+              <li>Surat keterangan kelakuan baik dari sekolah asal</li>
+            @endif
           </ul>
 
           <h4 class="font-semibold text-lg text-gray-900 mb-3">C. Ketentuan Berkas:</h4>
           <ul class="list-disc list-inside space-y-2 mb-6">
-            <li>Semua berkas dimasukkan ke dalam map plastik berwarna biru untuk laki-laki dan merah muda untuk perempuan</li>
-            <li>Berkas yang sudah diserahkan tidak dapat dikembalikan</li>
-            <li>Pastikan semua fotokopi jelas dan dapat dibaca dengan baik</li>
-            <li>Berkas yang tidak lengkap akan dikembalikan</li>
+            @if($persyaratan && $persyaratan->ketentuan_berkas)
+              @foreach($persyaratan->ketentuan_berkas as $ketentuan)
+                <li>{{ $ketentuan['item'] ?? $ketentuan }}</li>
+              @endforeach
+            @else
+              <li>Semua berkas dimasukkan ke dalam map plastik berwarna biru untuk laki-laki dan merah muda untuk perempuan</li>
+              <li>Berkas yang sudah diserahkan tidak dapat dikembalikan</li>
+              <li>Pastikan semua fotokopi jelas dan dapat dibaca dengan baik</li>
+              <li>Berkas yang tidak lengkap akan dikembalikan</li>
+            @endif
           </ul>
 
           <div class="bg-yellow-50 border-l-4 border-yellow-400 p-4 rounded-r-lg">
@@ -181,7 +224,11 @@
               </div>
               <div class="ml-3">
                 <p class="text-sm text-yellow-800">
-                  <strong>Penting:</strong> Harap cek kembali kelengkapan berkas sebelum diserahkan ke panitia pendaftaran. Berkas yang tidak lengkap akan memperlambat proses verifikasi.
+                  @if($persyaratan && $persyaratan->catatan_penting)
+                    {!! $persyaratan->catatan_penting !!}
+                  @else
+                    <strong>Penting:</strong> Harap cek kembali kelengkapan berkas sebelum diserahkan ke panitia pendaftaran. Berkas yang tidak lengkap akan memperlambat proses verifikasi.
+                  @endif
                 </p>
               </div>
             </div>
@@ -224,35 +271,63 @@
       <!-- Content dengan Scrollbar -->
       <div class="flex-1 overflow-y-auto p-6 space-y-6">
         <div class="text-gray-700">
-          <p class="mb-6 text-base leading-relaxed">Berikut adalah alur lengkap pendaftaran siswa baru SMPN 5 Sangatta Utara tahun ajaran 2025/2026 secara online dan offline:</p>
+          @if($tataCara && $tataCara->deskripsi_pembuka)
+            <p class="mb-6 text-base leading-relaxed">{!! $tataCara->deskripsi_pembuka !!}</p>
+          @else
+            <p class="mb-6 text-base leading-relaxed">Berikut adalah alur lengkap pendaftaran siswa baru SMPN 5 Sangatta Utara tahun ajaran 2025/2026 secara online dan offline:</p>
+          @endif
           
           <h4 class="font-semibold text-lg text-gray-900 mb-4">Tahap Persiapan:</h4>
           <ol class="list-decimal list-inside space-y-3 mb-6">
-            <li><strong>Unduh Formulir Pendaftaran:</strong> Calon siswa atau orang tua dapat mengunduh formulir dari website resmi sekolah atau mengambil langsung di sekretariat sekolah.</li>
-            <li><strong>Baca Ketentuan:</strong> Pahami dengan seksama semua ketentuan dan persyaratan yang telah ditetapkan.</li>
-            <li><strong>Siapkan Dokumen:</strong> Kumpulkan dan lengkapi semua dokumen persyaratan sesuai dengan checklist yang telah disediakan.</li>
+            @if($tataCara && $tataCara->tahap_persiapan)
+              @foreach($tataCara->tahap_persiapan as $tahap)
+                <li>{!! $tahap['item'] ?? $tahap !!}</li>
+              @endforeach
+            @else
+              <li><strong>Unduh Formulir Pendaftaran:</strong> Calon siswa atau orang tua dapat mengunduh formulir dari website resmi sekolah atau mengambil langsung di sekretariat sekolah.</li>
+              <li><strong>Baca Ketentuan:</strong> Pahami dengan seksama semua ketentuan dan persyaratan yang telah ditetapkan.</li>
+              <li><strong>Siapkan Dokumen:</strong> Kumpulkan dan lengkapi semua dokumen persyaratan sesuai dengan checklist yang telah disediakan.</li>
+            @endif
           </ol>
 
           <h4 class="font-semibold text-lg text-gray-900 mb-4">Tahap Pendaftaran:</h4>
           <ol class="list-decimal list-inside space-y-3 mb-6" start="4">
-            <li><strong>Isi Formulir:</strong> Cetak dan isi formulir pendaftaran dengan data yang benar, lengkap, dan menggunakan tinta hitam atau biru.</li>
-            <li><strong>Verifikasi Data:</strong> Pastikan semua data yang diisi sudah sesuai dengan dokumen asli dan tidak ada kesalahan penulisan.</li>
-            <li><strong>Kunjungi Sekolah:</strong> Datang ke sekretariat pendaftaran SMPN 5 Sangatta Utara pada hari kerja (Senin-Jumat) pukul 08:00 - 14:00 WITA.</li>
-            <li><strong>Serahkan Berkas:</strong> Serahkan formulir dan semua dokumen persyaratan kepada panitia pendaftaran.</li>
+            @if($tataCara && $tataCara->tahap_pendaftaran)
+              @foreach($tataCara->tahap_pendaftaran as $tahap)
+                <li>{!! $tahap['item'] ?? $tahap !!}</li>
+              @endforeach
+            @else
+              <li><strong>Isi Formulir:</strong> Cetak dan isi formulir pendaftaran dengan data yang benar, lengkap, dan menggunakan tinta hitam atau biru.</li>
+              <li><strong>Verifikasi Data:</strong> Pastikan semua data yang diisi sudah sesuai dengan dokumen asli dan tidak ada kesalahan penulisan.</li>
+              <li><strong>Kunjungi Sekolah:</strong> Datang ke sekretariat pendaftaran SMPN 5 Sangatta Utara pada hari kerja (Senin-Jumat) pukul 08:00 - 14:00 WITA.</li>
+              <li><strong>Serahkan Berkas:</strong> Serahkan formulir dan semua dokumen persyaratan kepada panitia pendaftaran.</li>
+            @endif
           </ol>
 
           <h4 class="font-semibold text-lg text-gray-900 mb-4">Tahap Seleksi:</h4>
           <ol class="list-decimal list-inside space-y-3 mb-6" start="8">
-            <li><strong>Verifikasi Berkas:</strong> Panitia akan memverifikasi kelengkapan dan keabsahan semua dokumen yang diserahkan.</li>
-            <li><strong>Tes Seleksi:</strong> Calon siswa akan mengikuti tes seleksi sesuai dengan jadwal yang telah ditentukan (tes tulis dan wawancara).</li>
-            <li><strong>Penilaian:</strong> Tim seleksi akan melakukan penilaian berdasarkan nilai akademik, tes seleksi, dan prestasi.</li>
+            @if($tataCara && $tataCara->tahap_seleksi)
+              @foreach($tataCara->tahap_seleksi as $tahap)
+                <li>{!! $tahap['item'] ?? $tahap !!}</li>
+              @endforeach
+            @else
+              <li><strong>Verifikasi Berkas:</strong> Panitia akan memverifikasi kelengkapan dan keabsahan semua dokumen yang diserahkan.</li>
+              <li><strong>Tes Seleksi:</strong> Calon siswa akan mengikuti tes seleksi sesuai dengan jadwal yang telah ditentukan (tes tulis dan wawancara).</li>
+              <li><strong>Penilaian:</strong> Tim seleksi akan melakukan penilaian berdasarkan nilai akademik, tes seleksi, dan prestasi.</li>
+            @endif
           </ol>
 
           <h4 class="font-semibold text-lg text-gray-900 mb-4">Tahap Pengumuman:</h4>
           <ol class="list-decimal list-inside space-y-3 mb-6" start="11">
-            <li><strong>Pengumuman Hasil:</strong> Hasil seleksi akan diumumkan di papan pengumuman sekolah dan website resmi sekolah.</li>
-            <li><strong>Daftar Ulang:</strong> Calon siswa yang dinyatakan lulus wajib melakukan daftar ulang sesuai jadwal yang ditentukan.</li>
-            <li><strong>Orientasi:</strong> Mengikuti program orientasi siswa baru dan persiapan pembelajaran.</li>
+            @if($tataCara && $tataCara->tahap_pengumuman)
+              @foreach($tataCara->tahap_pengumuman as $tahap)
+                <li>{!! $tahap['item'] ?? $tahap !!}</li>
+              @endforeach
+            @else
+              <li><strong>Pengumuman Hasil:</strong> Hasil seleksi akan diumumkan di papan pengumuman sekolah dan website resmi sekolah.</li>
+              <li><strong>Daftar Ulang:</strong> Calon siswa yang dinyatakan lulus wajib melakukan daftar ulang sesuai jadwal yang ditentukan.</li>
+              <li><strong>Orientasi:</strong> Mengikuti program orientasi siswa baru dan persiapan pembelajaran.</li>
+            @endif
           </ol>
 
           <div class="bg-blue-50 border-l-4 border-blue-400 p-4 rounded-r-lg mb-6">
@@ -266,10 +341,16 @@
                 <h4 class="text-sm font-medium text-blue-800">Informasi Penting</h4>
                 <div class="mt-2 text-sm text-blue-700">
                   <ul class="list-disc list-inside space-y-1">
-                    <li>Pendaftaran dibuka mulai tanggal 1 Agustus 2025</li>
-                    <li>Batas akhir pendaftaran: 31 Agustus 2025</li>
-                    <li>Pengumuman hasil seleksi: 15 September 2025</li>
-                    <li>Daftar ulang: 16-20 September 2025</li>
+                    @if($tataCara && $tataCara->jadwal_penting)
+                      @foreach($tataCara->jadwal_penting as $jadwal)
+                        <li>{{ $jadwal['item'] ?? $jadwal }}</li>
+                      @endforeach
+                    @else
+                      <li>Pendaftaran dibuka mulai tanggal 1 Agustus 2025</li>
+                      <li>Batas akhir pendaftaran: 31 Agustus 2025</li>
+                      <li>Pengumuman hasil seleksi: 15 September 2025</li>
+                      <li>Daftar ulang: 16-20 September 2025</li>
+                    @endif
                   </ul>
                 </div>
               </div>
@@ -287,10 +368,16 @@
                 <h4 class="text-sm font-medium text-green-800">Tips Sukses</h4>
                 <div class="mt-2 text-sm text-green-700">
                   <ul class="list-disc list-inside space-y-1">
-                    <li>Siapkan berkas jauh-jauh hari untuk menghindari keterlambatan</li>
-                    <li>Datang tepat waktu saat pengumpulan berkas dan tes seleksi</li>
-                    <li>Hubungi panitia jika ada pertanyaan atau kesulitan</li>
-                    <li>Ikuti perkembangan informasi melalui website resmi sekolah</li>
+                    @if($tataCara && $tataCara->tips_sukses)
+                      @foreach($tataCara->tips_sukses as $tips)
+                        <li>{{ $tips['item'] ?? $tips }}</li>
+                      @endforeach
+                    @else
+                      <li>Siapkan berkas jauh-jauh hari untuk menghindari keterlambatan</li>
+                      <li>Datang tepat waktu saat pengumpulan berkas dan tes seleksi</li>
+                      <li>Hubungi panitia jika ada pertanyaan atau kesulitan</li>
+                      <li>Ikuti perkembangan informasi melalui website resmi sekolah</li>
+                    @endif
                   </ul>
                 </div>
               </div>

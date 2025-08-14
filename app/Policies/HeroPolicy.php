@@ -15,7 +15,7 @@ class HeroPolicy
      */
     public function viewAny(User $user): bool
     {
-        return $user->can('view_any_hero::about');
+        return $user->can('view_any_hero::blog');
     }
 
     /**
@@ -23,7 +23,7 @@ class HeroPolicy
      */
     public function view(User $user, Hero $hero): bool
     {
-        return $user->can('view_hero::about');
+        return $user->can('view_hero::blog');
     }
 
     /**
@@ -31,7 +31,7 @@ class HeroPolicy
      */
     public function create(User $user): bool
     {
-        return $user->can('create_hero::about');
+        return $user->can('create_hero::blog');
     }
 
     /**
@@ -39,7 +39,7 @@ class HeroPolicy
      */
     public function update(User $user, Hero $hero): bool
     {
-        return $user->can('update_hero::about');
+        return $user->can('update_hero::blog');
     }
 
     /**
@@ -47,7 +47,7 @@ class HeroPolicy
      */
     public function delete(User $user, Hero $hero): bool
     {
-        return $user->can('delete_hero::about');
+        return $user->can('delete_hero::blog');
     }
 
     /**
@@ -55,7 +55,7 @@ class HeroPolicy
      */
     public function deleteAny(User $user): bool
     {
-        return $user->can('delete_any_hero::about');
+        return $user->can('delete_any_hero::blog');
     }
 
     /**

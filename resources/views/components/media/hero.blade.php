@@ -1,7 +1,29 @@
+@php
+    // Ambil data hero dari database
+    $mediaHero = \App\Models\MediaHero::active()->first();
+    
+    // Data fallback jika belum ada di database
+    $heroData = $mediaHero ? [
+        'subjudul' => $mediaHero->subjudul ?? 'Sekolah Menengah Unggulan di Sangatta Utara',
+        'judul_utama' => $mediaHero->judul_utama,
+        'deskripsi' => $mediaHero->deskripsi,
+        'gambar_hero' => $mediaHero->gambar_hero_url,
+        'gambar_globe' => $mediaHero->gambar_globe_url,
+        'gambar_wave' => $mediaHero->gambar_wave_url,
+    ] : [
+        'subjudul' => 'Sekolah Menengah Unggulan di Sangatta Utara',
+        'judul_utama' => 'Kami hadirkan aktivitas dan momen kampus dalam foto, video, dan tulisan.',
+        'deskripsi' => 'Kita ciptakan lingkungan belajar yang patut diacungi jempol. Siswa bersemangat mendalami ilmu. Gerbang sekolah adalah awal perjalananmu.',
+        'gambar_hero' => asset('assets/media/hero.png'),
+        'gambar_globe' => asset('assets/media/globe.png'),
+        'gambar_wave' => asset('assets/media/wave.png'),
+    ];
+@endphp
+
 {{-- resources/views/media.blade.php --}}
 <section id="hero" class="relative bg-white overflow-hidden">
   {{-- 1) Wave background --}}
-  <img src="{{ asset('assets/media/wave.png') }}"
+  <img src="{{ $heroData['gambar_wave'] }}"
        alt="Wave background"
        class="absolute top-0 right-0
               w-[180%] sm:w-[120%] md:w-[110%] lg:w-[90%]
@@ -20,13 +42,13 @@
                   mt-6 sm:mt-10 lg:-mt-32"
            data-aos="fade-right" data-aos-delay="300" data-aos-duration="900">
         <p class="text-sm font-semibold uppercase tracking-wide text-sky-800">
-          Sekolah Menengah Unggulan di Sangatta Utara
+          {{ $heroData['subjudul'] }}
         </p>
         <h1 class="text-3xl sm:text-4xl md:text-5xl lg:text-6xl font-black leading-tight text-gray-900">
-          Kami hadirkan aktivitas dan momen kampus dalam foto, video, dan tulisan.
+          {{ $heroData['judul_utama'] }}
         </h1>
         <p class="text-base md:text-lg text-slate-600">
-          Kita ciptakan lingkungan belajar yang patut diacungi jempol. Siswa bersemangat mendalami ilmu. Gerbang sekolah adalah awal perjalananmu.
+          {{ $heroData['deskripsi'] }}
         </p>
       </div>
 
@@ -37,14 +59,14 @@
                 style="--decorMinG:135px; --decorMaxG:340px; --decorMinT:110px; --decorMaxT:280px;">
 
           {{-- Hero (anchor ukuran) --}}
-          <img src="{{ asset('assets/media/hero.png') }}"
+          <img src="{{ $heroData['gambar_hero'] }}"
                alt="Siswa SMP 5 Sangatta Utara"
                class="block h-auto object-contain select-none relative z-10
                       w-[min(82vw,620px)] sm:w-[min(68vw,640px)] lg:w-[580px] xl:w-[620px]
                       lg:translate-x-4" />
 
           {{-- Globe (kiri–bawah) | dibuat lebih besar & responsif --}}
-    <img src="{{ asset('assets/media/globe.png') }}"
+    <img src="{{ $heroData['gambar_globe'] }}"
       alt="Globe decoration" aria-hidden="true"
       class="absolute z-20 pointer-events-none select-none drop-shadow-lg animate-float-slow rotate-[330deg]
           bottom-[14%] right-[52%]

@@ -26,19 +26,56 @@ class AdminPanelProvider extends PanelProvider
             ->default()
             ->id('admin')
             ->path('admin')
-            ->login()
+            ->login(\App\Filament\Pages\Auth\Login::class)
+            ->brandName('CMS Sekolah')
+            ->favicon('/favicon.ico')
             ->colors([
-                'primary' => Color::Amber,
+                'primary' => Color::Blue,
+                'gray' => Color::Slate,
             ])
             ->discoverResources(in: app_path('Filament/Resources'), for: 'App\\Filament\\Resources')
+            ->resources([
+                // Home/Beranda Resources
+                \App\Filament\Resources\HeroResource::class,
+                \App\Filament\Resources\KeunggulanResource::class,
+                \App\Filament\Resources\StatistikResource::class,
+                \App\Filament\Resources\SectionKeunggulanResource::class,
+                
+                // About/Profil Resources
+                \App\Filament\Resources\ProfilResource::class,
+                \App\Filament\Resources\AboutHeroResource::class,
+                \App\Filament\Resources\PrestasiAboutResource::class,
+                \App\Filament\Resources\TimBirokrasiResource::class,
+                \App\Filament\Resources\VisiMisiResource::class,
+                
+                // SPMB Resources
+                \App\Filament\Resources\SpmhHeroResource::class,
+                \App\Filament\Resources\SpmhContentResource::class,
+                
+                // Artikel Resources
+                \App\Filament\Resources\ArtikelResource::class,
+                
+                // Media/Galeri Resources
+                \App\Filament\Resources\GaleriResource::class,
+                \App\Filament\Resources\MediaGaleriResource::class,
+                \App\Filament\Resources\MediaHeroResource::class,
+                \App\Filament\Resources\MediaVideoResource::class,
+                
+                // System Resources
+                \App\Filament\Resources\UserResource::class,
+                \App\Filament\Resources\RoleResource::class,
+                \App\Filament\Resources\PermissionResource::class,
+                \App\Filament\Resources\ProfileSettingsResource::class,
+            ])
             ->discoverPages(in: app_path('Filament/Pages'), for: 'App\\Filament\\Pages')
             ->pages([
                 Pages\Dashboard::class,
             ])
             ->discoverWidgets(in: app_path('Filament/Widgets'), for: 'App\\Filament\\Widgets')
             ->widgets([
-                Widgets\AccountWidget::class,
-                Widgets\FilamentInfoWidget::class,
+                \App\Filament\Widgets\StatsOverviewWidget::class,
+                \App\Filament\Widgets\ContentOverviewChart::class,
+                \App\Filament\Widgets\CMSGuideWidget::class,
             ])
             ->middleware([
                 EncryptCookies::class,

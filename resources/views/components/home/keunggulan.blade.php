@@ -1,3 +1,4 @@
+@if($keunggulans->count() > 0)
 <section class="py-12 sm:py-16 lg:py-24"
          data-aos="fade-up"
          data-aos-duration="800"
@@ -77,20 +78,10 @@
         </div>
       </div>
       @empty
-      <!-- Fallback jika tidak ada data CMS -->
-      <div class="group bg-white p-8 rounded-3xl shadow-lg transition-all duration-500 ease-in-out hover:shadow-2xl hover:-translate-y-2 flex flex-col items-center text-center">
-        <div class="flex items-center justify-center h-20 w-20 rounded-full bg-gradient-to-br from-blue-200 to-blue-100 mb-6 ring-4 ring-white">
-          <svg class="h-10 w-10 text-blue-700" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor">
-            <path stroke-linecap="round" stroke-linejoin="round" d="M9 12.75L11.25 15 15 9.75M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
-          </svg>
-        </div>
-        <div>
-          <h3 class="text-lg font-semibold text-gray-900 mb-2">Akreditasi "B"</h3>
-          <p class="text-base text-gray-600">Sekolah telah terakreditasi B, memastikan mutu pendidikan yang terjamin dan diakui secara resmi.</p>
-        </div>
-      </div>
+      <!-- Tidak ada konten yang ditampilkan jika tidak ada keunggulan aktif -->
       @endforelse
 
     </div>
   </div>
 </section>
+@endif

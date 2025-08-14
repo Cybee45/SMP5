@@ -3,6 +3,7 @@
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\PublicController;
+use App\Http\Controllers\BlogController;
 /*
 |--------------------------------------------------------------------------
 | Web Routes
@@ -20,9 +21,9 @@ Route::view('/about',     'public.about')->name('about');
 Route::view('/spmb',      'public.spmb')->name('spmb');
 Route::view('/media',     'public.media')->name('media');
 Route::view('/kontak',    'public.kontak')->name('kontak');
-Route::view('/blog',      'public.blog.index')->name('blog');
 
-// Bagian Controller untuk public
+// Blog routes
+Route::get('/blog',       [BlogController::class, 'index'])->name('blog.index');
 Route::get('/blog/{slug}', [BlogController::class, 'show'])->name('blog.show');
 
 // ────────────────────────────

@@ -1,9 +1,9 @@
-<section class="relative bg-white overflow-hidden min-h-screen">
-  <div class="container mx-auto max-w-7xl px-4 md:px-8 pt-16 pb-20">
+<section class="relative bg-white">
+  <div class="container mx-auto max-w-7xl px-4 md:px-8 pt-16 pb-32">
     <div class="grid grid-cols-1 lg:grid-cols-12 items-center gap-10 lg:gap-16">
 
       {{-- Teks --}}
-      <div class="order-2 lg:order-1 lg:col-span-6 2xl:col-span-7">
+      <div class="order-2 lg:order-1 lg:col-span-6 2xl:col-span-7 pb-20">
         <div class="max-w-[48rem]">
           <p class="font-semibold uppercase tracking-wider text-sky-800 mb-3"
              data-aos="fade-right" 
@@ -12,14 +12,14 @@
              data-aos-easing="ease-out-cubic">
             SEKOLAH MENENGAH UNGGULAN DI SANGATTA UTARA
           </p>
-          <h1 class="text-4xl md:text-5xl xl:text-7xl font-black leading-tight text-gray-900 font-heading"
+          <h1 class="text-4xl md:text-5xl xl:text-6xl font-black leading-tight text-gray-900 font-heading"
               data-aos="fade-right" 
               data-aos-duration="900" 
               data-aos-delay="200"
               data-aos-easing="ease-out-cubic">
             Belajar, berprestasi,<br>dan raih ilmu untuk masa depan
           </h1>
-          <p class="mt-5 text-lg md:text-xl text-slate-600"
+          <p class="mt-5 text-lg md:text-xl text-slate-600 z-50 relative"
              data-aos="fade-right" 
              data-aos-duration="800" 
              data-aos-delay="300"
@@ -47,16 +47,10 @@
 
         {{-- Karakter --}}
         <img
-      src="{{ asset('assets/spmb/SPMB.png') }}"
-      alt="Karakter"
-      class="relative z-30 w-[350px] md:w-[500px] lg:w-[700px] xl:w-[800px] h-auto object-contain" />
-
-          </div>
-        </div>
+          src="{{ asset('assets/spmb/SPMB.png') }}"
+          alt="Karakter"
+          class="relative z-30 w-[350px] md:w-[500px] lg:w-[700px] xl:w-[800px] h-auto object-contain" />
       </div>
-  {{-- Gradasi ke bawah --}}
-  <div class="absolute bottom-0 left-0 w-full h-24 md:h-32 lg:h-40 
-              bg-gradient-to-b from-white/0 via-white/60 to-white 
-              pointer-events-none">
+    </div>
   </div>
 </section>

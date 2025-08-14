@@ -13,7 +13,8 @@ class ListKeunggulans extends ListRecords
     protected function getHeaderActions(): array
     {
         return [
-            Actions\CreateAction::make(),
+            // Temporarily disable create action to debug
+            // Actions\CreateAction::make(),
         ];
     }
 }

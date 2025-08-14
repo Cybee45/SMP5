@@ -14,9 +14,10 @@ use Filament\Tables\Table;
 use Filament\Tables\Columns\TextColumn;
 use Filament\Tables\Columns\ToggleColumn;
 use Illuminate\Support\Facades\Auth;
-use BezhanSalleh\FilamentShield\Contracts\HasShieldPermissions;
+use Illuminate\Database\Eloquent\Builder;
+use Illuminate\Database\Eloquent\SoftDeletingScope;
 
-class StatistikResource extends Resource implements HasShieldPermissions
+class StatistikResource extends Resource
 {
     protected static ?string $model = Statistik::class;
 
@@ -72,28 +73,28 @@ class StatistikResource extends Resource implements HasShieldPermissions
         return ['view_any', 'create', 'update', 'delete'];
     }
 
-    public static function canViewAny(): bool
-    {
-        return Auth::user()?->can('cms_manage');
-    }
-
     public static function canCreate(): bool
     {
-        return Auth::user()?->can('cms_manage');
+        return Auth::user()?->can('statistik_create') ?? false;
     }
 
     public static function canEdit($record): bool
     {
-        return Auth::user()?->can('cms_manage');
+        return Auth::user()?->can('statistik_edit') ?? false;
     }
 
     public static function canDelete($record): bool
     {
-        return Auth::user()?->can('cms_manage');
+        return Auth::user()?->can('statistik_delete') ?? false;
+    }
+
+    public static function canViewAny(): bool
+    {
+        return Auth::user()?->can('statistik_view') ?? false;
     }
 
     public static function shouldRegisterNavigation(): bool
     {
-        return Auth::user()?->can('cms_manage');
+        return Auth::user()?->can('statistik_view') ?? false;
     }
 }

@@ -13,9 +13,8 @@ use Filament\Tables\Table;
 use Filament\Tables\Columns\TextColumn;
 use Filament\Tables\Columns\ToggleColumn;
 use Illuminate\Support\Facades\Auth;
-use BezhanSalleh\FilamentShield\Contracts\HasShieldPermissions;
 
-class KeunggulanResource extends Resource implements HasShieldPermissions
+class KeunggulanResource extends Resource
 {
     protected static ?string $model = Keunggulan::class;
 
@@ -72,7 +71,7 @@ class KeunggulanResource extends Resource implements HasShieldPermissions
 
             ToggleColumn::make('aktif')
                 ->label('Aktif')
-                ->disabled(fn () => !Auth::user()?->hasRole(['super_admin', 'admin'])), // Admin dan superadmin bisa toggle
+                ->disabled(fn () => !Auth::user()?->hasRole(['superadmin', 'admin'])), // Admin dan superadmin bisa toggle
         ];
 
         return $table
@@ -81,13 +80,13 @@ class KeunggulanResource extends Resource implements HasShieldPermissions
             ->actions([
                 // Admin dan superadmin bisa edit
                 \Filament\Tables\Actions\EditAction::make()
-                    ->visible(fn () => Auth::user()?->hasRole(['super_admin', 'admin'])),
+                    ->visible(fn () => Auth::user()?->hasRole(['superadmin', 'admin'])),
             ])
             ->bulkActions([
                 // Admin dan superadmin bisa delete
                 \Filament\Tables\Actions\BulkActionGroup::make([
                     \Filament\Tables\Actions\DeleteBulkAction::make()
-                        ->visible(fn () => Auth::user()?->hasRole(['super_admin', 'admin'])),
+                        ->visible(fn () => Auth::user()?->hasRole(['superadmin', 'admin'])),
                 ]),
             ]);
     }
@@ -113,26 +112,26 @@ class KeunggulanResource extends Resource implements HasShieldPermissions
 
     public static function canCreate(): bool
     {
-        return Auth::user()?->hasRole(['super_admin', 'admin']);
+        return Auth::user()?->can('keunggulan_create') ?? false;
     }
 
     public static function canEdit($record): bool
     {
-        return Auth::user()?->hasRole(['super_admin', 'admin']);
+        return Auth::user()?->can('keunggulan_edit') ?? false;
     }
 
     public static function canDelete($record): bool
     {
-        return Auth::user()?->hasRole(['super_admin', 'admin']);
+        return Auth::user()?->can('keunggulan_delete') ?? false;
     }
 
     public static function canViewAny(): bool
     {
-        return Auth::user()?->can('cms_manage');
+        return Auth::user()?->can('keunggulan_view') ?? false;
     }
 
     public static function shouldRegisterNavigation(): bool
     {
-        return Auth::user()?->can('cms_manage');
+        return Auth::user()?->can('keunggulan_view') ?? false;
     }
 }

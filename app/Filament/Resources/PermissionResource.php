@@ -24,28 +24,22 @@ class PermissionResource extends Resource
 
     public static function canViewAny(): bool
     {
-        return Auth::user()?->hasRole('super_admin') && Auth::user()?->can('system_manage');
+        return Auth::user()?->can('view_any_permission') ?? false;
     }
 
     public static function canCreate(): bool
     {
-        return Auth::user()?->hasRole('super_admin') && Auth::user()?->can('system_manage');
+        return Auth::user()?->can('create_permission') ?? false;
     }
 
     public static function canEdit($record): bool
     {
-        return Auth::user()?->hasRole('super_admin') && Auth::user()?->can('system_manage');
+        return Auth::user()?->can('update_permission') ?? false;
     }
 
     public static function canDelete($record): bool
     {
-        return Auth::user()?->hasRole('super_admin') && Auth::user()?->can('system_manage');
-    }
-
-    public static function shouldRegisterNavigation(): bool
-    {
-        // Hanya superadmin yang bisa melihat menu Permission management
-        return Auth::user()?->hasRole('super_admin') && Auth::user()?->can('system_manage');
+        return Auth::user()?->can('delete_permission') ?? false;
     }
 
     public static function form(Form $form): Form

@@ -16,12 +16,10 @@ class DatabaseSeeder extends Seeder
         // User::factory(10)->create();
 
         $this->call([
-            AdminSeeder::class,
-            HeroSeeder::class,
-            keunggulanSeeder::class,
-            superAdminSeeder::class,
-            statistikSeeder::class,
-            // Tambahkan seeder lain di sini jika perlu
+            SimpleAdminSeeder::class,
+            AdminRoleSeeder::class,
+            SampleDataSeeder::class,
+            ArtikelSeeder::class,
         ]);
         
     }

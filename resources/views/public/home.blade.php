@@ -1,5 +1,5 @@
 {{-- resources/views/pages/home.blade.php --}}
-<x-app-layout>
+<x-app-layout title="Beranda - SMP Negeri 5 Sangatta Utara">
     @include('components.home.hero', ['hero' => $hero])
     @include('components.home.keunggulan', ['keunggulan' => $keunggulans])
     @include('components.home.stats', ['statistik' => $statistiks])

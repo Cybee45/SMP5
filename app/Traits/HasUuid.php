@@ -13,8 +13,8 @@ trait HasUuid
     protected static function bootHasUuid(): void
     {
         static::creating(function (Model $model) {
-            if (empty($model->uuid)) {
-                $model->uuid = Uuid::uuid4()->toString();
+            if (empty($model->uuid_id)) {
+                $model->uuid_id = Uuid::uuid4()->toString();
             }
         });
     }
@@ -24,7 +24,7 @@ trait HasUuid
      */
     public function getUuidColumn(): string
     {
-        return 'uuid';
+        return 'uuid_id';
     }
 
     /**
@@ -32,7 +32,7 @@ trait HasUuid
      */
     public static function findByUuid(string $uuid): ?static
     {
-        return static::where('uuid', $uuid)->first();
+        return static::where('uuid_id', $uuid)->first();
     }
 
     /**
@@ -40,7 +40,7 @@ trait HasUuid
      */
     public function getRouteKeyName(): string
     {
-        return 'uuid';
+        return 'uuid_id';
     }
 
     /**
@@ -48,6 +48,6 @@ trait HasUuid
      */
     public function resolveRouteBinding($value, $field = null)
     {
-        return $this->where('uuid', $value)->first();
+        return $this->where('uuid_id', $value)->first();
     }
 }

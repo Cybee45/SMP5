@@ -30,8 +30,8 @@
                     :active="request()->routeIs('media')">
           MEDIA
         </x-nav-link>
-        <x-nav-link href="{{ route('blog') }}"
-                    :active="request()->routeIs('blog')">
+        <x-nav-link href="{{ route('blog.index') }}"
+                    :active="request()->routeIs('blog.*')">
           BLOG
         </x-nav-link>
         <x-nav-link href="{{ route('kontak') }}"
@@ -84,9 +84,9 @@
                   :active="request()->routeIs('media')">
         MEDIA
       </x-nav-link>
-      <x-nav-link href="{{ route('blog') }}"
+      <x-nav-link href="{{ route('blog.index') }}"
                   mobile
-                  :active="request()->routeIs('blog')">
+                  :active="request()->routeIs('blog.*')">
         BLOG
       </x-nav-link>
       <x-nav-link href="{{ route('kontak') }}"
