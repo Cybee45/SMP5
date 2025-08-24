@@ -3,8 +3,8 @@
 namespace App\Filament\Resources\MediaVideoResource\Pages;
 
 use App\Filament\Resources\MediaVideoResource;
-use Filament\Actions;
 use Filament\Resources\Pages\ListRecords;
+use Filament\Actions;
 
 class ListMediaVideos extends ListRecords
 {
@@ -13,7 +13,7 @@ class ListMediaVideos extends ListRecords
     protected function getHeaderActions(): array
     {
         return [
-            Actions\CreateAction::make(),
+            Actions\CreateAction::make()->label('Tambah Video'),
         ];
     }
 }

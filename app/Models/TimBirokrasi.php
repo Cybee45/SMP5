@@ -9,7 +9,13 @@ class TimBirokrasi extends Model
 {
     use HasUuid;
 
+    /**
+     * UUID column name for this model
+     */
+    protected $uuidColumn = 'uuid';
+
     protected $fillable = [
+        'uuid',
         'nama',
         'jabatan',
         'foto',

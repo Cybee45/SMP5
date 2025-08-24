@@ -3,17 +3,25 @@
 namespace App\Filament\Resources\ArtikelResource\Pages;
 
 use App\Filament\Resources\ArtikelResource;
-use Filament\Actions;
 use Filament\Resources\Pages\EditRecord;
+use App\Models\KategoriArtikel;
 
 class EditArtikel extends EditRecord
 {
     protected static string $resource = ArtikelResource::class;
 
-    protected function getHeaderActions(): array
+    protected function mutateFormDataBeforeSave(array $data): array
     {
-        return [
-            Actions\DeleteAction::make(),
-        ];
+        if (empty($data['kategori_id'])) {
+            $defaultKategori = KategoriArtikel::firstOrCreate(
+                ['slug' => 'umum'],
+                ['nama' => 'Umum', 'aktif' => true]
+            );
+            $data['kategori_id'] = $defaultKategori->id;
+        }
+
+        $data['aktif'] = (bool)($data['aktif'] ?? true);
+
+        return $data;
     }
 }

@@ -14,27 +14,46 @@ use Filament\Tables\Table;
 use Filament\Tables\Columns\TextColumn;
 use Filament\Tables\Columns\ToggleColumn;
 use Illuminate\Support\Facades\Auth;
-use Illuminate\Database\Eloquent\Builder;
-use Illuminate\Database\Eloquent\SoftDeletingScope;
 
 class StatistikResource extends Resource
 {
     protected static ?string $model = Statistik::class;
 
-    protected static ?string $navigationIcon = 'heroicon-o-chart-bar';
+    protected static ?string $navigationIcon  = 'heroicon-o-chart-bar';
     protected static ?string $navigationLabel = 'Statistik';
     protected static ?string $pluralModelLabel = 'Statistik';
-    protected static ?string $navigationGroup = 'CMS - Home';
-    protected static ?int $navigationSort = 2;
+    protected static ?string $navigationGroup = 'CMS Home';
+    protected static ?int    $navigationSort = 2;
 
     public static function form(Form $form): Form
     {
         return $form->schema([
-            TextInput::make('judul')->label('Judul Statistik')->required(),
-            TextInput::make('jumlah')->label('Jumlah')->required(),
-            TextInput::make('deskripsi')->label('Keterangan')->nullable(),
-            TextInput::make('urutan')->numeric()->default(0),
-            Toggle::make('aktif')->default(true),
+            TextInput::make('judul')
+                ->label('Judul Statistik')
+                ->required()
+                ->maxLength(191),
+
+            TextInput::make('jumlah')
+                ->label('Jumlah')
+                ->numeric()
+                ->minValue(0)
+                ->required(),
+
+            TextInput::make('deskripsi')
+                ->label('Keterangan')
+                ->nullable()
+                ->maxLength(255),
+
+            TextInput::make('urutan')
+                ->label('Urutan')
+                ->numeric()
+                ->minValue(1)
+                ->required()
+                ->default(fn () => (\App\Models\Statistik::max('urutan') ?? 0) + 1),
+
+            Toggle::make('aktif')
+                ->label('Aktif')
+                ->default(true),
         ]);
     }
 
@@ -42,10 +61,21 @@ class StatistikResource extends Resource
     {
         return $table
             ->columns([
-                TextColumn::make('judul')->sortable()->searchable(),
-                TextColumn::make('jumlah'),
-                TextColumn::make('urutan')->sortable(),
-                ToggleColumn::make('aktif'),
+                TextColumn::make('judul')
+                    ->label('Judul')
+                    ->sortable()
+                    ->searchable(),
+
+                TextColumn::make('jumlah')
+                    ->label('Jumlah')
+                    ->sortable(),
+
+                TextColumn::make('urutan')
+                    ->label('Urutan')
+                    ->sortable(),
+
+                ToggleColumn::make('aktif')
+                    ->label('Aktif'),
             ])
             ->actions([
                 Tables\Actions\EditAction::make(),
@@ -62,9 +92,9 @@ class StatistikResource extends Resource
     public static function getPages(): array
     {
         return [
-            'index' => Pages\ListStatistiks::route('/'),
+            'index'  => Pages\ListStatistiks::route('/'),
             'create' => Pages\CreateStatistik::route('/create'),
-            'edit' => Pages\EditStatistik::route('/{record}/edit'),
+            'edit'   => Pages\EditStatistik::route('/{record}/edit'),
         ];
     }
 
@@ -75,26 +105,36 @@ class StatistikResource extends Resource
 
     public static function canCreate(): bool
     {
-        return Auth::user()?->can('statistik_create') ?? false;
+        return Auth::user()?->can('cms_home') ?? false;
     }
 
     public static function canEdit($record): bool
     {
-        return Auth::user()?->can('statistik_edit') ?? false;
+        return Auth::user()?->can('cms_home') ?? false;
     }
 
     public static function canDelete($record): bool
     {
-        return Auth::user()?->can('statistik_delete') ?? false;
+        return Auth::user()?->can('cms_home') ?? false;
     }
 
     public static function canViewAny(): bool
     {
-        return Auth::user()?->can('statistik_view') ?? false;
+        return Auth::user()?->can('cms_home') ?? false;
+    }
+
+    public static function canAccess(): bool
+    {
+        return static::canViewAny();
     }
 
     public static function shouldRegisterNavigation(): bool
     {
-        return Auth::user()?->can('statistik_view') ?? false;
+        return Auth::user()?->can('cms_home') ?? false;
+    }
+
+    public static function getRecordRouteKeyName(): string
+    {
+        return 'uuid_id';
     }
 }

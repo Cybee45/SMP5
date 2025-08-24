@@ -38,6 +38,11 @@ class ProfileSettingsResource extends Resource
         return Auth::user()?->can('profilesettings_view') ?? false;
     }
 
+    public static function canAccess(): bool
+    {
+        return static::canViewAny();
+    }
+
     public static function canCreate(): bool
     {
         return Auth::user()?->can('profilesettings_create') ?? false;
@@ -60,7 +65,7 @@ class ProfileSettingsResource extends Resource
             Section::make('Data Diri')
                 ->schema([
                     TextInput::make('name')
-                        ->label('Nama Lengkap')
+                        ->label('Nama Lengkap'->required())
                         ->required()
                         ->maxLength(255)
                         ->default($user?->name),
@@ -103,7 +108,7 @@ class ProfileSettingsResource extends Resource
                 ImageColumn::make('profile_photo_path')
                     ->label('Foto Profil'),
                 TextColumn::make('name')
-                    ->label('Nama'),
+                    ->label('Nama'->required()),
                 TextColumn::make('email')
                     ->label('Email'),
             ])

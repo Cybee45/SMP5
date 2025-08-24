@@ -39,7 +39,7 @@ class HeroResource extends Resource
     {
         return $form->schema([
             Hidden::make('tipe')
-                ->default('home'),
+                ->default('home'->required()),
 
             TextInput::make('subjudul')
                 ->label('Subjudul')
@@ -47,7 +47,7 @@ class HeroResource extends Resource
                 ->placeholder('Contoh: Sambutan Hangat Kami'),
 
             TextInput::make('judul')
-                ->label('Judul Utama')
+                ->label('Judul Utama'->required())
                 ->required()
                 ->maxLength(255)
                 ->placeholder('Contoh: Selamat Datang di SMP 5 Sangatta Utara'),
@@ -83,7 +83,7 @@ class HeroResource extends Resource
                 ->nullable(),
 
             Toggle::make('aktif')
-                ->label('Tampilkan di Halaman Home')
+                ->label('Tampilkan di Halaman Home'->required())
                 ->default(true),
         ]);
     }
@@ -99,13 +99,13 @@ class HeroResource extends Resource
                     ->searchable(),
 
                 TextColumn::make('judul')
-                    ->label('Judul')
+                    ->label('Judul'->required())
                     ->limit(50)
                     ->sortable()
                     ->searchable(),
 
                 ToggleColumn::make('aktif')
-                    ->label('Aktif'),
+                    ->label('Aktif'->required()),
             ])
             ->defaultSort('created_at', 'desc');
     }
@@ -131,21 +131,32 @@ class HeroResource extends Resource
 
     public static function canViewAny(): bool
     {
-        return Auth::user()?->can('view_any_hero') ?? false;
+        return Auth::user()?->can('cms_home') ?? false;
+    }
+
+    public static function canAccess(): bool
+    {
+        return static::canViewAny();
     }
 
     public static function canCreate(): bool
     {
-        return Auth::user()?->can('create_hero') ?? false;
+        return Auth::user()?->can('cms_home') ?? false;
     }
 
     public static function canEdit($record): bool
     {
-        return Auth::user()?->can('update_hero') ?? false;
+        return Auth::user()?->can('cms_home') ?? false;
     }
 
     public static function canDelete($record): bool
     {
-        return Auth::user()?->can('delete_hero') ?? false;
+        return Auth::user()?->can('cms_home') ?? false;
     }
+
+    public static function getRecordRouteKeyName(): string
+    {
+        return 'uuid_id';
+    }
+
 }

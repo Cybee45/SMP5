@@ -33,7 +33,7 @@ class EnsureUserIsAdmin
             Auth::logout();
             Log::warning('Locked account tried to access admin panel', [
                 'user_id' => $user->id,
-                'email' => $user->email,
+                'username' => $user->username,
                 'ip' => $request->ip(),
                 'locked_until' => $user->locked_until
             ]);
@@ -47,7 +47,7 @@ class EnsureUserIsAdmin
             Auth::logout();
             Log::warning('Inactive account tried to access admin panel', [
                 'user_id' => $user->id,
-                'email' => $user->email,
+                'username' => $user->username,
                 'ip' => $request->ip()
             ]);
             return redirect()->route('login')->withErrors([
@@ -64,7 +64,7 @@ class EnsureUserIsAdmin
         
         Log::info('Admin Access Check:', [
             'user_id' => $user->id,
-            'email' => $user->email,
+            'username' => $user->username,
             'is_active' => $isActive,
             'isAdmin()' => $isAdmin,
             'isLocked()' => $isLocked,
@@ -77,7 +77,7 @@ class EnsureUserIsAdmin
         if (!$canAccess) {
             Log::alert('Non-admin user tried to access admin panel', [
                 'user_id' => $user->id,
-                'email' => $user->email,
+                'username' => $user->username,
                 'ip' => $request->ip(),
                 'roles' => $userRoles
             ]);
@@ -88,7 +88,7 @@ class EnsureUserIsAdmin
         if ($user->force_password_change || $user->needsPasswordChange()) {
             Log::info('User required to change password', [
                 'user_id' => $user->id,
-                'email' => $user->email,
+                'username' => $user->username,
                 'force_change' => $user->force_password_change,
                 'password_age' => $user->password_changed_at ? $user->password_changed_at->diffInDays() : 'unknown'
             ]);

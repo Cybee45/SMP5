@@ -13,7 +13,9 @@ class ListArtikels extends ListRecords
     protected function getHeaderActions(): array
     {
         return [
-            Actions\CreateAction::make(),
+            Actions\CreateAction::make()
+                ->label('Artikel Baru')
+                ->visible(fn () => ArtikelResource::canCreate()),
         ];
     }
 }

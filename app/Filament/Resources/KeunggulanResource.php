@@ -21,7 +21,7 @@ class KeunggulanResource extends Resource
     protected static ?string $navigationIcon = 'heroicon-o-star';
     protected static ?string $navigationLabel = 'Item Keunggulan';
     protected static ?string $pluralModelLabel = 'Item Keunggulan';
-    protected static ?string $navigationGroup = 'CMS - Home';
+    protected static ?string $navigationGroup = 'CMS Home';
     protected static ?int $navigationSort = 4;
 
     public static function form(Form $form): Form
@@ -41,7 +41,9 @@ class KeunggulanResource extends Resource
             TextInput::make('urutan')
                 ->label('Urutan Tampil')
                 ->numeric()
-                ->default(0)
+                ->minValue(1)
+                ->required()
+                ->default(fn () => (\App\Models\Keunggulan::max('urutan') ?? 0) + 1)
                 ->placeholder('Contoh: 1'),
 
             Toggle::make('aktif')
@@ -67,23 +69,22 @@ class KeunggulanResource extends Resource
 
             TextColumn::make('urutan')
                 ->label('Urutan')
+                ->numeric()
                 ->sortable(),
 
             ToggleColumn::make('aktif')
                 ->label('Aktif')
-                ->disabled(fn () => !Auth::user()?->hasRole(['superadmin', 'admin'])), // Admin dan superadmin bisa toggle
+                ->disabled(fn () => !Auth::user()?->hasRole(['superadmin', 'admin'])), // hanya admin/superadmin yang bisa toggle
         ];
 
         return $table
             ->columns($columns)
             ->defaultSort('urutan')
             ->actions([
-                // Admin dan superadmin bisa edit
                 \Filament\Tables\Actions\EditAction::make()
                     ->visible(fn () => Auth::user()?->hasRole(['superadmin', 'admin'])),
             ])
             ->bulkActions([
-                // Admin dan superadmin bisa delete
                 \Filament\Tables\Actions\BulkActionGroup::make([
                     \Filament\Tables\Actions\DeleteBulkAction::make()
                         ->visible(fn () => Auth::user()?->hasRole(['superadmin', 'admin'])),
@@ -94,9 +95,9 @@ class KeunggulanResource extends Resource
     public static function getPages(): array
     {
         return [
-            'index' => Pages\ListKeunggulans::route('/'),
+            'index'  => Pages\ListKeunggulans::route('/'),
             'create' => Pages\CreateKeunggulan::route('/create'),
-            'edit' => Pages\EditKeunggulan::route('/{record}/edit'),
+            'edit'   => Pages\EditKeunggulan::route('/{record}/edit'),
         ];
     }
 
@@ -104,7 +105,7 @@ class KeunggulanResource extends Resource
     {
         return [
             'view_any',
-            'create', 
+            'create',
             'update',
             'delete',
         ];
@@ -112,26 +113,36 @@ class KeunggulanResource extends Resource
 
     public static function canCreate(): bool
     {
-        return Auth::user()?->can('keunggulan_create') ?? false;
+        return Auth::user()?->can('cms_home') ?? false;
     }
 
     public static function canEdit($record): bool
     {
-        return Auth::user()?->can('keunggulan_edit') ?? false;
+        return Auth::user()?->can('cms_home') ?? false;
     }
 
     public static function canDelete($record): bool
     {
-        return Auth::user()?->can('keunggulan_delete') ?? false;
+        return Auth::user()?->can('cms_home') ?? false;
     }
 
     public static function canViewAny(): bool
     {
-        return Auth::user()?->can('keunggulan_view') ?? false;
+        return Auth::user()?->can('cms_home') ?? false;
+    }
+
+    public static function canAccess(): bool
+    {
+        return static::canViewAny();
     }
 
     public static function shouldRegisterNavigation(): bool
     {
-        return Auth::user()?->can('keunggulan_view') ?? false;
+        return Auth::user()?->can('cms_home') ?? false;
+    }
+
+    public static function getRecordRouteKeyName(): string
+    {
+        return 'uuid_id';
     }
 }

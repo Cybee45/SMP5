@@ -18,86 +18,80 @@ class SpmhHeroResource extends Resource
 {
     protected static ?string $model = SpmhHero::class;
 
-    protected static ?string $navigationIcon = 'heroicon-o-academic-cap';
-    
+    protected static ?string $navigationIcon  = 'heroicon-o-academic-cap';
     protected static ?string $navigationLabel = 'Hero SPMB';
-    
     protected static ?string $navigationGroup = 'CMS SPMB';
-    
-    protected static ?int $navigationSort = 1;
+    protected static ?int    $navigationSort  = 1;
 
-    protected static ?string $modelLabel = 'Hero SPMB';
-
+    protected static ?string $modelLabel       = 'Hero SPMB';
     protected static ?string $pluralModelLabel = 'Hero SPMB';
 
     public static function canAccess(): bool
     {
-        return Auth::user()?->can('cms_spmb') ?? false;
+        return Auth::user()?->can('spmb_management') ?? false;
     }
 
-    
     public static function canViewAny(): bool
     {
-        return Auth::user()?->can('spmhhero_view') ?? false;
+        return Auth::user()?->can('spmb_management') ?? false;
     }
 
     public static function canCreate(): bool
     {
-        return Auth::user()?->can('spmhhero_create') ?? false;
+        return Auth::user()?->can('spmb_management') ?? false;
     }
 
     public static function canEdit($record): bool
     {
-        return Auth::user()?->can('spmhhero_edit') ?? false;
+        return Auth::user()?->can('spmb_management') ?? false;
     }
 
     public static function canDelete($record): bool
     {
-        return Auth::user()?->can('spmhhero_delete') ?? false;
+        return Auth::user()?->can('spmb_management') ?? false;
     }
 
     public static function form(Form $form): Form
     {
-        return $form
-            ->schema([
-                Forms\Components\Section::make('Konten Hero SPMB')
-                    ->schema([
-                        Forms\Components\TextInput::make('subtitle')
-                            ->label('Subtitle')
-                            ->placeholder('SEKOLAH MENENGAH UNGGULAN DI SANGATTA UTARA')
-                            ->columnSpanFull(),
+        return $form->schema([
+            Forms\Components\Section::make('Konten Hero SPMB')
+                ->schema([
+                    Forms\Components\TextInput::make('subtitle')
+                        ->label('Subtitle')
+                        ->placeholder('SEKOLAH MENENGAH UNGGULAN DI SANGATTA UTARA')
+                        ->columnSpanFull(),
 
-                        Forms\Components\RichEditor::make('title')
-                            ->label('Judul Utama')
-                            ->required()
-                            ->placeholder('Belajar, berprestasi, dan raih ilmu untuk masa depan')
-                            ->columnSpanFull(),
+                    Forms\Components\RichEditor::make('title')
+                        ->label('Judul Utama')
+                        ->required()
+                        ->placeholder('Belajar, berprestasi, dan raih ilmu untuk masa depan')
+                        ->columnSpanFull(),
 
-                        Forms\Components\Textarea::make('description')
-                            ->label('Deskripsi')
-                            ->required()
-                            ->rows(3)
-                            ->placeholder('Kita ciptakan lingkungan belajar yang patut diacungi jempol...')
-                            ->columnSpanFull(),
+                    Forms\Components\Textarea::make('description')
+                        ->label('Deskripsi')
+                        ->required()
+                        ->rows(3)
+                        ->placeholder('Kita ciptakan lingkungan belajar yang patut diacungi jempol...')
+                        ->columnSpanFull(),
 
-                        Forms\Components\Toggle::make('aktif')
-                            ->label('Status Aktif')
-                            ->default(true)
-                            ->inline(false),
-                    ])->columns(2),
+                    Forms\Components\Toggle::make('active')
+                        ->label('Status Aktif')
+                        ->default(true)
+                        ->inline(false),
+                ])->columns(2),
 
-                Forms\Components\Section::make('Media & Gambar')
-                    ->schema([
-                        Forms\Components\FileUpload::make('image_utama')
-                            ->label('Gambar Utama Hero')
-                            ->image()
-                            ->directory('spmb/hero')
-                            ->visibility('public')
-                            ->imageEditor()
-                            ->helperText('Gambar utama untuk hero section SPMB')
-                            ->columnSpanFull(),
-                    ]),
-            ]);
+            Forms\Components\Section::make('Media & Gambar')
+                ->schema([
+                    Forms\Components\FileUpload::make('image_utama')
+                        ->label('Gambar Utama Hero')
+                        ->image()
+                        ->directory('spmb/hero')
+                        ->visibility('public')
+                        ->imageEditor()
+                        ->helperText('Gambar utama untuk hero section SPMB')
+                        ->columnSpanFull(),
+                ]),
+        ]);
     }
 
     public static function table(Table $table): Table
@@ -119,7 +113,7 @@ class SpmhHeroResource extends Resource
                     ->label('Gambar Utama')
                     ->size(60),
 
-                Tables\Columns\IconColumn::make('aktif')
+                Tables\Columns\IconColumn::make('active')
                     ->label('Status')
                     ->boolean()
                     ->trueIcon('heroicon-o-check-circle')
@@ -140,7 +134,7 @@ class SpmhHeroResource extends Resource
                     ->toggleable(isToggledHiddenByDefault: true),
             ])
             ->filters([
-                Tables\Filters\TernaryFilter::make('aktif')
+                Tables\Filters\TernaryFilter::make('active')
                     ->label('Status')
                     ->placeholder('Semua Status')
                     ->trueLabel('Aktif')
@@ -153,8 +147,7 @@ class SpmhHeroResource extends Resource
             ])
             ->bulkActions([
                 Tables\Actions\BulkActionGroup::make([
-                    Tables\Actions\DeleteBulkAction::make()
-                        ->requiresConfirmation(),
+                    Tables\Actions\DeleteBulkAction::make()->requiresConfirmation(),
                 ]),
             ])
             ->defaultSort('created_at', 'desc');
@@ -162,17 +155,20 @@ class SpmhHeroResource extends Resource
 
     public static function getRelations(): array
     {
-        return [
-            //
-        ];
+        return [];
     }
 
     public static function getPages(): array
     {
         return [
-            'index' => Pages\ListSpmhHeroes::route('/'),
+            'index'  => Pages\ListSpmhHeroes::route('/'),
             'create' => Pages\CreateSpmhHero::route('/create'),
-            'edit' => Pages\EditSpmhHero::route('/{record}/edit'),
+            'edit'   => Pages\EditSpmhHero::route('/{record}/edit'),
         ];
+    }
+
+    public static function getRecordRouteKeyName(): string
+    {
+        return 'uuid_id';
     }
 }

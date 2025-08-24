@@ -3,13 +3,12 @@
 namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
-use Illuminate\Database\Eloquent\Concerns\HasUuids;
+use Illuminate\Support\Str;
 
 class SpmhContent extends Model
 {
-    use HasUuids;
-
     protected $fillable = [
+        'uuid_id',
         'jenis',
         'judul',
         'deskripsi',
@@ -18,13 +17,15 @@ class SpmhContent extends Model
         'aktif',
         'file_pdf',
         'nama_file',
-        // Fields untuk Persyaratan
+
+        // Persyaratan
         'deskripsi_pembuka',
         'dokumen_wajib',
         'dokumen_pendukung',
         'ketentuan_berkas',
         'catatan_penting',
-        // Fields untuk Tata Cara
+
+        // Tata Cara
         'tahap_persiapan',
         'tahap_pendaftaran',
         'tahap_seleksi',
@@ -34,31 +35,38 @@ class SpmhContent extends Model
     ];
 
     protected $casts = [
-        'aktif' => 'boolean',
-        'konten' => 'array',
-        'dokumen_wajib' => 'array',
-        'dokumen_pendukung' => 'array', 
-        'ketentuan_berkas' => 'array',
-        'tahap_persiapan' => 'array',
+        'aktif'             => 'boolean',
+        'urutan'            => 'integer',
+        'konten'            => 'array',
+        'dokumen_wajib'     => 'array',
+        'dokumen_pendukung' => 'array',
+        'ketentuan_berkas'  => 'array',
+        'tahap_persiapan'   => 'array',
         'tahap_pendaftaran' => 'array',
-        'tahap_seleksi' => 'array',
-        'tahap_pengumuman' => 'array',
-        'jadwal_penting' => 'array',
-        'tips_sukses' => 'array',
+        'tahap_seleksi'     => 'array',
+        'tahap_pengumuman'  => 'array',
+        'jadwal_penting'    => 'array',
+        'tips_sukses'       => 'array',
     ];
 
-    public function scopeActive($query)
+    // route model binding pakai uuid_id
+    public function getRouteKeyName(): string
     {
-        return $query->where('aktif', true);
+        return 'uuid_id';
     }
 
-    public function scopeOrdered($query)
+    // isi uuid_id otomatis jika kosong
+    protected static function booted(): void
     {
-        return $query->orderBy('urutan');
+        static::creating(function (self $m) {
+            if (empty($m->uuid_id)) {
+                $m->uuid_id = (string) Str::uuid();
+            }
+        });
     }
 
-    public function scopeByJenis($query, $jenis)
-    {
-        return $query->where('jenis', $jenis);
-    }
+    // scopes
+    public function scopeActive($q)  { return $q->where('aktif', true); }
+    public function scopeOrdered($q) { return $q->orderBy('urutan'); }
+    public function scopeByJenis($q, $jenis) { return $q->where('jenis', $jenis); }
 }

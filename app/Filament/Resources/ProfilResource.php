@@ -21,31 +21,17 @@ class ProfilResource extends Resource
 {
     protected static ?string $model = Profil::class;
 
-    protected static ?string $navigationIcon = 'heroicon-o-building-office-2';
+    protected static ?string $navigationIcon  = 'heroicon-o-building-office-2';
     protected static ?string $navigationLabel = 'Profil Sekolah';
     protected static ?string $pluralModelLabel = 'Profil Sekolah';
     protected static ?string $navigationGroup = 'CMS Home';
-    protected static ?int $navigationSort = 5;
+    protected static ?int    $navigationSort  = 5;
 
-    public static function canViewAny(): bool
-    {
-        return Auth::user()?->can('view_any_profil') ?? false;
-    }
-
-    public static function canCreate(): bool
-    {
-        return Auth::user()?->can('create_profil') ?? false;
-    }
-
-    public static function canEdit($record): bool
-    {
-        return Auth::user()?->can('update_profil') ?? false;
-    }
-
-    public static function canDelete($record): bool
-    {
-        return Auth::user()?->can('delete_profil') ?? false;
-    }
+    public static function canViewAny(): bool   { return Auth::user()?->can('cms_about') ?? false; }
+    public static function canAccess(): bool    { return static::canViewAny(); }
+    public static function canCreate(): bool    { return Auth::user()?->can('cms_about') ?? false; }
+    public static function canEdit($record): bool   { return Auth::user()?->can('cms_about') ?? false; }
+    public static function canDelete($record): bool { return Auth::user()?->can('cms_about') ?? false; }
 
     public static function form(Form $form): Form
     {
@@ -91,13 +77,13 @@ class ProfilResource extends Resource
                     ->label('Judul')
                     ->searchable()
                     ->sortable(),
-                
+
                 ImageColumn::make('gambar')
                     ->label('Gambar'),
-                
+
                 ToggleColumn::make('aktif')
                     ->label('Status'),
-                
+
                 TextColumn::make('created_at')
                     ->label('Dibuat')
                     ->dateTime()
@@ -111,20 +97,19 @@ class ProfilResource extends Resource
     public static function getPages(): array
     {
         return [
-            'index' => Pages\ListProfils::route('/'),
+            'index'  => Pages\ListProfils::route('/'),
             'create' => Pages\CreateProfil::route('/create'),
-            'edit' => Pages\EditProfil::route('/{record}/edit'),
+            'edit'   => Pages\EditProfil::route('/{record}/edit'),
         ];
     }
 
     public static function getPermissionPrefixes(): array
     {
-        return [
-            'view',
-            'view_any',
-            'create',
-            'update', 
-            'delete',
-        ];
+        return ['view', 'view_any', 'create', 'update', 'delete'];
+    }
+
+    public static function getRecordRouteKeyName(): string
+    {
+        return 'uuid_id';
     }
 }

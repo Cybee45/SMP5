@@ -9,76 +9,53 @@
         'deskripsi' => $mediaHero->deskripsi,
         'gambar_hero' => $mediaHero->gambar_hero_url,
         'gambar_globe' => $mediaHero->gambar_globe_url,
-        'gambar_wave' => $mediaHero->gambar_wave_url,
     ] : [
         'subjudul' => 'Sekolah Menengah Unggulan di Sangatta Utara',
         'judul_utama' => 'Kami hadirkan aktivitas dan momen kampus dalam foto, video, dan tulisan.',
         'deskripsi' => 'Kita ciptakan lingkungan belajar yang patut diacungi jempol. Siswa bersemangat mendalami ilmu. Gerbang sekolah adalah awal perjalananmu.',
         'gambar_hero' => asset('assets/media/hero.png'),
         'gambar_globe' => asset('assets/media/globe.png'),
-        'gambar_wave' => asset('assets/media/wave.png'),
     ];
 @endphp
 
-{{-- resources/views/media.blade.php --}}
-<section id="hero" class="relative bg-white overflow-hidden">
-  {{-- 1) Wave background --}}
-  <img src="{{ $heroData['gambar_wave'] }}"
-       alt="Wave background"
-       class="absolute top-0 right-0
-              w-[180%] sm:w-[120%] md:w-[110%] lg:w-[90%]
-              max-w-none h-auto object-cover z-10 pointer-events-none" />
-
-  {{-- 2) Content wrapper --}}
-  <div class="relative z-20 mx-auto max-w-7xl
-              px-4 sm:px-6 md:px-8
-              pt-14 pb-16
-              lg:pt-16 lg:pb-24
-              lg:pl-20 xl:pl-32">
-    <div class="flex flex-col-reverse lg:flex-row items-center gap-y-9 lg:gap-x-16">
-
-      {{-- Text Container (tetap) --}}
-      <div class="w-full lg:w-5/12 space-y-5 text-left relative
-                  mt-6 sm:mt-10 lg:-mt-32"
-           data-aos="fade-right" data-aos-delay="300" data-aos-duration="900">
-        <p class="text-sm font-semibold uppercase tracking-wide text-sky-800">
-          {{ $heroData['subjudul'] }}
-        </p>
-        <h1 class="text-3xl sm:text-4xl md:text-5xl lg:text-6xl font-black leading-tight text-gray-900">
-          {{ $heroData['judul_utama'] }}
-        </h1>
-        <p class="text-base md:text-lg text-slate-600">
-          {{ $heroData['deskripsi'] }}
-        </p>
-      </div>
-
-      {{-- Image Container (figure + clamp, komposisi stabil) --}}
-      <div class="w-full lg:w-7/12 relative flex justify-center lg:justify-end mb-6 sm:mb-8 lg:mb-0 overflow-visible">
-        <!-- Kanvas komposisi. Variabel untuk skala dekorasi -->
-        <figure class="relative inline-block isolate max-w-full"
-                style="--decorMinG:135px; --decorMaxG:340px; --decorMinT:110px; --decorMaxT:280px;">
-
-          {{-- Hero (anchor ukuran) --}}
-          <img src="{{ $heroData['gambar_hero'] }}"
-               alt="Siswa SMP 5 Sangatta Utara"
-               class="block h-auto object-contain select-none relative z-10
-                      w-[min(82vw,620px)] sm:w-[min(68vw,640px)] lg:w-[580px] xl:w-[620px]
-                      lg:translate-x-4" />
-
-          {{-- Globe (kiri–bawah) | dibuat lebih besar & responsif --}}
-    <img src="{{ $heroData['gambar_globe'] }}"
-      alt="Globe decoration" aria-hidden="true"
-      class="absolute z-20 pointer-events-none select-none drop-shadow-lg animate-float-slow rotate-[330deg]
-          bottom-[14%] right-[52%]
-          sm:bottom-[13%] sm:right-[50%]
-          md:bottom-[12%] md:right-[48%]
-          lg:bottom-[11%] lg:right-[46%]
-          w-[clamp(var(--decorMinG),28vw,var(--decorMaxG))] lg:w-[min(56vw,680px)]" />
-        </figure>
-      </div>
+<section id="hero-media" class="relative min-h-screen flex items-center justify-center overflow-hidden">
+    <!-- Latar Belakang Gambar Sekolah -->
+    <div class="absolute inset-0 z-0">
+        <img src="{{ asset('assets/hero/hero-prestasi.jpg') }}" alt="Latar Belakang Media" class="w-full h-full object-cover object-center">
+        <div class="absolute inset-0 bg-gradient-to-r from-sky-900/70 via-sky-800/50 to-transparent"></div>
     </div>
-  </div>
 
-  {{-- Bottom gradient --}}
-  <div class="absolute bottom-0 left-0 z-20 h-32 w-full bg-gradient-to-t from-white to-transparent pointer-events-none"></div>
+    <!-- Konten Hero -->
+    <div class="max-w-7xl w-full relative z-10 mx-auto grid grid-cols-2 lg:grid-cols-5 items-center gap-x-4 lg:gap-x-8 px-4 sm:px-6 lg:px-8 pt-28 pb-12 lg:pt-24">
+        
+        <!-- Kolom Kiri: Teks (ditambah AOS) -->
+        <div class="space-y-4 md:space-y-6 text-left col-span-2 sm:col-span-1 lg:col-span-2">
+            <div class="inline-block bg-white/20 backdrop-blur-sm text-white px-3 py-1 rounded-full text-xs sm:text-sm font-semibold"
+                 data-aos="fade-right" data-aos-duration="800" data-aos-delay="100" data-aos-easing="ease-out-cubic">
+                {{ $heroData['subjudul'] }}
+            </div>
+
+            <h1 class="text-3xl sm:text-4xl lg:text-6xl font-black leading-tight text-white drop-shadow-lg"
+                data-aos="fade-right" data-aos-duration="900" data-aos-delay="200" data-aos-easing="ease-out-cubic">
+                {{ $heroData['judul_utama'] }}
+            </h1>
+
+            <p class="text-sm sm:text-base lg:text-lg text-slate-200 max-w-lg"
+               data-aos="fade-right" data-aos-duration="800" data-aos-delay="300" data-aos-easing="ease-out-cubic">
+                {{ $heroData['deskripsi'] }}
+            </p>
+        </div>
+
+        <!-- Kolom Kanan: Visual (ditambah AOS) -->
+        <div class="relative w-full flex justify-center items-end col-span-2 sm:col-span-1 lg:col-span-3 h-[50vh] sm:h-[60vh] lg:h-[80vh]"
+             data-aos="fade-left" data-aos-duration="1000" data-aos-delay="450" data-aos-easing="ease-out-cubic">
+            <img
+                src="{{ $heroData['gambar_hero'] }}"
+                alt="Siswa SMP 5 Sangatta Utara"
+                class="absolute bottom-0 z-10 h-[85%] lg:h-[95%] w-auto object-contain lg:translate-x-6" />
+        </div>
+    </div>
+
+    <!-- Gradasi Bawah untuk Transisi Mulus -->
+    <div class="absolute bottom-0 left-0 w-full h-30 bg-gradient-to-t from-slate-100 to-transparent z-20"></div>
 </section>

@@ -28,7 +28,7 @@ class User extends Authenticatable implements FilamentUser
      */
     protected $fillable = [
         'name',
-        'email',
+        'username',
         'password',
         'is_active',
         'last_login_at',
@@ -58,7 +58,6 @@ class User extends Authenticatable implements FilamentUser
     protected function casts(): array
     {
         return [
-            'email_verified_at' => 'datetime',
             'password' => 'hashed',
             'is_active' => 'boolean',
             'last_login_at' => 'datetime',
@@ -81,7 +80,7 @@ class User extends Authenticatable implements FilamentUser
      */
     public function isAdmin(): bool
     {
-        return $this->hasRole(['admin', 'superadmin']);
+        return $this->hasRole(['admin', 'super_admin']);
     }
 
     /**
@@ -90,7 +89,7 @@ class User extends Authenticatable implements FilamentUser
     public function canAccessPanel(Panel $panel = null): bool
     {
         return $this->is_active && 
-               $this->can('admin_access') && 
+               $this->isAdmin() && 
                !$this->isLocked();
     }
 
@@ -113,7 +112,7 @@ class User extends Authenticatable implements FilamentUser
         
         Log::warning('User account locked', [
             'user_id' => $this->id,
-            'email' => $this->email,
+            'username' => $this->username,
             'locked_until' => $this->locked_until
         ]);
     }
@@ -127,7 +126,7 @@ class User extends Authenticatable implements FilamentUser
         
         Log::info('User account unlocked', [
             'user_id' => $this->id,
-            'email' => $this->email
+            'username' => $this->username
         ]);
     }
 
@@ -165,7 +164,7 @@ class User extends Authenticatable implements FilamentUser
         
         Log::info('User login recorded', [
             'user_id' => $this->id,
-            'email' => $this->email,
+            'username' => $this->username,
             'ip' => $ip,
             'timestamp' => now()
         ]);

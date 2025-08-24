@@ -7,10 +7,6 @@
 
 <!-- ===== Bagian Birokrasi Dimulai ===== -->
 <section class="relative overflow-hidden py-16 md:py-24">
-    <!-- Top gradient overlay untuk blending dengan section atas -->
-    <div class="pointer-events-none absolute inset-x-0 top-0 z-10 h-20 sm:h-24 lg:h-32 
-                bg-gradient-to-b from-white via-white/85 via-white/60 via-white/30 to-transparent"></div>
-                
     <!-- Bagian Konten Tengah (Judul & Pimpinan) -->
     <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <!-- Judul Section -->

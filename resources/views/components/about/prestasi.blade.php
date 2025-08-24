@@ -1,103 +1,138 @@
-@php
-    $prestasiList = \App\Models\PrestasiAbout::where('aktif', true)->ordered()->get();
-@endphp
+    @php
+        use App\Models\SectionAkreditasi;
+        use App\Models\PrestasiAbout;
 
-<section class="relative overflow-hidden bg-slate-50 py-20 lg:py-24">
-  <div class="container mx-auto px-6 md:px-8">
+        $akreditasi = SectionAkreditasi::where('aktif', true)->orderBy('urutan')->first();
 
-   <div class="max-w-3xl mx-auto text-center px-6 mb-12">
-    {{-- Ikon Akreditasi --}}
-    <img src="{{ asset('assets/about/akreditas.png') }}"
-    alt="Akreditasi B"
-    class="mx-auto h-70 w-70 mb-6"
-    data-aos="zoom-in"/>
-    {{-- Deskripsi --}}
-    <p class="text-base md:text-lg text-slate-600"
-    data-aos="fade-up" data-aos-delay="100"> SMP Negeri 5 Sangatta Utara terakreditasi B, menandakan sekolah ini memiliki kualitas pendidikan yang baik, didukung kurikulum sesuai standar, guru kompeten, dan fasilitas memadai. Sekolah terus berkomitmen meningkatkan mutu demi meraih prestasi lebih tinggi.
-    </p>
-    </div>
+        $judulSection = $akreditasi->judul_section ?? 'Prestasi & Akreditasi';
+        $deskripsiAkreditasi = $akreditasi->deskripsi_akreditasi
+            ?? 'SMP Negeri 5 Sangatta Utara telah meraih berbagai prestasi dan memiliki akreditasi yang menandakan kualitas pendidikan yang baik.';
+        $gambarAkreditasi = $akreditasi && $akreditasi->gambar_akreditasi
+            ? asset('storage/' . $akreditasi->gambar_akreditasi)
+            : asset('assets/about/akreditas.png');
 
-    <!-- PENYESUAIAN: Membungkus grid untuk membatasi lebar maksimum, membuat kartu terlihat lebih kecil -->
-    <div class="max-w-6xl mx-auto">
-      <!-- Grid untuk Kartu-kartu Prestasi -->
-    <div class="grid grid-cols-1 md:grid-cols-2 gap-8 lg:gap-12">
+        $prestasiList = PrestasiAbout::query()
+            ->active()
+            ->ordered()
+            ->when($akreditasi, function ($q) use ($akreditasi) {
+                $q->where(function ($q) use ($akreditasi) {
+                    $q->where('section_akreditasi_id', $akreditasi->id)
+                        ->orWhereNull('section_akreditasi_id');
+                });
+            })
+            ->get();
+    @endphp
 
-        @forelse($prestasiList as $index => $prestasi)
-        <!-- Kartu Prestasi {{ $index + 1 }} -->
-        <div class="bg-white rounded-2xl shadow-lg overflow-hidden group smooth-hover-lift" 
-             data-aos="fade-up" 
-             data-aos-delay="{{ 300 + ($index * 100) }}">
-          <div class="overflow-hidden h-56">
-            <!-- PENYESUAIAN: Menambahkan style will-change untuk animasi yang lebih halus -->
-            <img src="{{ asset('storage/' . $prestasi->gambar) }}" 
-                 alt="{{ $prestasi->judul }}" 
-                 onerror="this.onerror=null;this.src='{{ asset('assets/about/smp_5-36.jpg') }}';"
-                 class="w-full h-full object-cover transition-transform duration-500 ease-in-out group-hover:scale-110" 
-                 style="will-change: transform;">
-          </div>
-          <div class="p-6">
-            <p class="text-slate-600">
-              {{ $prestasi->deskripsi }}
-            </p>
-          </div>
+    {{-- [MODIFIED] Tambahkan x-data untuk state modal --}}
+    <section 
+        x-data="{ 
+            modalOpen: false, 
+            modalImage: '', 
+            modalTitle: '',
+            modalDescription: '' 
+        }" 
+        @keydown.escape.window="modalOpen = false"
+        class="relative overflow-hidden bg-slate-50 py-20 lg:py-24">
+        <div class="container mx-auto px-6 md:px-8">
+
+            <div class="max-w-3xl mx-auto text-center px-6 mb-12 lg:mb-16">
+                <img src="{{ $gambarAkreditasi }}" alt="Akreditasi" class="mx-auto h-auto w-48 mb-6" data-aos="zoom-in"/>
+                <h2 class="text-3xl md:text-4xl font-bold font-heading text-gray-900" data-aos="fade-up" data-aos-delay="50">
+                    {{ $judulSection }}
+                </h2>
+                <p class="text-base md:text-lg text-slate-600 mt-3" data-aos="fade-up" data-aos-delay="100">
+                    {{ $deskripsiAkreditasi }}
+                </p>
+            </div>
+
+            <div class="max-w-6xl mx-auto">
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-8 lg:gap-10">
+                    @forelse($prestasiList as $index => $prestasi)
+                        {{-- [REDESIGNED] Kartu Prestasi dengan @click event --}}
+                        <div 
+                            @click="
+                                modalOpen = true; 
+                                modalImage = '{{ asset('storage/' . $prestasi->gambar) }}'; 
+                                modalTitle = '{{ addslashes($prestasi->judul) }}';
+                                modalDescription = '{{ addslashes($prestasi->deskripsi) }}';
+                            "
+                            class="bg-white rounded-2xl shadow-lg overflow-hidden group cursor-pointer transition-all duration-300 hover:shadow-2xl hover:-translate-y-2"
+                            data-aos="fade-up" data-aos-delay="{{ 300 + ($index * 100) }}">
+                            
+                            <!-- [EDITED] Container gambar dikembalikan ke object-cover -->
+                            <div class="relative overflow-hidden h-64">
+                                <img
+                                    src="{{ asset('storage/' . $prestasi->gambar) }}"
+                                    alt="{{ $prestasi->judul }}"
+                                    onerror="this.onerror=null;this.src='{{ asset('assets/about/smp_5-36.jpg') }}';"
+                                    class="w-full h-full object-cover transition-transform duration-500 ease-in-out group-hover:scale-110">
+                                
+                                {{-- Overlay untuk judul --}}
+                                <div class="absolute inset-0 bg-gradient-to-t from-black/70 to-transparent"></div>
+                                <h3 class="absolute bottom-0 left-0 p-5 text-xl font-bold text-white leading-tight w-full">
+                                    {{ $prestasi->judul }}
+                                </h3>
+                            </div>
+                        </div>
+                    @empty
+                        {{-- Fallback contoh bila kosong --}}
+                        @for ($i = 0; $i < 2; $i++)
+                        <div class="bg-white rounded-2xl shadow-lg overflow-hidden group" data-aos="fade-up" data-aos-delay="{{ 300 + ($i * 100) }}">
+                            <div class="relative overflow-hidden h-64">
+                                <img src="{{ asset('assets/about/smp_5-3' . (6 + $i*3) . '.jpg') }}"
+                                    class="w-full h-full object-cover" alt="Contoh Prestasi">
+                                <div class="absolute inset-0 bg-gradient-to-t from-black/70 to-transparent"></div>
+                                <h3 class="absolute bottom-0 left-0 p-5 text-xl font-bold text-white leading-tight w-full">
+                                    {{ $i == 0 ? 'Prestasi Akademik Siswa' : 'Juara Lomba Futsal' }}
+                                </h3>
+                            </div>
+                        </div>
+                        @endfor
+                    @endforelse
+                </div>
+            </div>
         </div>
-        @empty
-        <!-- Fallback jika tidak ada data dari CMS -->
-        <!-- Kartu 1 -->
-        <div class="bg-white rounded-2xl shadow-lg overflow-hidden group smooth-hover-lift" data-aos="fade-up" data-aos-delay="300">
-          <div class="overflow-hidden h-56">
-            <!-- PENYESUAIAN: Menambahkan style will-change untuk animasi yang lebih halus -->
-            <img src="{{ asset('assets/about/smp_5-36.jpg') }}" alt="Juara 1 Lomba Cerdas Cermat" class="w-full h-full object-cover transition-transform duration-500 ease-in-out group-hover:scale-110" style="will-change: transform;">
-          </div>
-          <div class="p-6">
-            <p class="text-slate-600">
-              Siswa SMP Negeri 5 Sangatta Utara berhasil meraih Juara 1 Lomba Cerdas Cermat Tingkat Kabupaten, membuktikan kualitas akademik yang unggul. Keberhasilan ini menjadi motivasi bagi siswa lain untuk terus berprestasi.
-            </p>
-          </div>
-        </div>
 
-        <!-- Kartu 2 -->
-        <div class="bg-white rounded-2xl shadow-lg overflow-hidden group smooth-hover-lift" data-aos="fade-up" data-aos-delay="400">
-          <div class="overflow-hidden h-56">
-            <img src="{{ asset('assets/about/smp_5-39.jpg') }}" alt="Juara 2 Turnamen Futsal" class="w-full h-full object-cover transition-transform duration-500 ease-in-out group-hover:scale-110" style="will-change: transform;">
-          </div>
-          <div class="p-6">
-            <p class="text-slate-600">
-              Tim futsal sekolah sukses meraih Juara 2 Turnamen Futsal Pelajar se-Kalimantan Timur, menunjukkan bahwa SMP Negeri 5 Sangatta Utara tak hanya unggul di bidang akademik, tetapi juga aktif dalam kegiatan olahraga dan pengembangan bakat siswa.
-            </p>
-          </div>
-        </div>
+        {{-- [ADDED] Komponen Modal --}}
+        <div x-show="modalOpen" 
+            x-transition:enter="transition ease-out duration-300"
+            x-transition:enter-start="opacity-0"
+            x-transition:enter-end="opacity-100"
+            x-transition:leave="transition ease-in duration-200"
+            x-transition:leave-start="opacity-100"
+            x-transition:leave-end="opacity-0"
+            class="fixed inset-0 z-50 flex items-center justify-center p-4"
+            style="display: none;">
 
-        <!-- Kartu 3 -->
-        <div class="bg-white rounded-2xl shadow-lg overflow-hidden group smooth-hover-lift" data-aos="fade-up" data-aos-delay="300">
-          <div class="overflow-hidden h-56">
-            <img src="{{ asset('assets/about/smp_5-39.jpg') }}" alt="Juara 2 Turnamen Futsal" class="w-full h-full object-cover transition-transform duration-500 ease-in-out group-hover:scale-110" style="will-change: transform;">
-          </div>
-          <div class="p-6">
-            <p class="text-slate-600">
-              Tim futsal sekolah sukses meraih Juara 2 Turnamen Futsal Pelajar se-Kalimantan Timur, menunjukkan bahwa SMP Negeri 5 Sangatta Utara tak hanya unggul di bidang akademik, tetapi juga aktif dalam kegiatan olahraga dan pengembangan bakat siswa.
-            </p>
-          </div>
-        </div>
+            <!-- Latar Belakang Blur (Overlay) -->
+            <div @click="modalOpen = false" 
+                class="fixed inset-0 bg-black/60 backdrop-blur-sm"></div>
 
-        <!-- Kartu 4 -->
-        <div class="bg-white rounded-2xl shadow-lg overflow-hidden group smooth-hover-lift" data-aos="fade-up" data-aos-delay="400">
-          <div class="overflow-hidden h-56">
-            <img src="{{ asset('assets/about/smp_5-40.jpg') }}" alt="Juara 1 Lomba Cerdas Cermat" class="w-full h-full object-cover transition-transform duration-500 ease-in-out group-hover:scale-110" style="will-change: transform;">
-          </div>
-          <div class="p-6">
-            <p class="text-slate-600">
-              Siswa SMP Negeri 5 Sangatta Utara berhasil meraih Juara 1 Lomba Cerdas Cermat Tingkat Kabupaten, membuktikan kualitas akademik yang unggul. Keberhasilan ini menjadi motivasi bagi siswa lain untuk terus berprestasi.
-            </p>
-          </div>
-        </div>
-        @endforelse
+            <!-- Konten Modal (tetap contain) -->
+            <div x-show="modalOpen"
+                x-transition:enter="transition ease-out duration-300"
+                x-transition:enter-start="opacity-0 scale-90"
+                x-transition:enter-end="opacity-100 scale-100"
+                x-transition:leave="transition ease-in duration-200"
+                x-transition:leave-start="opacity-100 scale-100"
+                x-transition:leave-end="opacity-0 scale-90"
+                class="relative bg-white w-auto max-w-3xl max-h-[90vh] rounded-xl shadow-2xl overflow-y-auto flex flex-col">
+                
+                <!-- Tombol Close -->
+                <button @click="modalOpen = false" class="absolute top-3 right-3 text-white bg-black/40 rounded-full p-1.5 hover:bg-black/60 transition-colors z-10">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
+                    </svg>
+                </button>
 
-      </div>
-    </div>
-  </div>
-  
-  <!-- Bottom gradient overlay untuk blending dengan section bawah -->
-  <div class="pointer-events-none absolute inset-x-0 bottom-0 z-10 h-20 sm:h-24 lg:h-32 
-              bg-gradient-to-t from-white via-white/85 via-white/60 via-white/30 to-transparent"></div>
-</section>
+                <!-- Gambar di Modal -->
+                <img :src="modalImage" :alt="modalTitle" class="w-full h-auto max-h-[75vh] object-contain flex-shrink-0">
+
+                <!-- Deskripsi di Modal -->
+                <div class="p-6 text-center">
+                    <h3 x-text="modalTitle" class="text-xl font-bold text-gray-900 mb-2"></h3>
+                    <p x-text="modalDescription" class="text-gray-600"></p>
+                </div>
+            </div>
+        </div>
+    </section>

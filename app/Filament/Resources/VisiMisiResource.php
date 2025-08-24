@@ -49,7 +49,7 @@ class VisiMisiResource extends Resource
                 Forms\Components\Section::make('Konten Visi')
                     ->schema([
                         Forms\Components\Textarea::make('visi')
-                            ->label('Visi Sekolah')
+                            ->label('Visi Sekolah'->required())
                             ->required()
                             ->rows(4)
                             ->columnSpanFull()
@@ -59,7 +59,7 @@ class VisiMisiResource extends Resource
                 Forms\Components\Section::make('Konten Misi')
                     ->schema([
                         Forms\Components\Repeater::make('misi')
-                            ->label('Misi Sekolah')
+                            ->label('Misi Sekolah'->required())
                             ->schema([
                                 Forms\Components\Textarea::make('item')
                                     ->label('Poin Misi')
@@ -90,7 +90,7 @@ class VisiMisiResource extends Resource
                 Forms\Components\Section::make('Status')
                     ->schema([
                         Forms\Components\Toggle::make('aktif')
-                            ->label('Aktif')
+                            ->label('Aktif'->required())
                             ->default(true)
                             ->helperText('Hanya satu visi misi yang boleh aktif'),
                     ]),
@@ -112,12 +112,12 @@ class VisiMisiResource extends Resource
                     ->limit(30),
                     
                 Tables\Columns\TextColumn::make('visi')
-                    ->label('Visi')
+                    ->label('Visi'->required())
                     ->limit(50)
                     ->wrap(),
                     
                 Tables\Columns\IconColumn::make('aktif')
-                    ->label('Status')
+                    ->label('Status'->required())
                     ->boolean()
                     ->trueIcon('heroicon-m-check-circle')
                     ->falseIcon('heroicon-m-x-circle')
@@ -132,7 +132,7 @@ class VisiMisiResource extends Resource
             ])
             ->filters([
                 Tables\Filters\TernaryFilter::make('aktif')
-                    ->label('Status Aktif')
+                    ->label('Status Aktif'->required())
                     ->boolean()
                     ->trueLabel('Aktif')
                     ->falseLabel('Tidak Aktif')
@@ -159,27 +159,32 @@ class VisiMisiResource extends Resource
 
     public static function canViewAny(): bool
     {
-        return Auth::user()?->can('visimisi_view') ?? false;
+        return Auth::user()?->can('cms_about') ?? false;
+    }
+
+    public static function canAccess(): bool
+    {
+        return static::canViewAny();
     }
 
     public static function canCreate(): bool
     {
-        return Auth::user()?->can('visimisi_create') ?? false;
+        return Auth::user()?->can('cms_about') ?? false;
     }
 
     public static function canEdit($record): bool
     {
-        return Auth::user()?->can('visimisi_edit') ?? false;
+        return Auth::user()?->can('cms_about') ?? false;
     }
 
     public static function canDelete($record): bool
     {
-        return Auth::user()?->can('visimisi_delete') ?? false;
+        return Auth::user()?->can('cms_about') ?? false;
     }
 
     public static function shouldRegisterNavigation(): bool
     {
-        return Auth::user()?->can('visimisi_view') ?? false;
+        return Auth::user()?->can('cms_about') ?? false;
     }
 
     public static function getPages(): array
@@ -190,4 +195,10 @@ class VisiMisiResource extends Resource
             'edit' => Pages\EditVisiMisi::route('/{record}/edit'),
         ];
     }
+
+    public static function getRecordRouteKeyName(): string
+    {
+        return 'uuid_id';
+    }
+
 }

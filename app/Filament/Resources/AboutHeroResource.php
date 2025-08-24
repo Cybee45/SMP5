@@ -3,15 +3,12 @@
 namespace App\Filament\Resources;
 
 use App\Filament\Resources\AboutHeroResource\Pages;
-use App\Filament\Resources\AboutHeroResource\RelationManagers;
 use App\Models\AboutHero;
 use Filament\Forms;
 use Filament\Forms\Form;
 use Filament\Resources\Resource;
 use Filament\Tables;
 use Filament\Tables\Table;
-use Illuminate\Database\Eloquent\Builder;
-use Illuminate\Database\Eloquent\SoftDeletingScope;
 use Illuminate\Support\Facades\Auth;
 
 class AboutHeroResource extends Resource
@@ -19,59 +16,59 @@ class AboutHeroResource extends Resource
     protected static ?string $model = AboutHero::class;
 
     protected static ?string $navigationIcon = 'heroicon-o-user-group';
-
     protected static ?string $navigationGroup = 'CMS About';
-
     protected static ?string $navigationLabel = 'Hero About';
-    
     protected static ?int $navigationSort = 1;
-
     protected static ?string $modelLabel = 'Hero About';
-
     protected static ?string $pluralModelLabel = 'Hero About';
+
+    // 🔧 PENTING: paksa Filament pakai 'id' untuk {record}
+    public static function getRecordRouteKeyName(): ?string
+    {
+        return 'id';
+    }
 
     public static function form(Form $form): Form
     {
-        return $form
-            ->schema([
-                Forms\Components\Section::make('Konten Hero About')
-                    ->schema([
-                        Forms\Components\TextInput::make('subjudul')
-                            ->label('Sub Judul')
-                            ->required()
-                            ->maxLength(255)
-                            ->default('Sekolah Menengah Unggulan di Sangatta Utara'),
-                        
-                        Forms\Components\TextInput::make('judul')
-                            ->label('Judul Utama')
-                            ->required()
-                            ->maxLength(255)
-                            ->placeholder('Gali ilmu, ukir prestasi, sambut masa depan gemilang.'),
-                        
-                        Forms\Components\Textarea::make('deskripsi')
-                            ->label('Deskripsi')
-                            ->required()
-                            ->rows(4)
-                            ->columnSpanFull()
-                            ->placeholder('Deskripsi tentang sekolah...'),
-                    ])->columns(2),
+        return $form->schema([
+            Forms\Components\Section::make('Konten Hero About')->schema([
+                Forms\Components\TextInput::make('subjudul')
+                    ->label('Sub Judul')
+                    ->required()
+                    ->maxLength(255)
+                    ->default('Sekolah Menengah Unggulan di Sangatta Utara'),
 
-                Forms\Components\Section::make('Media & Status')
-                    ->schema([
-                        Forms\Components\FileUpload::make('gambar')
-                            ->label('Gambar Hero')
-                            ->image()
-                            ->directory('hero-about')
-                            ->visibility('public')
-                            ->imageEditor()
-                            ->columnSpanFull(),
-                        
-                        Forms\Components\Toggle::make('aktif')
-                            ->label('Aktif')
-                            ->default(true)
-                            ->helperText('Hanya satu hero yang boleh aktif'),
-                    ]),
-            ]);
+                Forms\Components\TextInput::make('judul')
+                    ->label('Judul Utama'->required())
+                    ->required()
+                    ->maxLength(255)
+                    ->placeholder('Gali ilmu, ukir prestasi, sambut masa depan gemilang.'),
+
+                Forms\Components\Textarea::make('deskripsi')
+                    ->label('Deskripsi')
+                    ->rows(4)
+                    ->columnSpanFull()
+                    ->placeholder('Deskripsi tentang sekolah...'),
+                    // NOTE: kalau kolom 'deskripsi' TIDAK ada di tabel about_heroes,
+                    // uncomment baris di bawah agar tidak ikut disimpan ke DB:
+                    // ->dehydrated(false),
+            ])->columns(2),
+
+            Forms\Components\Section::make('Media & Status')->schema([
+                Forms\Components\FileUpload::make('gambar')
+                    ->label('Gambar Hero')
+                    ->image()
+                    ->directory('hero-about')
+                    ->visibility('public')
+                    ->imageEditor()
+                    ->columnSpanFull(),
+
+                Forms\Components\Toggle::make('aktif')
+                    ->label('Aktif'->required())
+                    ->default(true)
+                    ->helperText('Hanya satu hero yang boleh aktif'),
+            ]),
+        ]);
     }
 
     public static function table(Table $table): Table
@@ -82,25 +79,25 @@ class AboutHeroResource extends Resource
                     ->label('Sub Judul')
                     ->searchable()
                     ->limit(30),
-                    
+
                 Tables\Columns\TextColumn::make('judul')
-                    ->label('Judul Utama')
+                    ->label('Judul Utama'->required())
                     ->searchable()
                     ->limit(40),
-                    
+
                 Tables\Columns\ImageColumn::make('gambar')
                     ->label('Gambar')
                     ->circular()
                     ->size(50),
-                    
+
                 Tables\Columns\IconColumn::make('aktif')
-                    ->label('Status')
+                    ->label('Status'->required())
                     ->boolean()
                     ->trueIcon('heroicon-m-check-circle')
                     ->falseIcon('heroicon-m-x-circle')
                     ->trueColor('success')
                     ->falseColor('danger'),
-                    
+
                 Tables\Columns\TextColumn::make('created_at')
                     ->label('Dibuat')
                     ->dateTime('d/m/Y H:i')
@@ -109,7 +106,7 @@ class AboutHeroResource extends Resource
             ])
             ->filters([
                 Tables\Filters\TernaryFilter::make('aktif')
-                    ->label('Status Aktif')
+                    ->label('Status Aktif'->required())
                     ->boolean()
                     ->trueLabel('Aktif')
                     ->falseLabel('Tidak Aktif')
@@ -129,40 +126,40 @@ class AboutHeroResource extends Resource
 
     public static function getRelations(): array
     {
-        return [
-            //
-        ];
+        return [];
     }
 
     public static function canViewAny(): bool
     {
-        return Auth::user()?->can('cms_manage') || Auth::user()?->can('cms_about');
+        return Auth::user()?->can('cms_home') || Auth::user()?->can('cms_about');
+    }
+
+    public static function canAccess(): bool
+    {
+        return static::canViewAny();
     }
 
     public static function canCreate(): bool
     {
-        return (Auth::user()?->can('cms_manage') || Auth::user()?->can('cms_about')) 
-               && Auth::user()?->can('content_create');
+        return Auth::user()?->can('cms_about') ?? false;
     }
 
     public static function canEdit($record): bool
     {
-        return (Auth::user()?->can('cms_manage') || Auth::user()?->can('cms_about')) 
-               && Auth::user()?->can('content_edit');
+        return Auth::user()?->can('cms_about') ?? false;
     }
 
     public static function canDelete($record): bool
     {
-        return (Auth::user()?->can('cms_manage') || Auth::user()?->can('cms_about')) 
-               && Auth::user()?->can('content_delete');
+        return Auth::user()?->can('cms_about') ?? false;
     }
 
     public static function getPages(): array
     {
         return [
-            'index' => Pages\ListAboutHeroes::route('/'),
+            'index'  => Pages\ListAboutHeroes::route('/'),
             'create' => Pages\CreateAboutHero::route('/create'),
-            'edit' => Pages\EditAboutHero::route('/{record}/edit'),
+            'edit'   => Pages\EditAboutHero::route('/{record}/edit'),
         ];
     }
 }

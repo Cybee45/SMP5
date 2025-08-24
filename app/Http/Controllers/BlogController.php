@@ -3,8 +3,9 @@
 namespace App\Http\Controllers;
 
 use App\Models\Artikel;
-use App\Models\Kategori;
+use App\Models\KategoriArtikel;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Log;
 
 class BlogController extends Controller
 {
@@ -15,9 +16,8 @@ class BlogController extends Controller
     {
         \Log::info('BlogController@index dipanggil');
         
-        $query = Artikel::with('kategori', 'user')
+        $query = Artikel::with('kategori')
             ->where('aktif', true)
-            ->where('status', 'published')
             ->orderBy('created_at', 'desc');
 
         // Filter by category if provided
@@ -36,13 +36,13 @@ class BlogController extends Controller
         }
 
         $artikels = $query->paginate(9);
-        $kategoris = Kategori::where('aktif', true)->get();
+        $kategoris = KategoriArtikel::where('aktif', true)->get();
 
         \Log::info('Jumlah artikel: ' . $artikels->count());
         \Log::info('Jumlah kategori: ' . $kategoris->count());
-        \Log::info('Tentang to render view: public.blog.index');
+        \Log::info('Tentang to render view: public.blog');
 
-        return view('public.blog.index', compact('artikels', 'kategoris'));
+        return view('public.blog', compact('artikels', 'kategoris'));
     }
 
     /**
@@ -50,10 +50,9 @@ class BlogController extends Controller
      */
     public function show(string $slug)
     {
-        $artikel = Artikel::with('kategori', 'user')
+        $artikel = Artikel::with('kategori')
             ->where('slug', $slug)
             ->where('aktif', true)
-            ->where('status', 'published')
             ->firstOrFail();
 
         // Get related articles from the same category
@@ -61,8 +60,7 @@ class BlogController extends Controller
             ->where('kategori_id', $artikel->kategori_id)
             ->where('id', '!=', $artikel->id)
             ->where('aktif', true)
-            ->where('status', 'published')
-            ->orderBy('tanggal_publikasi', 'desc')
+            ->orderBy('created_at', 'desc')
             ->take(3)
             ->get();
 
@@ -71,8 +69,7 @@ class BlogController extends Controller
             $additionalArtikels = Artikel::with('kategori')
                 ->where('id', '!=', $artikel->id)
                 ->where('aktif', true)
-                ->where('status', 'published')
-                ->orderBy('tanggal_publikasi', 'desc')
+                ->orderBy('created_at', 'desc')
                 ->take(3 - $relatedArtikels->count())
                 ->get();
 

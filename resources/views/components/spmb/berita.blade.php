@@ -1,17 +1,26 @@
 @php
-    // Ambil data dari CMS
+    // Ambil data dari CMS berdasarkan jenis yang tersedia di database
     $persyaratan = \App\Models\SpmhContent::where('jenis', 'persyaratan')->where('aktif', true)->first();
-    $tataCara = \App\Models\SpmhContent::where('jenis', 'tata_cara')->where('aktif', true)->first();
-    $formulir = \App\Models\SpmhContent::where('jenis', 'formulir')->where('aktif', true)->first();
+    $tataCara = \App\Models\SpmhContent::where('jenis', 'alur')->where('aktif', true)->first();
+    $formulir = \App\Models\SpmhContent::where('jenis', 'info')->where('aktif', true)->first();
+    
+    // Fallback: ambil data apapun yang ada jika tidak ada dengan jenis spesifik
+    if (!$formulir) {
+        $formulir = \App\Models\SpmhContent::whereNotNull('file_pdf')->where('aktif', true)->first();
+    }
+    if (!$formulir) {
+        // Jika masih tidak ada, ambil record terakhir untuk formulir
+        $formulir = \App\Models\SpmhContent::where('aktif', true)->orderBy('id', 'desc')->first();
+    }
 @endphp
 
 <!-- SPMB Section (Tailwind v4.1 ready) -->
 <section id="spmb"
   class="relative overflow-hidden py-20 lg:py-24"
   x-data="{ modalPersyaratan: false, modalTataCara: false }">
-  <!-- Top gradient overlay -->
-  <div class="pointer-events-none absolute inset-x-0 top-0 z-10 h-20 sm:h-24 lg:h-32
-              bg-gradient-to-b from-white via-white/85 via-white/60 via-white/30 to-transparent"></div>
+  <div class="pointer-events-none absolute top-0 left-1/2 -translate-x-1/2 z-0 
+            w-[90%] h-40 bg-gradient-radial from-indigo-200/40 via-white/0 to-transparent 
+            blur-3xl rounded-full"></div>
 
   <div class="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8"
        data-aos="fade-up"
@@ -122,16 +131,16 @@
         </div>
         <div class="p-6 mt-auto">
           @if($formulir && $formulir->file_pdf)
-            <a href="{{ asset('storage/' . $formulir->file_pdf) }}"
-               download="{{ $formulir->nama_file ?? 'Formulir-Pendaftaran.pdf' }}"
+            <a href="{{ route('download.spmb', $formulir->id) }}"
+               target="_blank"
                class="block w-full rounded-lg bg-white py-3 px-6 text-center font-semibold text-indigo-600 transition-all duration-300 hover:bg-gray-100 focus:outline-none focus:ring-2 focus:ring-white focus:ring-offset-2 focus:ring-offset-indigo-500">
-              Download Formulir (.pdf)
+              <i class="fas fa-download mr-2"></i>Download {{ $formulir->nama_file ?? 'Formulir (.pdf)' }}
             </a>
           @else
-            <a href="#"
-               class="block w-full rounded-lg bg-white py-3 px-6 text-center font-semibold text-indigo-600 transition-all duration-300 hover:bg-gray-100 focus:outline-none focus:ring-2 focus:ring-white focus:ring-offset-2 focus:ring-offset-indigo-500">
-              Download Formulir (.pdf)
-            </a>
+            <button onclick="alert('Formulir belum tersedia. Silakan hubungi admin sekolah untuk informasi lebih lanjut.')"
+                    class="block w-full rounded-lg bg-white/80 py-3 px-6 text-center font-semibold text-indigo-400 cursor-not-allowed">
+              <i class="fas fa-exclamation-circle mr-2"></i>Formulir Belum Tersedia
+            </button>
           @endif
         </div>
       </div>
@@ -386,7 +395,6 @@
         </div>
       </div>
       
-      <!-- Footer -->
       <div class="p-6 border-t border-gray-200 flex-shrink-0">
         <button @click="modalTataCara = false" 
                 class="w-full rounded-lg bg-emerald-500 hover:bg-emerald-600 py-3 px-4 font-semibold text-white transition-colors">

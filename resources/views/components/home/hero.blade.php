@@ -1,50 +1,70 @@
 @php
-    $hero = \App\Models\Hero::where('aktif', true)->first();
+    // Ambil data hero dari database
+    $heroData = $hero ?? null;
+    
+    // Data fallback jika belum ada di database atau data kosong
+    $fallbackData = [
+        'subjudul' => 'SEKOLAH MENENGAH UNGGULAN',
+        'judul' => 'Prestasi dan Inovasi',
+        'deskripsi' => 'Dengan fasilitas modern, tenaga pengajar berkualitas, dan program unggulan, kami membentuk siswa yang siap menghadapi tantangan masa depan dengan percaya diri dan kompeten.',
+        'tombol_teks' => 'Selengkapnya',
+        'tombol_link' => '#',
+        'gambar' => 'assets/hero/hero-prestasi.jpg'
+    ];
+    
+    $displayData = [
+        'subjudul' => $heroData->subjudul ?? $fallbackData['subjudul'],
+        'judul' => $heroData->judul ?? $fallbackData['judul'],
+        'deskripsi' => $heroData->deskripsi ?? $fallbackData['deskripsi'],
+        'tombol_teks' => $heroData->tombol_teks ?? $fallbackData['tombol_teks'],
+        'tombol_link' => $heroData->tombol_link ?? $fallbackData['tombol_link'],
+        'gambar' => $heroData && $heroData->gambar ? asset('storage/' . $heroData->gambar) : asset($fallbackData['gambar'])
+    ];
 @endphp
 
-<section id="hero" class="relative min-h-screen bg-white flex items-center overflow-hidden pt-20 sm:pt-24 md:pt-0">
-  <!-- Wave (dekoratif background) -->
-  <img src="{{ asset('assets/home/wave.png') }}" alt="" class="absolute top-0 right-0 w-[85%] max-w-[1200px] object-cover z-10 pointer-events-none" />
-
-  <div class="max-w-[88rem] w-full relative z-20 mx-auto flex flex-col-reverse items-center gap-y-4 sm:gap-y-6 md:gap-y-8 px-4 sm:px-6 md:px-8 pt-24 lg:pt-28 pb-24 lg:flex-row lg:gap-x-16 lg:pl-12 xl:pl-24">
-    <!-- Kolom kiri: teks -->
-    <div class="w-full space-y-5 text-left lg:w-5/12 mt-4 lg:mt-0" data-aos="fade-right" data-aos-delay="300" data-aos-duration="900">
-      <div class="flex items-start gap-x-2">
-        <p class="font-semibold uppercase tracking-wider text-sky-800">Sekolah Menengah Unggulan di Sangatta Utara</p>
-      </div>
-      <h1 class="text-4xl lg:text-5xl xl:text-6xl font-black leading-tight text-gray-900 font-heading">
-        {{ $hero->judul ?? 'Belajar, berprestasi, dan raih ilmu untuk masa depan' }}
-      </h1>
-      <p class="text-base md:text-lg text-slate-600 max-w-[48rem]">
-        {{ $hero->deskripsi ?? 'Kita ciptakan lingkungan belajar yang patut diacungi jempol. Siswa semangat mendalami ilmu—gerbang sekolah adalah awal perjalananmu.' }}
-      </p>
-      <a href="{{ $hero->tombol_link ?? '/spmb' }}" class="inline-block rounded-full bg-white px-8 py-4 text-base font-bold text-[var(--color-brand-dark)] shadow-xl hover:-translate-y-1 hover:shadow-2xl transition-all duration-500 ease-in-out">
-        {{ $hero->tombol_teks ?? 'Cek SPMB' }}
-      </a>
+<section id="hero" class="relative min-h-screen flex items-center justify-center overflow-hidden">
+    <!-- Latar Belakang -->
+    <div class="absolute inset-0 z-0">
+        <img src="{{ asset('assets/home/gedung.jpg') }}" alt="Gedung" class="w-full h-full object-cover object-center">
+        <div class="absolute inset-0 bg-gradient-to-r from-sky-900/70 via-sky-800/50 to-transparent"></div>
     </div>
 
-    <!-- Kolom kanan: KANVAS visual -->
-    <div class="w-full lg:w-7/12 flex justify-center lg:justify-end">
-      <div class="relative isolate w-full max-w-[420px] sm:max-w-[520px] md:max-w-[720px] lg:max-w-[960px] xl:max-w-[1080px] aspect-[1/1]">
-        <!-- Parent komposisi: semua elemen di-scale bersama -->
-        <div class="absolute inset-0">
-          <!-- Karakter utama -->
-          @if ($hero?->gambar)
-            <img src="{{ asset('storage/' . $hero->gambar) }}" alt="Hero Image" class="absolute z-30 left-1/2 -translate-x-1/2 bottom-0 w-[72%] h-auto object-contain" />
-          @else
-            <img src="{{ asset('assets/home/hero.png') }}" alt="Siswa SMP 5 Sangatta Utara" class="absolute z-30 left-1/2 -translate-x-1/2 bottom-0 w-[72%] h-auto object-contain" />
-          @endif
+    <!-- Konten Hero -->
+    <div class="max-w-7xl w-full relative z-10 mx-auto grid grid-cols-2 lg:grid-cols-5 items-center gap-x-6 px-4 sm:px-6 lg:px-8 pt-28 pb-12 lg:pt-24">
 
-          <!-- Globe kiri-atas -->
-          <img src="{{ asset('assets/home/globe (1).png') }}" alt="Decorative Graduation" class="block absolute z-20 left-[-8%] bottom-[65%] w-[32%] sm:left-[-12%] sm:bottom-[62%] sm:w-[38%] md:left-[-22%] md:bottom-[59%] md:w-[56%] h-auto drop-shadow-xl animate-float-slow rotate-[350deg]" />
+        <!-- Kolom Kiri: Text -->
+        <div class="space-y-4 md:space-y-6 text-left col-span-2 sm:col-span-1 lg:col-span-2">
+            <div class="inline-block bg-white/20 backdrop-blur-sm text-white px-3 py-1 rounded-full text-xs sm:text-sm font-semibold"
+                 data-aos="fade-right" data-aos-duration="800" data-aos-delay="100" data-aos-easing="ease-out-cubic">
+                {{ $displayData['subjudul'] }}
+            </div>
 
-          <!-- Globe kanan-bawah -->
-          <img src="{{ asset('assets/home/globe (2).png') }}" alt="Decorative Globe" class="block absolute z-20 right-[-8%] bottom-[12%] w-[30%] sm:right-[-12%] sm:bottom-[15%] sm:w-[36%] md:right-[-15%] md:bottom-[15%] md:w-[50%] h-auto drop-shadow-xl animate-float-slow rotate-[20deg]" />
+            <h1 class="text-3xl sm:text-4xl lg:text-6xl font-black leading-tight text-white drop-shadow-lg"
+                data-aos="fade-right" data-aos-duration="900" data-aos-delay="200" data-aos-easing="ease-out-cubic">
+                {{ $displayData['judul'] }}
+            </h1>
+
+            <p class="text-sm sm:text-base lg:text-lg text-slate-200 max-w-lg"
+               data-aos="fade-right" data-aos-duration="800" data-aos-delay="300" data-aos-easing="ease-out-cubic">
+                {{ $displayData['deskripsi'] }}
+            </p>
+
+            <a href="{{ $displayData['tombol_link'] }}"
+               class="inline-block rounded-lg bg-white px-6 py-2 sm:px-8 sm:py-3 text-sm sm:text-base font-bold text-sky-800 shadow-xl hover:bg-slate-100 hover:-translate-y-1 transition-all duration-300 ease-in-out"
+               data-aos="fade-right" data-aos-duration="800" data-aos-delay="400" data-aos-easing="ease-out-cubic">
+                {{ $displayData['tombol_teks'] }}
+            </a>
         </div>
-      </div>
-    </div>
-  </div>
 
-  <!-- Fade/gradien bawah -->
-  <div class="absolute bottom-0 left-0 z-20 h-28 md:h-36 lg:h-40 w-full bg-gradient-to-t from-slate-100 to-transparent pointer-events-none"></div>
+        <!-- Kolom Kanan: Visual -->
+        <div class="relative w-full flex justify-center items-end col-span-2 sm:col-span-1 lg:col-span-3 h-[50vh] sm:h-[60vh] lg:h-[80vh]"
+             data-aos="fade-left" data-aos-duration="1000" data-aos-delay="600" data-aos-easing="ease-out-cubic">
+            <img src="{{ $displayData['gambar'] }}" alt="Hero Image"
+                 class="absolute bottom-0 h-[85%] lg:h-[95%] lg:translate-x-9 w-auto object-contain z-10">
+        </div>
+
+    </div>
+
+    <!-- Gradasi bawah -->
+    <div class="absolute bottom-0 left-0 w-full h-32 bg-gradient-to-t from-gray-100 to-transparent z-20"></div>
 </section>

@@ -2,89 +2,59 @@
     $heroData = \App\Models\SpmhHero::active()->first();
 @endphp
 
-<section class="relative bg-white overflow-hidden min-h-screen">
-  <div class="container mx-auto max-w-7xl px-4 md:px-8 pt-16 pb-20">
-    <div class="grid grid-cols-1 lg:grid-cols-12 items-center gap-10 lg:gap-16">
-
-      {{-- Teks --}}
-      <div class="order-2 lg:order-1 lg:col-span-6 2xl:col-span-7">
-        <div class="max-w-[48rem]">
-          @if($heroData)
-          <p class="font-semibold uppercase tracking-wider text-sky-800 mb-3"
-             data-aos="fade-right" 
-             data-aos-duration="800" 
-             data-aos-delay="100"
-             data-aos-easing="ease-out-cubic">
-            {{ $heroData->subtitle }}
-          </p>
-          <h1 class="text-4xl md:text-5xl xl:text-7xl font-black leading-tight text-gray-900 font-heading"
-              data-aos="fade-right" 
-              data-aos-duration="900" 
-              data-aos-delay="200"
-              data-aos-easing="ease-out-cubic">
-            {!! $heroData->title !!}
-          </h1>
-          <p class="mt-5 text-lg md:text-xl text-slate-600"
-             data-aos="fade-right" 
-             data-aos-duration="800" 
-             data-aos-delay="300"
-             data-aos-easing="ease-out-cubic">
-            {{ $heroData->description }}
-          </p>
-          @else
-          <p class="font-semibold uppercase tracking-wider text-sky-800 mb-3"
-             data-aos="fade-right" 
-             data-aos-duration="800" 
-             data-aos-delay="100"
-             data-aos-easing="ease-out-cubic">
-            SEKOLAH MENENGAH UNGGULAN DI SANGATTA UTARA
-          </p>
-          <h1 class="text-4xl md:text-5xl xl:text-7xl font-black leading-tight text-gray-900 font-heading"
-              data-aos="fade-right" 
-              data-aos-duration="900" 
-              data-aos-delay="200"
-              data-aos-easing="ease-out-cubic">
-            Belajar, berprestasi,<br>dan raih ilmu untuk masa depan
-          </h1>
-          <p class="mt-5 text-lg md:text-xl text-slate-600"
-             data-aos="fade-right" 
-             data-aos-duration="800" 
-             data-aos-delay="300"
-             data-aos-easing="ease-out-cubic">
-            Kita ciptakan lingkungan belajar yang patut diacungi jempol.
-            Siswa semangat mendalami ilmu—gerbang sekolah adalah awal dari perjalananmu.
-          </p>
-          @endif
-        </div>
-      </div>
-
-      {{-- Visual --}}
-      <div class="order-1 lg:order-2 lg:col-span-6 2xl:col-span-5 relative flex justify-center lg:justify-end items-center">
-
-        {{-- Ornamen lingkaran --}}
-        <img
-          src="{{ $heroData && $heroData->image_ornamen ? asset('storage/' . $heroData->image_ornamen) : asset('assets/spmb/hero.png') }}"
-          alt="Ornamen Lingkaran"
-          class="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[420px] md:w-[560px] lg:w-[760px] xl:w-[880px] max-w-[94vw] h-auto z-10 pointer-events-none" />
-
-        {{-- Back to School --}}
-        <img
-          src="{{ $heroData && $heroData->image_back_to_school ? asset('storage/' . $heroData->image_back_to_school) : asset('assets/spmb/back.png') }}"
-          alt="Back to School"
-          class="absolute z-20 left-1/2 -translate-x-[150%] top-[8%] md:top-[6%] lg:top-[7%] w-[76px] md:w-[98px] lg:w-[116px] xl:w-[132px] transition-all duration-300" />
-
-        {{-- Karakter --}}
-        <img
-          src="{{ $heroData && $heroData->image_utama ? asset('storage/' . $heroData->image_utama) : asset('assets/spmb/SPMB.png') }}"
-          alt="Karakter"
-          class="relative z-30 w-[350px] md:w-[500px] lg:w-[700px] xl:w-[800px] h-auto object-contain" />
-
-      </div>
+<section id="hero-spmb" class="relative min-h-screen flex items-center justify-center overflow-hidden">
+    <!-- Latar Belakang Gambar Sekolah -->
+    <div class="absolute inset-0 z-0">
+        <img src="{{ asset('assets/spmb/gedung.jpg') }}" alt="Latar Belakang Pendaftaran Siswa Baru" class="w-full h-full object-cover object-center">
+        <div class="absolute inset-0 bg-gradient-to-r from-sky-900/70 via-sky-800/50 to-transparent"></div>
     </div>
-  </div>
-  {{-- Gradasi ke bawah --}}
-  <div class="absolute bottom-0 left-0 w-full h-24 md:h-32 lg:h-40 
-              bg-gradient-to-b from-white/0 via-white/60 to-white 
-              pointer-events-none">
-  </div>
+
+    <!-- Konten Hero -->
+    <!-- PERUBAHAN: Menyesuaikan padding bawah (pb-12) agar konsisten dengan contoh pertama -->
+    <div class="max-w-7xl w-full relative z-10 mx-auto grid grid-cols-2 lg:grid-cols-5 items-center gap-x-4 lg:gap-x-8 px-4 sm:px-6 lg:px-8 pt-28 pb-12 lg:pt-24">
+        
+        <!-- Kolom Kiri: Teks (sudah pakai AOS) -->
+        <div class="space-y-4 md:space-y-6 text-left col-span-2 sm:col-span-1 lg:col-span-2">
+            @if($heroData)
+                <div class="inline-block bg-white/20 backdrop-blur-sm text-white px-3 py-1 rounded-full text-xs sm:text-sm font-semibold"
+                     data-aos="fade-right" data-aos-duration="800" data-aos-delay="100" data-aos-easing="ease-out-cubic">
+                    {{ $heroData->subtitle }}
+                </div>
+                <h1 class="text-3xl sm:text-4xl lg:text-6xl font-black leading-tight text-white drop-shadow-lg"
+                    data-aos="fade-right" data-aos-duration="900" data-aos-delay="200" data-aos-easing="ease-out-cubic">
+                    {!! $heroData->title !!}
+                </h1>
+                <p class="text-sm sm:text-base lg:text-lg text-slate-200 max-w-lg"
+                   data-aos="fade-right" data-aos-duration="800" data-aos-delay="300" data-aos-easing="ease-out-cubic">
+                    {{ $heroData->description }}
+                </p>
+            @else
+                <div class="inline-block bg-white/20 backdrop-blur-sm text-white px-3 py-1 rounded-full text-xs sm:text-sm font-semibold"
+                     data-aos="fade-right" data-aos-duration="800" data-aos-delay="100" data-aos-easing="ease-out-cubic">
+                    SEKOLAH MENENGAH UNGGULAN DI SANGATTA UTARA
+                </div>
+                <h1 class="text-3xl sm:text-4xl lg:text-6xl font-black leading-tight text-white drop-shadow-lg"
+                    data-aos="fade-right" data-aos-duration="900" data-aos-delay="200" data-aos-easing="ease-out-cubic">
+                    Belajar, berprestasi,<br>dan raih ilmu untuk masa depan
+                </h1>
+                <p class="text-sm sm:text-base lg:text-lg text-slate-200 max-w-lg"
+                   data-aos="fade-right" data-aos-duration="800" data-aos-delay="300" data-aos-easing="ease-out-cubic">
+                    Kita ciptakan lingkungan belajar yang patut diacungi jempol. Siswa semangat mendalami ilmu—gerbang sekolah adalah awal dari perjalananmu.
+                </p>
+            @endif
+        </div>
+
+        <!-- Kolom Kanan: Visual (DITAMBAH AOS) -->
+        <div class="relative w-full flex justify-center items-end col-span-2 sm:col-span-1 lg:col-span-3 h-[50vh] sm:h-[60vh] lg:h-[80vh]"
+             data-aos="fade-left" data-aos-duration="1000" data-aos-delay="450" data-aos-easing="ease-out-cubic">
+            <img
+              src="{{ $heroData && $heroData->image_ornamen ? asset('storage/' . $heroData->image_ornamen) : asset('assets/spmb/hero.png') }}"
+              alt="Ornamen"
+              class="absolute bottom-0 z-10 h-[85%] lg:h-[95%] w-auto object-contain lg:translate-x-6" />
+        </div>
+
+    </div>
+
+    <!-- Gradasi Bawah untuk Transisi Mulus -->
+    <div class="absolute bottom-0 left-0 w-full h-30 bg-gradient-to-t from-slate-100 to-transparent z-20"></div>
 </section>

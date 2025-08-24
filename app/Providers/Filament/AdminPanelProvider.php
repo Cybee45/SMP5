@@ -33,6 +33,14 @@ class AdminPanelProvider extends PanelProvider
                 'primary' => Color::Blue,
                 'gray' => Color::Slate,
             ])
+            ->renderHook(
+                'panels::body.end',
+                fn (): string => '<script src="' . asset('js/admin-session-manager.js') . '"></script>'
+            )
+            ->renderHook(
+                'panels::head.end',
+                fn (): string => '<meta name="csrf-token" content="' . csrf_token() . '">'
+            )
             ->discoverResources(in: app_path('Filament/Resources'), for: 'App\\Filament\\Resources')
             ->resources([
                 // Home/Beranda Resources
@@ -52,14 +60,19 @@ class AdminPanelProvider extends PanelProvider
                 \App\Filament\Resources\SpmhHeroResource::class,
                 \App\Filament\Resources\SpmhContentResource::class,
                 
-                // Artikel Resources
+                // Artikel & Content Resources
                 \App\Filament\Resources\ArtikelResource::class,
+                \App\Filament\Resources\KategoriArtikelResource::class,
+                \App\Filament\Resources\KontakResource::class,
                 
                 // Media/Galeri Resources
-                \App\Filament\Resources\GaleriResource::class,
                 \App\Filament\Resources\MediaGaleriResource::class,
                 \App\Filament\Resources\MediaHeroResource::class,
                 \App\Filament\Resources\MediaVideoResource::class,
+                
+                // Footer Management Resources
+                \App\Filament\Resources\FooterSettingResource::class,
+                \App\Filament\Resources\SectionAkreditasiResource::class,
                 
                 // System Resources
                 \App\Filament\Resources\UserResource::class,
@@ -73,10 +86,13 @@ class AdminPanelProvider extends PanelProvider
             ])
             ->discoverWidgets(in: app_path('Filament/Widgets'), for: 'App\\Filament\\Widgets')
             ->widgets([
-                \App\Filament\Widgets\StatsOverviewWidget::class,
-                \App\Filament\Widgets\ContentOverviewChart::class,
-                \App\Filament\Widgets\CMSGuideWidget::class,
+            \App\Filament\Widgets\QuickActionsWidget::class,
+            \App\Filament\Widgets\KpiOverview::class,          // <-- pakai nama widget kustom kamu
+            \App\Filament\Widgets\ContentOverviewChart::class,
+            \App\Filament\Widgets\CMSGuideWidget::class,
+            \App\Filament\Widgets\RecentActivityTable::class,
             ])
+
             ->middleware([
                 EncryptCookies::class,
                 AddQueuedCookiesToResponse::class,

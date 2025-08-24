@@ -5,5 +5,5 @@
     @include('components.home.stats', ['statistik' => $statistiks])
     @include('components.home.profil')
     @include('components.home.gallery')
-    @include('components.home.berita')
+    @include('components.home.artikel', ['artikels' => $artikels])
 </x-app-layout>

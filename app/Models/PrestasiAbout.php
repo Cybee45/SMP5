@@ -4,30 +4,45 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
 use App\Traits\HasUuid;
+use App\Traits\AutoOrder;
 
 class PrestasiAbout extends Model
 {
-    use HasUuid;
+    use HasUuid, AutoOrder;
+
+    // Kolom UUID yang kamu pakai
+    protected $uuidColumn = 'uuid_id';
+
+    // Kolom urutan (boleh di-skip; default di trait = 'urutan')
+    protected string $orderColumn = 'urutan';
+
+    // Grouping urutan (opsional). Misal: per section akreditasi
+    protected array $orderGroupColumns = ['section_akreditasi_id'];
 
     protected $fillable = [
+        'uuid_id',        // pakai nama yang benar sesuai DB-mu
         'judul',
         'deskripsi',
         'gambar',
         'urutan',
-        'aktif'
+        'aktif',
+        'section_akreditasi_id',
     ];
 
     protected $casts = [
-        'aktif' => 'boolean'
+        'aktif' => 'boolean',
     ];
 
-    public function scopeActive($query)
+    public function getRouteKeyName()
     {
-        return $query->where('aktif', true);
+        return 'id';
     }
 
-    public function scopeOrdered($query)
+    public function scopeActive($q)  { return $q->where('aktif', true); }
+    public function scopeOrdered($q) { return $q->orderBy('urutan'); }
+
+    public function sectionAkreditasi()
     {
-        return $query->orderBy('urutan');
+        return $this->belongsTo(\App\Models\SectionAkreditasi::class, 'section_akreditasi_id');
     }
 }

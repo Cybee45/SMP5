@@ -1,6 +1,6 @@
-<section class="bg-slate-50 py-20 lg:py-24">
-  
-  <div class="container mx-auto px-6 md:px-8">
+<section class="relative bg-slate-50 py-20 lg:py-24 overflow-hidden">
+  <div class="absolute top-0 left-0 w-full h-20 md:h-24 bg-gradient-to-b from-slate-50/95 via-slate-50/70 to-transparent backdrop-blur-sm pointer-events-none z-20"></div>
+  <div class="container mx-auto px-6 md:px-8 relative z-10">
     <div class="grid grid-cols-1 items-left gap-y-12 lg:grid-cols-12 lg:gap-x-12">
       <!-- Kolom Kiri -->
       <div class="text-left lg:text-left lg:col-span-5 lg:col-start-2">
@@ -50,4 +50,7 @@
       </div>
     </div>
   </div>
+
+  <!-- Gradasi Blur Bawah -->
+  <div class="absolute bottom-0 left-0 w-full h-20 md:h-24 bg-gradient-to-t from-slate-50/95 via-slate-50/70 to-transparent backdrop-blur-sm pointer-events-none z-20"></div>
 </section>

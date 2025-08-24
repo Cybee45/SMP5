@@ -1,149 +1,258 @@
 @php
-    // Ambil data galeri dari database
-    $mediaGaleris = \App\Models\MediaGaleri::active()->ordered()->get();
-    
-    // Convert ke format yang dibutuhkan Alpine.js
-    $galeriData = $mediaGaleris->map(function($galeri) {
+    use Illuminate\Support\Str;
+
+    $mediaGaleris = \App\Models\Galeri::query()
+        ->when(function ($q) { return $q->where('aktif', true); })
+        ->with('kategoriRef')
+        ->orderBy('urutan')->orderByDesc('created_at')
+        ->get();
+
+    $galeriData = $mediaGaleris->map(function ($g) {
+        $label = optional($g->kategoriRef)->nama ?: ($g->kategori ?: 'Umum');
+        $slug  = Str::slug(Str::lower(trim($label)));
+
+        // Normalisasi URL gambar (boleh URL penuh atau path storage)
+        $raw = $g->gambar;
+        if ($raw && (str_starts_with($raw, 'http://') || str_starts_with($raw, 'https://'))) {
+            $url = $raw;
+        } elseif ($raw) {
+            $clean = ltrim(preg_replace('#^(public/|storage/)+#', '', trim($raw)), '/');
+            $url = asset('storage/' . $clean);
+        } else {
+            $url = null;
+        }
+
         return [
-            'img' => $galeri->gambar_url,
-            'title' => $galeri->judul,
-            'desc' => $galeri->deskripsi ?? ucfirst($galeri->kategori),
+            'img'            => $url,
+            'title'          => $g->judul ?? 'Tanpa Judul',
+            'desc'           => $g->deskripsi ?? ucfirst($label),
+            'kategori_label' => $label,
+            'kategori_slug'  => $slug ?: 'umum',
         ];
     });
 
-    // Data fallback jika database kosong
     $fallbackData = [
-        ['img' => 'https://images.unsplash.com/photo-1577896851231-70ef18881754?q=80&w=2070&auto=format&fit=crop', 'title' => 'Perkemahan Akbar', 'desc' => 'Pramuka Penggalang'],
-        ['img' => 'https://images.unsplash.com/photo-1523050854058-8df90110c9f1?q=80&w=2070&auto=format&fit=crop', 'title' => 'Juara 1 LKS Tingkat Kota', 'desc' => 'Kompetensi Siswa 2024'],
-        ['img' => 'https://images.unsplash.com/photo-1541339907198-e08756dedf3f?q=80&w=2070&auto=format&fit=crop', 'title' => 'Pentas Seni Tahunan', 'desc' => 'Ekspresi Bakat Siswa'],
-        ['img' => 'https://images.unsplash.com/photo-1524178232363-1fb2b075b655?q=80&w=2070&auto=format&fit=crop', 'title' => 'Final Cerdas Cermat', 'desc' => 'Tingkat Provinsi'],
-        ['img' => 'https://images.unsplash.com/photo-1531482615713-2c65776cf0ce?q=80&w=2070&auto=format&fit=crop', 'title' => 'Emas Olimpiade', 'desc' => 'Sains Nasional'],
-        ['img' => 'https://images.unsplash.com/photo-1594608661623-aa0bd3a69d98?q=80&w=1896&auto=format&fit=crop', 'title' => 'Kegiatan Bakti Sosial', 'desc' => 'Peduli Lingkungan Sekitar'],
-        ['img' => 'https://images.unsplash.com/photo-1556742502-ec7c0e9f34b1?q=80&w=2070&auto=format&fit=crop', 'title' => 'Workshop Kewirausahaan', 'desc' => 'Mencetak Generasi Kreatif'],
-        ['img' => 'https://images.unsplash.com/photo-1517048676732-d65bc937f952?q=80&w=2070&auto=format&fit=crop', 'title' => 'Pelatihan Kepemimpinan OSIS', 'desc' => 'Membangun Jiwa Pemimpin']
+        ['img'=>asset('assets/galery/smp_5-11.jpg'),'title'=>'Perkemahan Akbar','desc'=>'Pramuka Penggalang','kategori_label'=>'Pramuka','kategori_slug'=>'pramuka'],
+        ['img'=>asset('assets/galery/smp_5-12.jpg'),'title'=>'Pentas Seni Tahunan','desc'=>'Ekspresi Bakat Siswa','kategori_label'=>'Seni','kategori_slug'=>'seni'],
+        ['img'=>asset('assets/galery/smp_5-15.jpg'),'title'=>'Studi Banding ke Jakarta','desc'=>'Wawasan Industri 4.0','kategori_label'=>'Kunjungan','kategori_slug'=>'kunjungan'],
+        ['img'=>asset('assets/galery/smp_5-40.jpg'),'title'=>'Medali Emas Olimpiade','desc'=>'Olimpiade Sains Nasional','kategori_label'=>'Prestasi','kategori_slug'=>'prestasi'],
+        ['img'=>asset('assets/galery/smp_5-10.jpg'),'title'=>'Juara 1 Lomba Paskibra','desc'=>'Tingkat Kabupaten','kategori_label'=>'Prestasi','kategori_slug'=>'prestasi'],
+        ['img'=>asset('assets/galery/smp_5-38.jpg'),'title'=>'Final Cerdas Cermat','desc'=>'Tingkat Provinsi','kategori_label'=>'Akademik','kategori_slug'=>'akademik'],
     ];
 
-    $items = $galeriData->count() > 0 ? $galeriData->toArray() : $fallbackData;
+    $items = $galeriData->count() ? $galeriData->toArray() : $fallbackData;
+
+    $kategoriList = collect($items)
+        ->map(fn($i) => ['label' => $i['kategori_label'], 'slug' => $i['kategori_slug']])
+        ->unique('slug')
+        ->values()
+        ->all();
 @endphp
 
-<!-- Media Section -->
-<section id="media" class="relative py-20 lg:py-24 overflow-hidden" 
-         x-data="{ 
-            modalOpen: false, 
-            modalImage: '', 
-            modalTitle: '',
-            currentPage: 1,
-            itemsPerPage: 6,
-            items: {{ json_encode($items) }},
-            get totalPages() {
-                return Math.ceil(this.items.length / this.itemsPerPage);
-            },
-            get paginatedItems() {
-                const start = (this.currentPage - 1) * this.itemsPerPage;
-                const end = start + this.itemsPerPage;
-                return this.items.slice(start, end);
-            }
-         }">
-        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-            
-            <!-- Section Header -->
-            <div class="text-center mb-12 lg:mb-16"
-                 data-aos="fade-up"
-                 data-aos-duration="600"
-                 data-aos-anchor-placement="top-bottom">
-                <h2 class="text-3xl sm:text-4xl font-extrabold text-gray-900 tracking-tight">
-                    Galeri Aktivitas Sekolah
-                </h2>
-                <p class="mt-4 max-w-3xl mx-auto text-lg text-gray-600">
-                    Momen dan kegiatan berharga yang terekam di lingkungan SMP Negeri 5 Sangatta Utara.
-                </p>
-            </div>
+<section id="media" class="relative py-20 lg:py-24 bg-slate-50 overflow-visible"
+    x-data="{
+        allItems: {{ json_encode($items) }},
+        kategoriList: {{ json_encode($kategoriList) }},
+        activeCategory: 'all',
+        currentPage: 1,
+        itemsPerPage: 9,
 
-            <!-- Gallery Grid -->
-            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8"
-                 data-aos="fade-up"
-                 data-aos-duration="800"
-                 data-aos-delay="200"
-                 data-aos-anchor-placement="top-bottom">
-                <template x-for="(item, index) in paginatedItems" :key="item.title">
-                    <!-- Gallery Card -->
-                    <div @click="modalOpen = true; modalImage = item.img; modalTitle = item.title" 
-                         class="group bg-white rounded-xl shadow-md hover:shadow-xl hover:-translate-y-1.5 transition-all duration-300 ease-in-out cursor-pointer overflow-hidden flex flex-col"
-                         :data-aos="'fade-in'"
-                         :data-aos-duration="800"
-                         :data-aos-delay="index * 200 + 400"
-                         :data-aos-anchor-placement="'top-bottom'"
-                         :data-aos-easing="'ease-out-cubic'">
-                        <!-- Image Container -->
-                        <div class="aspect-w-16 aspect-h-9">
-                            <img :src="item.img" :alt="item.title" class="group-hover:scale-105 transition-transform duration-300">
-                        </div>
-                        <!-- Text Content -->
-                        <div class="p-5 flex-grow">
-                            <h3 class="text-lg font-bold text-gray-900" x-text="item.title"></h3>
-                            <p class="mt-1 text-sm text-gray-600" x-text="item.desc"></p>
-                        </div>
-                    </div>
-                </template>
-            </div>
+        // Modal
+        modalOpen: false,
+        modalImage: '',
+        modalTitle: '',
+        modalDescription: '',
 
-            <!-- Pagination Controls -->
-            <nav class="mt-12 flex items-center justify-center space-x-2" x-show="totalPages > 1">
-                <!-- Previous Button -->
-                <button @click="currentPage--" :disabled="currentPage === 1" class="p-2 text-sm font-medium text-gray-600 bg-white rounded-md hover:bg-gray-100 disabled:opacity-50 disabled:cursor-not-allowed transition-colors">
-                    <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" viewBox="0 0 20 20" fill="currentColor">
-                      <path fill-rule="evenodd" d="M12.707 5.293a1 1 0 010 1.414L9.414 10l3.293 3.293a1 1 0 01-1.414 1.414l-4-4a1 1 0 010-1.414l4-4a1 1 0 011.414 0z" clip-rule="evenodd" />
-                    </svg>
-                </button>
+        // Dropdown (mobile)
+        dropdownOpen: false,
 
-                <!-- Page Numbers -->
-                <template x-for="i in totalPages" :key="i">
-                    <button @click="currentPage = i" :class="i === currentPage ? 'bg-sky-600 text-white' : 'bg-white text-gray-600 hover:bg-gray-100'" class="px-4 py-2 text-sm font-medium rounded-md transition-colors"><span x-text="i"></span></button>
-                </template>
+        // Label kategori aktif (biar sama kayak section berita)
+        get activeCategoryLabel() {
+            if (this.activeCategory === 'all') return 'Semua Kategori';
+            const c = this.kategoriList.find(k => k.slug === this.activeCategory);
+            return c ? c.label : 'Semua Kategori';
+        },
 
-                <!-- Next Button -->
-                <button @click="currentPage++" :disabled="currentPage === totalPages" class="p-2 text-sm font-medium text-gray-600 bg-white rounded-md hover:bg-gray-100 disabled:opacity-50 disabled:cursor-not-allowed transition-colors">
-                    <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" viewBox="0 0 20 20" fill="currentColor">
-                      <path fill-rule="evenodd" d="M7.293 14.707a1 1 0 010-1.414L10.586 10 7.293 6.707a1 1 0 011.414-1.414l4 4a1 1 0 010 1.414l-4 4a1 1 0 01-1.414 0z" clip-rule="evenodd" />
-                    </svg>
-                </button>
-            </nav>
+        get filteredItems() {
+            if (this.activeCategory === 'all') return this.allItems;
+            return this.allItems.filter(item => item.kategori_slug === this.activeCategory);
+        },
+        get totalPages() {
+            return Math.ceil(this.filteredItems.length / this.itemsPerPage) || 1;
+        },
+        get paginatedItems() {
+            if (this.currentPage > this.totalPages) this.currentPage = 1;
+            const start = (this.currentPage - 1) * this.itemsPerPage;
+            return this.filteredItems.slice(start, start + this.itemsPerPage);
+        },
+        changeCategory(slug) {
+            this.activeCategory = slug;
+            this.currentPage = 1;
+            this.dropdownOpen = false; // tutup dropdown setelah pilih
+        },
+        openModal(item) {
+            this.modalImage = item.img || '{{ asset('assets/galery/smp_5-12.jpg') }}';
+            this.modalTitle = item.title;
+            this.modalDescription = item.desc;
+            this.modalOpen = true;
+        }
+    }"
+    @keydown.escape.window="modalOpen = false">
 
+    <!-- Gradasi Blur Atas -->
+    <div class="absolute top-0 left-0 w-full h-20 md:h-24 
+                bg-gradient-to-b from-white/95 via-white/70 to-transparent 
+                backdrop-blur-sm pointer-events-none z-20"></div>
+
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
+        <!-- Header -->
+        <div class="text-center mb-12" data-aos="fade-up">
+            <h2 class="text-3xl sm:text-4xl font-bold font-heading text-gray-900 tracking-tight">Galeri Aktivitas Sekolah</h2>
+            <p class="mt-4 max-w-3xl mx-auto text-lg text-slate-600">
+                Momen dan kegiatan berharga yang terekam di lingkungan SMP Negeri 5 Sangatta Utara.
+            </p>
         </div>
 
-        <!-- Image Modal -->    
-        <div x-show="modalOpen" 
-             x-transition:enter="ease-out duration-300" 
-             x-transition:enter-start="opacity-100" 
-             x-transition:enter-end="opacity-100" 
-             x-transition:leave="ease-in duration-200" 
-             x-transition:leave-start="opacity-100" 
-             x-transition:leave-end="opacity-100" 
-             class="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/40 backdrop-blur-sm md:backdrop-blur bg-opacity-60" 
-             style="display: none;">
-            
-            <!-- Modal Container -->
-            <div class="relative" @click.away="modalOpen = false">
-                <!-- Close Button -->
-                <button @click="modalOpen = false" class="absolute -top-2 -right-2 z-10 bg-gray-800 text-white h-8 w-8 rounded-full flex items-center justify-center hover:bg-gray-900 transition-colors focus:outline-none">
-                    <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" /></svg>
+        <!-- FILTER (Desktop pills + Mobile dropdown dengan efek sama seperti section berita) -->
+        <div class="mb-10 flex flex-col items-center gap-4 relative z-40" data-aos="fade-up" data-aos-delay="100">
+            <!-- Desktop: pills -->
+            <div class="hidden sm:flex items-center justify-center flex-wrap gap-3">
+                <button @click="changeCategory('all')"
+                        :class="activeCategory === 'all' ? 'bg-indigo-600 text-white shadow-md' : 'bg-white text-slate-700 hover:bg-indigo-50'"
+                        class="px-5 py-2 rounded-lg text-sm font-semibold transition-all duration-200">
+                    Semua
                 </button>
-                
-                <!-- Modal Content -->
-                <div class="bg-white rounded-lg shadow-xl w-full max-w-3xl max-h-[90vh] flex flex-col overflow-hidden">
-                    <!-- Image Container -->
-                    <div class="flex-grow overflow-hidden flex items-center justify-center h-full w-full">
-                        <img :src="modalImage" :alt="modalTitle" class="max-w-full max-h-[60vh] w-auto h-auto object-contain rounded-md" style="object-fit:contain;">
-                    </div>
-                    
-                    <!-- Title Caption -->
-                    <div class="p-4 text-center bg-gray-50 rounded-b-lg flex-shrink-0">
-                        <h3 class="text-lg font-semibold text-gray-800" x-text="modalTitle"></h3>
+                <template x-for="kat in kategoriList" :key="kat.slug">
+                    <button @click="changeCategory(kat.slug)"
+                            :class="activeCategory === kat.slug ? 'bg-indigo-600 text-white shadow-md' : 'bg-white text-slate-700 hover:bg-indigo-50'"
+                            class="px-5 py-2 rounded-lg text-sm font-semibold transition-all duration-200">
+                        <span x-text="kat.label"></span>
+                    </button>
+                </template>
+            </div>
+
+            <!-- Mobile: dropdown (efek & gaya disamakan) -->
+            <div class="sm:hidden relative w-full max-w-xs z-50" @click.outside="dropdownOpen = false">
+                <button @click="dropdownOpen = !dropdownOpen"
+                        class="w-full flex items-center justify-between px-4 py-2.5 rounded-lg bg-white text-slate-700 font-semibold shadow-sm ring-1 ring-inset ring-gray-300 hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500">
+                    <span x-text="activeCategoryLabel"></span>
+                    <svg class="h-5 w-5 text-slate-400 transition-transform duration-300"
+                         :class="{'rotate-180': dropdownOpen}" viewBox="0 0 20 20" fill="currentColor">
+                        <path fill-rule="evenodd" d="M5.23 7.21a.75.75 0 011.06.02L10 10.94l3.71-3.71a.75.75 0 111.06 1.06l-4.24 4.24a.75.75 0 01-1.06 0L5.21 8.29a.75.75 0 01.02-1.08z" clip-rule="evenodd" />
+                    </svg>
+                </button>
+
+                <div x-show="dropdownOpen"
+                     x-transition:enter="transition ease-out duration-100"
+                     x-transition:enter-start="opacity-0 scale-95"
+                     x-transition:enter-end="opacity-100 scale-100"
+                     x-transition:leave="transition ease-in duration-75"
+                     x-transition:leave-start="opacity-100 scale-100"
+                     x-transition:leave-end="opacity-0 scale-95"
+                     class="absolute mt-1 w-full bg-white shadow-lg rounded-md p-1 z-[9999]"
+                     style="display: none;">
+                    <div class="max-h-60 overflow-y-auto">
+                        <a @click="changeCategory('all')"
+                           class="block w-full text-left px-3 py-2 rounded-md text-sm font-medium cursor-pointer"
+                           :class="activeCategory === 'all' ? 'bg-indigo-600 text-white' : 'text-slate-700 hover:bg-indigo-50 hover:text-indigo-600'">
+                           Semua Kategori
+                        </a>
+                        <template x-for="kat in kategoriList" :key="kat.slug">
+                            <a @click="changeCategory(kat.slug)"
+                               class="block w-full text-left px-3 py-2 rounded-md text-sm font-medium cursor-pointer"
+                               :class="activeCategory === kat.slug ? 'bg-indigo-600 text-white' : 'text-slate-700 hover:bg-indigo-50 hover:text-indigo-600'">
+                                <span x-text="kat.label"></span>
+                            </a>
+                        </template>
                     </div>
                 </div>
             </div>
         </div>
-        
-        <!-- Bottom gradient overlay -->
-        <div class="absolute bottom-0 left-0 right-0 h-20 sm:h-24 lg:h-32 bg-gradient-to-t from-white via-white/85 via-white/60 via-white/30 to-transparent pointer-events-none z-10"></div>
-    </section>
+
+        <!-- Grid Galeri -->
+        <div id="gallery-grid" class="relative grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-8">
+            <template x-for="(item, index) in paginatedItems" :key="(item.img || 'fallback') + index">
+                <div
+                    @click="openModal(item)"
+                    class="relative z-0 aspect-[4/5] bg-gray-200 rounded-2xl shadow-lg overflow-hidden group cursor-pointer transition-all duration-300 hover:shadow-2xl hover:-translate-y-2"
+                    data-aos="fade-up"
+                    :data-aos-delay="100 + (index * 50)">
+
+                    <img :src="item.img || '{{ asset('assets/galery/smp_5-12.jpg') }}'"
+                         :alt="item.title"
+                         onerror="this.onerror=null;this.src='{{ asset('assets/galery/smp_5-12.jpg') }}';"
+                         class="absolute inset-0 w-full h-full object-cover transition-transform duration-500 ease-in-out group-hover:scale-110"
+                         loading="lazy">
+
+                    <!-- Overlay hover -->
+                    <div class="absolute inset-0 bg-gradient-to-t from-black/70 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300 flex flex-col justify-end p-5">
+                        <h3 class="text-white font-bold text-lg leading-tight line-clamp-2" x-text="item.title"></h3>
+                    </div>
+                </div>
+            </template>
+
+            <template x-if="paginatedItems.length === 0">
+                <div class="text-center py-12 sm:col-span-2 lg:col-span-3">
+                    <p class="text-gray-500">Tidak ada galeri yang ditemukan untuk kategori ini.</p>
+                </div>
+            </template>
+        </div>
+
+        <!-- Paginasi -->
+        <nav x-show="totalPages > 1" class="mt-12 flex items-center justify-center gap-2" aria-label="Pagination">
+            <button @click="currentPage--" :disabled="currentPage === 1"
+                    class="inline-flex items-center justify-center w-10 h-10 rounded-lg border bg-white text-gray-700 hover:bg-gray-100 disabled:opacity-50 disabled:cursor-not-allowed transition">
+                ‹
+            </button>
+            <template x-for="p in totalPages" :key="p">
+                <button @click="currentPage = p"
+                        :class="p === currentPage ? 'bg-indigo-600 text-white' : 'border bg-white text-gray-700 hover:bg-gray-100'"
+                        class="w-10 h-10 rounded-lg text-sm font-medium transition">
+                    <span x-text="p"></span>
+                </button>
+            </template>
+            <button @click="currentPage++" :disabled="currentPage === totalPages"
+                    class="inline-flex items-center justify-center w-10 h-10 rounded-lg border bg-white text-gray-700 hover:bg-gray-100 disabled:opacity-50 disabled:cursor-not-allowed transition">
+                ›
+            </button>
+        </nav>
+    </div>
+
+    <!-- Modal -->
+    <div x-show="modalOpen"
+        x-transition:enter="transition ease-out duration-300"
+        x-transition:enter-start="opacity-0"
+        x-transition:enter-end="opacity-100"
+        x-transition:leave="transition ease-in duration-200"
+        x-transition:leave-start="opacity-100"
+        x-transition:leave-end="opacity-0"
+        class="fixed inset-0 z-50 flex items-center justify-center p-4"
+        style="display: none;">
+
+        <div @click="modalOpen = false" class="fixed inset-0 bg-black/60 backdrop-blur-sm"></div>
+
+        <div x-show="modalOpen"
+            x-transition:enter="transition ease-out duration-300"
+            x-transition:enter-start="opacity-0 scale-90"
+            x-transition:enter-end="opacity-100 scale-100"
+            x-transition:leave="transition ease-in duration-200"
+            x-transition:leave-start="opacity-100 scale-100"
+            x-transition:leave-end="opacity-0 scale-90"
+            class="relative bg-white w-auto max-w-3xl max-h-[90vh] rounded-xl shadow-2xl overflow-y-auto flex flex-col">
+
+            <button @click="modalOpen = false" class="absolute top-3 right-3 text-white bg-black/40 rounded-full p-1.5 hover:bg-black/60 transition-colors z-10">✕</button>
+
+            <img :src="modalImage" :alt="modalTitle" class="w-full h-auto max-h-[75vh] object-contain flex-shrink-0">
+
+            <div class="p-6 text-center">
+                <h3 x-text="modalTitle" class="text-xl font-bold text-gray-900 mb-2"></h3>
+                <p x-text="modalDescription" class="text-gray-600"></p>
+            </div>
+        </div>
+    </div>
+
+    <!-- Gradasi Blur Bawah -->
+    <div class="absolute bottom-0 left-0 w-full h-20 md:h-24 
+                bg-gradient-to-t from-white/95 via-white/70 to-transparent 
+                backdrop-blur-sm pointer-events-none z-20"></div>
+</section>

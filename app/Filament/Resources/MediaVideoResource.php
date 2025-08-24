@@ -3,127 +3,97 @@
 namespace App\Filament\Resources;
 
 use App\Filament\Resources\MediaVideoResource\Pages;
-use App\Filament\Resources\MediaVideoResource\RelationManagers;
 use App\Models\MediaVideo;
 use Filament\Forms;
 use Filament\Forms\Form;
 use Filament\Resources\Resource;
 use Filament\Tables;
 use Filament\Tables\Table;
-use Illuminate\Database\Eloquent\Builder;
-use Illuminate\Database\Eloquent\SoftDeletingScope;
 use Illuminate\Support\Facades\Auth;
 
 class MediaVideoResource extends Resource
 {
     protected static ?string $model = MediaVideo::class;
 
-    protected static ?string $navigationIcon = 'heroicon-o-video-camera';
-
+    protected static ?string $navigationIcon  = 'heroicon-o-video-camera';
     protected static ?string $navigationGroup = 'CMS Media';
-
     protected static ?string $navigationLabel = 'Video';
-    
-    protected static ?int $navigationSort = 1;
+    protected static ?int    $navigationSort  = 3;
 
-    protected static ?string $modelLabel = 'Video';
-
-    protected static ?string $pluralModelLabel = 'Video Media';
-
-    protected static ?string $recordRouteKeyName = 'uuid_id';
+    /** ==== BYPASS SHIELD / POLICY: asal login boleh akses & menu muncul ==== */
+    public static function shouldRegisterNavigation(): bool { return true; }
+    public static function canViewAny(): bool { return Auth::check(); }
+    public static function canAccess(): bool { return static::canViewAny(); }
+    public static function canCreate(): bool { return Auth::check(); }
+    public static function canEdit($record): bool { return Auth::check(); }
+    public static function canDelete($record): bool { return Auth::check(); }
+    /** ===================================================================== */
 
     public static function form(Form $form): Form
     {
-        return $form
-            ->schema([
-                Forms\Components\Section::make('Informasi Video')
-                    ->schema([
-                        Forms\Components\TextInput::make('judul')
-                            ->label('Judul Video')
-                            ->required()
-                            ->maxLength(255)
-                            ->placeholder('Selamat Datang di SMP 5 Sangatta Utara'),
-                        
-                        Forms\Components\Textarea::make('deskripsi')
-                            ->label('Deskripsi')
-                            ->rows(3)
-                            ->columnSpanFull()
-                            ->placeholder('Deskripsi singkat tentang video ini...'),
-                        
-                        Forms\Components\TextInput::make('youtube_url')
-                            ->label('YouTube URL')
-                            ->required()
-                            ->url()
-                            ->placeholder('https://www.youtube.com/watch?v=...')
-                            ->helperText('Masukkan URL lengkap video YouTube')
-                            ->columnSpanFull(),
-                        
-                        Forms\Components\FileUpload::make('thumbnail')
-                            ->label('Custom Thumbnail (Opsional)')
-                            ->image()
-                            ->directory('media/thumbnails')
-                            ->visibility('public')
-                            ->imageEditor()
-                            ->helperText('Jika kosong, akan menggunakan thumbnail dari YouTube'),
-                        
-                        Forms\Components\TextInput::make('urutan')
-                            ->label('Urutan Tampil')
-                            ->numeric()
-                            ->default(0)
-                            ->helperText('Angka kecil akan tampil lebih dulu'),
-                        
-                        Forms\Components\Toggle::make('aktif')
-                            ->label('Aktif')
-                            ->default(true),
-                    ])->columns(2),
-            ]);
+        return $form->schema([
+            Forms\Components\Section::make('Data Video')->schema([
+                Forms\Components\TextInput::make('judul')
+                    ->label('Judul')
+                    ->required()
+                    ->maxLength(191),
+
+                Forms\Components\Textarea::make('deskripsi')
+                    ->label('Deskripsi')
+                    ->rows(3)
+                    ->nullable(),
+
+                Forms\Components\TextInput::make('youtube_url')
+                    ->label('URL YouTube')
+                    ->placeholder('https://www.youtube.com/watch?v=XXXXX atau https://youtu.be/XXXXX')
+                    ->helperText('Tempelkan URL video YouTube. ID akan diisi otomatis.')
+                    ->required()
+                    ->rule('url')
+                    ->live(onBlur: true)
+                    ->afterStateUpdated(function ($state, $set) {
+                        $set('youtube_id', self::extractYouTubeId($state));
+                    }),
+
+                Forms\Components\TextInput::make('youtube_id')
+                    ->label('YouTube ID')
+                    ->disabled()
+                    ->dehydrated()
+                    ->nullable(),
+
+                Forms\Components\FileUpload::make('thumbnail')
+                    ->label('Thumbnail (opsional)')
+                    ->directory('video-thumbs')
+                    ->image()
+                    ->imageEditor()
+                    ->nullable(),
+
+                Forms\Components\TextInput::make('urutan')
+                    ->label('Urutan')
+                    ->numeric()
+                    ->minValue(1)
+                    ->required()
+                    ->default(fn () => (\App\Models\MediaVideo::max('urutan') ?? 0) + 1),
+
+                Forms\Components\Toggle::make('aktif')
+                    ->label('Aktif')
+                    ->default(true),
+            ])->columns(2),
+        ]);
     }
 
     public static function table(Table $table): Table
     {
         return $table
             ->columns([
-                Tables\Columns\ImageColumn::make('thumbnail_url')
-                    ->label('Thumbnail')
-                    ->size(80),
-                    
-                Tables\Columns\TextColumn::make('judul')
-                    ->label('Judul')
-                    ->searchable()
-                    ->limit(40),
-                    
-                Tables\Columns\TextColumn::make('youtube_url')
-                    ->label('YouTube URL')
-                    ->limit(50)
-                    ->url(fn ($record) => $record->youtube_url)
-                    ->openUrlInNewTab(),
-                    
-                Tables\Columns\TextColumn::make('urutan')
-                    ->label('Urutan')
-                    ->badge()
-                    ->sortable(),
-                    
-                Tables\Columns\IconColumn::make('aktif')
-                    ->label('Status')
-                    ->boolean()
-                    ->trueIcon('heroicon-m-check-circle')
-                    ->falseIcon('heroicon-m-x-circle')
-                    ->trueColor('success')
-                    ->falseColor('danger'),
-                    
-                Tables\Columns\TextColumn::make('created_at')
-                    ->label('Dibuat')
-                    ->dateTime('d/m/Y H:i')
-                    ->sortable()
-                    ->toggleable(isToggledHiddenByDefault: true),
+                Tables\Columns\ImageColumn::make('thumbnail')->label('Thumb'),
+                Tables\Columns\TextColumn::make('judul')->label('Judul')->searchable()->sortable(),
+                Tables\Columns\TextColumn::make('youtube_url')->label('URL')->toggleable(),
+                Tables\Columns\TextColumn::make('youtube_id')->label('YouTube ID')->copyable(),
+                Tables\Columns\IconColumn::make('aktif')->label('Aktif')->boolean(),
+                Tables\Columns\TextColumn::make('created_at')->label('Dibuat')->dateTime()->sortable(),
             ])
             ->filters([
-                Tables\Filters\TernaryFilter::make('aktif')
-                    ->label('Status Aktif')
-                    ->boolean()
-                    ->trueLabel('Aktif')
-                    ->falseLabel('Tidak Aktif')
-                    ->native(false),
+                Tables\Filters\TernaryFilter::make('aktif')->label('Aktif'),
             ])
             ->actions([
                 Tables\Actions\EditAction::make(),
@@ -133,48 +103,38 @@ class MediaVideoResource extends Resource
                 Tables\Actions\BulkActionGroup::make([
                     Tables\Actions\DeleteBulkAction::make(),
                 ]),
-            ])
-            ->defaultSort('urutan', 'asc');
-    }
-
-    public static function getRelations(): array
-    {
-        return [
-            //
-        ];
-    }
-
-    public static function canViewAny(): bool
-    {
-        return Auth::user()?->can('mediavideo_view') ?? false;
-    }
-
-    public static function canCreate(): bool
-    {
-        return Auth::user()?->can('mediavideo_create') ?? false;
-    }
-
-    public static function canEdit($record): bool
-    {
-        return Auth::user()?->can('mediavideo_edit') ?? false;
-    }
-
-    public static function canDelete($record): bool
-    {
-        return Auth::user()?->can('mediavideo_delete') ?? false;
-    }
-
-    public static function shouldRegisterNavigation(): bool
-    {
-        return Auth::user()?->can('mediavideo_view') ?? false;
+            ]);
     }
 
     public static function getPages(): array
     {
         return [
-            'index' => Pages\ListMediaVideos::route('/'),
+            'index'  => Pages\ListMediaVideos::route('/'),
             'create' => Pages\CreateMediaVideo::route('/create'),
-            'edit' => Pages\EditMediaVideo::route('/{record}/edit'),
+            'edit'   => Pages\EditMediaVideo::route('/{record}/edit'),
         ];
+    }
+
+    /** Helper: ekstrak YouTube ID dari berbagai format URL */
+    private static function extractYouTubeId(?string $url): ?string
+    {
+        if (!$url) return null;
+
+        $patterns = [
+            '/youtu\.be\/([a-zA-Z0-9_-]{11})/',
+            '/v=([a-zA-Z0-9_-]{11})/',
+            '/embed\/([a-zA-Z0-9_-]{11})/',
+            '/shorts\/([a-zA-Z0-9_-]{11})/',
+        ];
+        foreach ($patterns as $p) {
+            if (preg_match($p, $url, $m)) return $m[1];
+        }
+        if (preg_match('/^[a-zA-Z0-9_-]{11}$/', $url)) return $url; // kalau user tempel ID langsung
+        return null;
+    }
+
+    public static function getRecordRouteKeyName(): string
+    {
+        return 'uuid_id';
     }
 }

@@ -2,15 +2,16 @@
 
 namespace App\Models;
 
-use App\Traits\HasUuid;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Str;
+use App\Traits\HasUuid; // hapus baris ini jika tidak memakai trait
 
 class Artikel extends Model
 {
-    use HasUuid;
+    use HasUuid; // hapus baris ini jika tidak memakai trait
 
     protected $fillable = [
+        'uuid_id',
         'judul',
         'slug',
         'konten',
@@ -29,27 +30,16 @@ class Artikel extends Model
         'aktif' => 'boolean',
     ];
 
-    // Auto generate slug from judul
-    protected static function boot()
+    /** (Opsional, tapi enak kalau frontend pakai UUID di URL) */
+    public function getRouteKeyName(): string
     {
-        parent::boot();
-        
-        static::creating(function ($artikel) {
-            if (empty($artikel->slug)) {
-                $artikel->slug = Str::slug($artikel->judul);
-            }
-        });
-        
-        static::updating(function ($artikel) {
-            if ($artikel->isDirty('judul') && empty($artikel->slug)) {
-                $artikel->slug = Str::slug($artikel->judul);
-            }
-        });
+        return 'uuid_id';
     }
 
+    /** Relasi */
     public function kategori()
     {
-        return $this->belongsTo(Kategori::class);
+        return $this->belongsTo(KategoriArtikel::class, 'kategori_id');
     }
 
     public function user()
@@ -57,15 +47,39 @@ class Artikel extends Model
         return $this->belongsTo(User::class);
     }
 
-    // Scope untuk artikel aktif
-    public function scopeAktif($query)
+    /** Scopes */
+    public function scopeAktif($q)
     {
-        return $query->where('aktif', true);
+        return $q->where('aktif', true);
     }
 
-    // Scope untuk artikel published
-    public function scopePublished($query)
+    public function scopePublished($q)
     {
-        return $query->where('status', 'published');
+        return $q->where('status', 'published');
+    }
+
+    /** 👉 Scope yang baru: urut terbaru duluan */
+    public function scopeNewest($q)
+    {
+        return $q->orderByDesc('tanggal_publikasi')
+                 ->orderByDesc('created_at');
+    }
+
+    /** Auto-slug saat buat/update */
+    protected static function boot()
+    {
+        parent::boot();
+
+        static::creating(function ($artikel) {
+            if (empty($artikel->slug) && !empty($artikel->judul)) {
+                $artikel->slug = Str::slug($artikel->judul);
+            }
+        });
+
+        static::updating(function ($artikel) {
+            if ($artikel->isDirty('judul') && empty($artikel->slug)) {
+                $artikel->slug = Str::slug($artikel->judul);
+            }
+        });
     }
 }

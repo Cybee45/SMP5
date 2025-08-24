@@ -30,22 +30,27 @@ class UserResource extends Resource
 
     public static function canViewAny(): bool
     {
-        return Auth::user()?->can('view_any_user') ?? false;
+        return Auth::user()?->can('user_management') ?? false;
+    }
+
+    public static function canAccess(): bool
+    {
+        return static::canViewAny();
     }
 
     public static function canCreate(): bool
     {
-        return Auth::user()?->can('create_user') ?? false;
+        return Auth::user()?->can('user_management') ?? false;
     }
 
     public static function canEdit(Model $record): bool
     {
-        return Auth::user()?->can('update_user') ?? false;
+        return Auth::user()?->can('user_management') ?? false;
     }
 
     public static function canDelete(Model $record): bool
     {
-        return Auth::user()?->can('delete_user') ?? false;
+        return Auth::user()?->can('user_management') ?? false;
     }
 
     public static function form(Form $form): Form
@@ -63,13 +68,6 @@ class UserResource extends Resource
                 ->maxLength(255)
                 ->alphaDash()
                 ->helperText('Username hanya boleh berisi huruf, angka, dash, dan underscore'),
-
-            TextInput::make('email')
-                ->label('Email')
-                ->email()
-                ->required()
-                ->unique(User::class, 'email', ignoreRecord: true)
-                ->maxLength(255),
 
             TextInput::make('password')
                 ->label('Password')
@@ -103,9 +101,16 @@ class UserResource extends Resource
     public static function table(Table $table): Table
     {
         return $table->columns([
-            TextColumn::make('name')->label('Nama')->searchable()->sortable(),
-            TextColumn::make('username')->label('Username')->searchable()->sortable(),
-            TextColumn::make('email')->label('Email')->searchable()->sortable(),
+            TextColumn::make('name')
+                ->label('Nama')
+                ->searchable()
+                ->sortable(),
+
+            TextColumn::make('username')
+                ->label('Username')
+                ->searchable()
+                ->sortable(),
+
             TextColumn::make('roles.name')
                 ->label('Role')
                 ->badge()
@@ -115,13 +120,25 @@ class UserResource extends Resource
                     'admin' => 'warning',
                     default => 'gray',
                 }),
-            BooleanColumn::make('is_active')->label('Aktif')->sortable(),
-            TextColumn::make('created_at')->label('Dibuat')->dateTime()->sortable(),
-            TextColumn::make('last_login_at')->label('Login Terakhir')->dateTime()->sortable(),
+
+            BooleanColumn::make('is_active')
+                ->label('Aktif')
+                ->sortable(),
+
+            TextColumn::make('created_at')
+                ->label('Dibuat')
+                ->dateTime()
+                ->sortable(),
+
+            TextColumn::make('last_login_at')
+                ->label('Login Terakhir')
+                ->dateTime()
+                ->sortable(),
         ])->filters([
             Tables\Filters\SelectFilter::make('roles')
                 ->relationship('roles', 'name')
                 ->label('Filter by Role'),
+
             Tables\Filters\TernaryFilter::make('is_active')
                 ->label('Status Aktif'),
         ]);

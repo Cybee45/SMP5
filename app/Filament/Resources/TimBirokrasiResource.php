@@ -3,34 +3,25 @@
 namespace App\Filament\Resources;
 
 use App\Filament\Resources\TimBirokrasiResource\Pages;
-use App\Filament\Resources\TimBirokrasiResource\RelationManagers;
 use App\Models\TimBirokrasi;
 use Filament\Forms;
 use Filament\Forms\Form;
 use Filament\Resources\Resource;
 use Filament\Tables;
 use Filament\Tables\Table;
-use Illuminate\Database\Eloquent\Builder;
-use Illuminate\Database\Eloquent\SoftDeletingScope;
 use Illuminate\Support\Facades\Auth;
 
 class TimBirokrasiResource extends Resource
 {
     protected static ?string $model = TimBirokrasi::class;
 
-    protected static ?string $navigationIcon = 'heroicon-o-users';
-
+    protected static ?string $navigationIcon  = 'heroicon-o-users';
     protected static ?string $navigationGroup = 'CMS About';
-
     protected static ?string $navigationLabel = 'Tim Birokrasi';
-    
-    protected static ?int $navigationSort = 4;
+    protected static ?int    $navigationSort  = 4;
 
-    protected static ?string $modelLabel = 'Anggota Tim';
-
+    protected static ?string $modelLabel       = 'Anggota Tim';
     protected static ?string $pluralModelLabel = 'Tim Birokrasi';
-
-    protected static ?string $recordRouteKeyName = 'uuid_id';
 
     public static function form(Form $form): Form
     {
@@ -43,21 +34,21 @@ class TimBirokrasiResource extends Resource
                             ->required()
                             ->maxLength(255)
                             ->placeholder('Dr. H. Budi Santoso, M.Pd.'),
-                        
+
                         Forms\Components\TextInput::make('jabatan')
                             ->label('Jabatan')
                             ->required()
                             ->maxLength(255)
                             ->placeholder('Kepala Sekolah'),
-                        
+
                         Forms\Components\Select::make('kategori')
                             ->label('Kategori')
                             ->required()
                             ->options([
                                 'kepala_sekolah' => 'Kepala Sekolah',
-                                'wakil_kepala' => 'Wakil Kepala',
-                                'guru' => 'Guru',
-                                'staff' => 'Staff'
+                                'wakil_kepala'   => 'Wakil Kepala',
+                                'guru'           => 'Guru',
+                                'staff'          => 'Staff',
                             ])
                             ->native(false),
                     ])->columns(2),
@@ -72,13 +63,15 @@ class TimBirokrasiResource extends Resource
                             ->visibility('public')
                             ->imageEditor()
                             ->columnSpanFull(),
-                        
+
                         Forms\Components\TextInput::make('urutan')
                             ->label('Urutan Tampil')
                             ->numeric()
-                            ->default(0)
+                            ->minValue(1)
+                            ->required()
+                            ->default(fn () => (\App\Models\TimBirokrasi::max('urutan') ?? 0) + 1)
                             ->helperText('Angka kecil akan tampil lebih dulu'),
-                        
+
                         Forms\Components\Toggle::make('aktif')
                             ->label('Aktif')
                             ->default(true),
@@ -94,39 +87,40 @@ class TimBirokrasiResource extends Resource
                     ->label('Foto')
                     ->circular()
                     ->size(50),
-                    
+
                 Tables\Columns\TextColumn::make('nama')
                     ->label('Nama')
                     ->searchable()
                     ->limit(30),
-                    
+
                 Tables\Columns\TextColumn::make('jabatan')
                     ->label('Jabatan')
                     ->searchable()
                     ->limit(40),
-                    
+
                 Tables\Columns\TextColumn::make('kategori')
                     ->label('Kategori')
                     ->badge()
                     ->color(fn (string $state): string => match ($state) {
                         'kepala_sekolah' => 'success',
-                        'wakil_kepala' => 'warning',
-                        'guru' => 'info',
-                        'staff' => 'gray',
+                        'wakil_kepala'   => 'warning',
+                        'guru'           => 'info',
+                        'staff'          => 'gray',
+                        default          => 'gray',
                     })
                     ->formatStateUsing(fn (string $state): string => match ($state) {
                         'kepala_sekolah' => 'Kepala Sekolah',
-                        'wakil_kepala' => 'Wakil Kepala',
-                        'guru' => 'Guru',
-                        'staff' => 'Staff',
-                        default => $state,
+                        'wakil_kepala'   => 'Wakil Kepala',
+                        'guru'           => 'Guru',
+                        'staff'          => 'Staff',
+                        default          => $state,
                     }),
-                    
+
                 Tables\Columns\TextColumn::make('urutan')
                     ->label('Urutan')
                     ->badge()
                     ->sortable(),
-                    
+
                 Tables\Columns\IconColumn::make('aktif')
                     ->label('Status')
                     ->boolean()
@@ -134,7 +128,7 @@ class TimBirokrasiResource extends Resource
                     ->falseIcon('heroicon-m-x-circle')
                     ->trueColor('success')
                     ->falseColor('danger'),
-                    
+
                 Tables\Columns\TextColumn::make('created_at')
                     ->label('Dibuat')
                     ->dateTime('d/m/Y H:i')
@@ -146,12 +140,12 @@ class TimBirokrasiResource extends Resource
                     ->label('Kategori')
                     ->options([
                         'kepala_sekolah' => 'Kepala Sekolah',
-                        'wakil_kepala' => 'Wakil Kepala',
-                        'guru' => 'Guru',
-                        'staff' => 'Staff'
+                        'wakil_kepala'   => 'Wakil Kepala',
+                        'guru'           => 'Guru',
+                        'staff'          => 'Staff',
                     ])
                     ->native(false),
-                    
+
                 Tables\Filters\TernaryFilter::make('aktif')
                     ->label('Status Aktif')
                     ->boolean()
@@ -173,42 +167,29 @@ class TimBirokrasiResource extends Resource
 
     public static function getRelations(): array
     {
-        return [
-            //
-        ];
+        return [];
     }
 
-    public static function canViewAny(): bool
-    {
-        return Auth::user()?->can('timbirokrasi_view') ?? false;
-    }
-
-    public static function canCreate(): bool
-    {
-        return Auth::user()?->can('timbirokrasi_create') ?? false;
-    }
-
-    public static function canEdit($record): bool
-    {
-        return Auth::user()?->can('timbirokrasi_edit') ?? false;
-    }
-
-    public static function canDelete($record): bool
-    {
-        return Auth::user()?->can('timbirokrasi_delete') ?? false;
-    }
-
-    public static function shouldRegisterNavigation(): bool
-    {
-        return Auth::user()?->can('timbirokrasi_view') ?? false;
-    }
+    // Gate / izin
+    public static function canViewAny(): bool     { return Auth::user()?->can('cms_about') ?? false; }
+    public static function canAccess(): bool      { return static::canViewAny(); }
+    public static function canCreate(): bool      { return Auth::user()?->can('cms_about') ?? false; }
+    public static function canEdit($record): bool { return Auth::user()?->can('cms_about') ?? false; }
+    public static function canDelete($record): bool { return Auth::user()?->can('cms_about') ?? false; }
+    public static function shouldRegisterNavigation(): bool { return Auth::user()?->can('cms_about') ?? false; }
 
     public static function getPages(): array
     {
         return [
-            'index' => Pages\ListTimBirokrasis::route('/'),
+            'index'  => Pages\ListTimBirokrasis::route('/'),
             'create' => Pages\CreateTimBirokrasi::route('/create'),
-            'edit' => Pages\EditTimBirokrasi::route('/{record}/edit'),
+            'edit'   => Pages\EditTimBirokrasi::route('/{record}/edit'),
         ];
+    }
+
+    public static function getRecordRouteKeyName(): string
+    {
+        // konsisten dengan tabel yang pakai uuid_id
+        return 'uuid_id';
     }
 }

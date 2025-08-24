@@ -2,66 +2,103 @@
 
 namespace App\Models;
 
-use App\Traits\HasUuid;
+use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Support\Str;
 
 class MediaVideo extends Model
 {
-    use HasUuid;
+    use HasFactory;
+
+    protected $table = 'media_videos';
 
     protected $fillable = [
+        'uuid_id',
         'judul',
         'deskripsi',
         'youtube_url',
         'youtube_id',
+        'url_video',
         'thumbnail',
         'urutan',
-        'aktif'
+        'aktif',
     ];
 
     protected $casts = [
-        'aktif' => 'boolean'
+        'aktif'  => 'boolean',
+        'urutan' => 'integer',
     ];
 
-    protected static function boot()
+    /** Pakai uuid_id di URL */
+    public function getRouteKeyName(): string
     {
-        parent::boot();
-        
-        static::saving(function ($video) {
-            if ($video->youtube_url) {
-                $video->youtube_id = self::extractYouTubeId($video->youtube_url);
-            }
-        });
+        return 'uuid_id';
     }
 
-    public static function extractYouTubeId($url)
-    {
-        $pattern = '/(?:youtube\.com\/watch\?v=|youtu\.be\/|youtube\.com\/embed\/)([a-zA-Z0-9_-]{11})/';
-        preg_match($pattern, $url, $matches);
-        return $matches[1] ?? null;
-    }
-
-    public function getEmbedUrlAttribute()
-    {
-        return $this->youtube_id ? "https://www.youtube.com/embed/{$this->youtube_id}" : null;
-    }
-
-    public function getThumbnailUrlAttribute()
-    {
-        if ($this->thumbnail) {
-            return asset('storage/' . $this->thumbnail);
-        }
-        
-        return $this->youtube_id ? "https://img.youtube.com/vi/{$this->youtube_id}/maxresdefault.jpg" : null;
-    }
-
+    /** ===== Scopes untuk dipakai di Blade / query ===== */
     public function scopeActive($query)
+    {
+        return $query->where('aktif', true);
+    }
+
+    // alias kalau ada view lama yang pakai ->aktif()
+    public function scopeAktif($query)
     {
         return $query->where('aktif', true);
     }
 
     public function scopeOrdered($query)
     {
-        return $query->orderBy('urutan')->orderBy('created_at', 'desc');
+        return $query->orderBy('urutan')->orderByDesc('created_at');
+    }
+    /** ================================================== */
+
+    protected static function boot()
+    {
+        parent::boot();
+
+        static::creating(function ($m) {
+            if (empty($m->uuid_id)) {
+                $m->uuid_id = (string) Str::uuid();
+            }
+
+            // sinkron kolom lama
+            if (empty($m->url_video) && !empty($m->youtube_url)) {
+                $m->url_video = $m->youtube_url;
+            }
+
+            if (empty($m->youtube_id) && !empty($m->youtube_url)) {
+                $m->youtube_id = self::extractYouTubeId($m->youtube_url);
+            }
+        });
+
+        static::updating(function ($m) {
+            if ($m->isDirty('youtube_url')) {
+                $m->url_video  = $m->youtube_url;
+                $m->youtube_id = self::extractYouTubeId($m->youtube_url);
+            }
+        });
+    }
+
+    /** Ambil 11-char YouTube ID dari berbagai format URL */
+    private static function extractYouTubeId(?string $url): ?string
+    {
+        if (!$url) return null;
+
+        $patterns = [
+            '/youtu\.be\/([a-zA-Z0-9_-]{11})/',
+            '/[?&]v=([a-zA-Z0-9_-]{11})/',
+            '/embed\/([a-zA-Z0-9_-]{11})/',
+            '/shorts\/([a-zA-Z0-9_-]{11})/',
+        ];
+
+        foreach ($patterns as $p) {
+            if (preg_match($p, $url, $m)) {
+                return $m[1];
+            }
+        }
+
+        // kalau user tempel ID langsung
+        return preg_match('/^[a-zA-Z0-9_-]{11}$/', $url) ? $url : null;
     }
 }

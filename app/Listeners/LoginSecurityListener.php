@@ -24,7 +24,7 @@ class LoginSecurityListener
         // Log successful login
         Log::info('Successful admin login', [
             'user_id' => $user->id,
-            'email' => $user->email,
+            'username' => $user->username,
             'ip' => $ip,
             'user_agent' => Request::userAgent(),
             'timestamp' => now(),
@@ -44,15 +44,21 @@ class LoginSecurityListener
         $ip = Request::ip();
         
         Log::warning('Failed admin login attempt', [
-            'email' => $credentials['email'] ?? 'unknown',
+            'username' => $credentials['username'] ?? $credentials['email'] ?? 'unknown',
             'ip' => $ip,
             'user_agent' => Request::userAgent(),
             'timestamp' => now()
         ]);
         
         // If user exists, increment login attempts
-        if (isset($credentials['email'])) {
-            $user = \App\Models\User::where('email', $credentials['email'])->first();
+        if (isset($credentials['username'])) {
+            $user = \App\Models\User::where('username', $credentials['username'])->first();
+            if ($user) {
+                $user->incrementLoginAttempts();
+            }
+        } elseif (isset($credentials['email'])) {
+            // Fallback for older systems that might still use email
+            $user = \App\Models\User::where('username', $credentials['email'])->first();
             if ($user) {
                 $user->incrementLoginAttempts();
             }
@@ -69,7 +75,7 @@ class LoginSecurityListener
         
         Log::info('User logout', [
             'user_id' => $user->id,
-            'email' => $user->email,
+            'username' => $user->username,
             'ip' => $ip,
             'timestamp' => now()
         ]);
@@ -84,7 +90,7 @@ class LoginSecurityListener
         if ($user->last_login_ip && $user->last_login_ip !== $ip) {
             Log::alert('Login from different IP detected', [
                 'user_id' => $user->id,
-                'email' => $user->email,
+                'username' => $user->username,
                 'previous_ip' => $user->last_login_ip,
                 'current_ip' => $ip,
                 'timestamp' => now()
@@ -96,7 +102,7 @@ class LoginSecurityListener
         if ($currentHour < 6 || $currentHour > 22) { // Outside 6 AM - 10 PM
             Log::warning('Login outside business hours', [
                 'user_id' => $user->id,
-                'email' => $user->email,
+                'username' => $user->username,
                 'ip' => $ip,
                 'hour' => $currentHour,
                 'timestamp' => now()

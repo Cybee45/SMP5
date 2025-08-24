@@ -10,8 +10,9 @@
 <!-- ===== Section Visi, Misi, & Tujuan Dimulai ===== -->
 <section class="relative overflow-hidden py-16 md:py-24">
     <!-- Top gradient blur overlay - diperbesar untuk menyatu lebih baik -->
-    <div class="pointer-events-none absolute inset-x-0 top-0 z-10 h-20 sm:h-24 lg:h-32 
-                bg-gradient-to-b from-white via-white/85 via-white/60 via-white/30 to-transparent"></div>
+    <div class="pointer-events-none absolute top-0 left-1/2 -translate-x-1/2 z-0 
+            w-[80%] h-40 bg-gradient-radial from-indigo-200/40 via-white/0 to-transparent 
+            blur-3xl rounded-full"></div>
     <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         
         <!-- Judul Section -->

@@ -1,15 +1,22 @@
 <section class="relative bg-white py-20 lg:py-24 overflow-hidden">
-    <!-- Efek Gradasi / Blur di Bagian Atas -->
-    <div class="absolute top-0 left-0 z-20 h-32 w-full bg-gradient-to-b from-slate-50 to-transparent"></div>
-
+    <!-- Efek Gradasi Blur Atas -->
+    <div class="absolute top-0 left-0 z-20 h-20 md:h-24 w-full bg-gradient-to-b from-white/90 via-white/60 to-transparent backdrop-blur-sm pointer-events-none"></div>
     @php
+        use Illuminate\Support\Facades\Storage;
+
         $profil = \App\Models\Profil::where('aktif', true)->first();
+
+        // Normalisasi path dari DB
+        $path = $profil?->gambar ? ltrim(trim($profil->gambar), '/\\') : null;
+
+        // Bentuk URL publik
+        $imgUrl = $path ? Storage::disk('public')->url($path) : asset('assets/home/smp_5-32.jpg');
     @endphp
 
     @if($profil)
     <div class="container relative z-10 mx-auto px-6 md:px-8">
         <div class="grid grid-cols-1 lg:grid-cols-2 gap-12 lg:gap-16 items-center">
-          
+
             <!-- Kolom Gambar -->
             <div class="relative h-80 lg:h-[480px] w-full"
                  data-aos="fade-right"
@@ -17,12 +24,16 @@
                  data-aos-duration="900">
                 <div class="absolute -top-4 -left-4 w-full h-full bg-sky-100 rounded-2xl transform -rotate-3"></div>
                 <div class="relative w-full h-full rounded-2xl shadow-2xl overflow-hidden">
-                    <img src="{{ $profil->gambar ? asset($profil->gambar) : asset('assets/home/smp_5-32.jpg') }}"
-                         alt="Foto Gedung SMP 5 Sangatta Utara"
-                         onerror="this.onerror=null;this.src='https://placehold.co/800x600/e0f2fe/333?text=Gambar+Tidak+Tersedia';"
-                         class="w-full h-full object-cover">
+                    <img
+                        src="{{ $imgUrl }}"
+                        alt="Foto Gedung SMP 5 Sangatta Utara"
+                        loading="lazy"
+                        decoding="async"
+                        onerror="this.onerror=null;this.src='https://placehold.co/800x600/e0f2fe/333?text=Gambar+Tidak+Tersedia';"
+                        class="w-full h-full object-cover">
                 </div>
             </div>
+
             <!-- Kolom Teks -->
             <div>
               <div class="max-w-2xl space-y-6"
@@ -43,7 +54,7 @@
                     @endif
                 </div>
               </div>
-              
+
                 @if($profil->link_selengkapnya)
                 <a href="{{ $profil->link_selengkapnya }}"
                    class="mt-8 inline-flex items-center gap-x-3 bg-[var(--color-brand)] text-white font-semibold rounded-lg px-6 py-3 shadow-lg hover:bg-[var(--color-brand-dark)] transition-all duration-300 transform hover:scale-105"
@@ -52,7 +63,7 @@
                    data-aos-duration="650">
                     Selengkapnya Tentang Kami
                     <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" viewBox="0 0 20 20" fill="currentColor">
-                        <path fill-rule="evenodd" d="M10.293 3.293a1 1 0 011.414 0l6 6a1 1 0 010 1.414l-6 6a1 1 0 01-1.414-1.414L14.586 11H3a1 1 0 110-2h11.586l-4.293-4.293a1 1 0 010-1.414z" clip-rule="evenodd" />
+                        <path fill-rule="evenodd" d="M10.293 3.293a1 1 0 011.414 0l6 6a 1 1 0 010 1.414l-6 6a 1 1 0 01-1.414-1.414L14.586 11H3a1 1 0 110-2h11.586l-4.293-4.293a1 1 0 010-1.414z" clip-rule="evenodd" />
                     </svg>
                 </a>
                 @else
@@ -63,7 +74,7 @@
                    data-aos-duration="650">
                     Selengkapnya Tentang Kami
                     <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" viewBox="0 0 20 20" fill="currentColor">
-                        <path fill-rule="evenodd" d="M10.293 3.293a1 1 0 011.414 0l6 6a1 1 0 010 1.414l-6 6a1 1 0 01-1.414-1.414L14.586 11H3a1 1 0 110-2h11.586l-4.293-4.293a1 1 0 010-1.414z" clip-rule="evenodd" />
+                        <path fill-rule="evenodd" d="M10.293 3.293a1 1 0 011.414 0l6 6a 1 1 0 010 1.414l-6 6a 1 1 0 01-1.414-1.414L14.586 11H3a 1 1 0 110-2h11.586l-4.293-4.293a1 1 0 010-1.414z" clip-rule="evenodd" />
                     </svg>
                 </a>
                 @endif
@@ -71,7 +82,5 @@
         </div>
     </div>
     @endif
-
-    <!-- Efek Gradasi / Blur di Bagian Bawah -->
-    <div class="absolute bottom-0 left-0 z-20 h-32 w-full bg-gradient-to-t from-slate-50 to-transparent"></div>
+  <div class="absolute bottom-0 left-0 w-full h-20 md:h-24 bg-gradient-to-t from-slate-50/95 via-slate-50/70 to-transparent backdrop-blur-sm pointer-events-none z-20"></div>
 </section>

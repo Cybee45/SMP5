@@ -22,14 +22,14 @@ class SectionKeunggulanResource extends Resource
     protected static ?string $navigationIcon = 'heroicon-o-megaphone';
     protected static ?string $navigationLabel = 'Header Section Keunggulan';
     protected static ?string $pluralModelLabel = 'Header Section Keunggulan';
-    protected static ?string $navigationGroup = 'CMS - Home';
+    protected static ?string $navigationGroup = 'CMS Home';
     protected static ?int $navigationSort = 3;
 
     public static function form(Form $form): Form
     {
         return $form->schema([
             TextInput::make('judul_section')
-                ->label('Judul Section')
+                ->label('Judul Section'->required())
                 ->required()
                 ->maxLength(255)
                 ->placeholder('Contoh: Mengapa Memilih SMP 5 Sangatta Utara?')
@@ -42,7 +42,7 @@ class SectionKeunggulanResource extends Resource
                 ->columnSpanFull(),
 
             Toggle::make('aktif')
-                ->label('Tampilkan di Website')
+                ->label('Tampilkan di Website'->required())
                 ->default(true),
         ]);
     }
@@ -52,7 +52,7 @@ class SectionKeunggulanResource extends Resource
         return $table
             ->columns([
                 TextColumn::make('judul_section')
-                    ->label('Judul Section')
+                    ->label('Judul Section'->required())
                     ->searchable()
                     ->sortable(),
 
@@ -62,7 +62,7 @@ class SectionKeunggulanResource extends Resource
                     ->searchable(),
 
                 ToggleColumn::make('aktif')
-                    ->label('Aktif'),
+                    ->label('Aktif'->required()),
 
                 TextColumn::make('updated_at')
                     ->label('Diperbarui')
@@ -113,8 +113,19 @@ class SectionKeunggulanResource extends Resource
         return Auth::user()?->can('sectionkeunggulan_view') ?? false;
     }
 
+    public static function canAccess(): bool
+    {
+        return static::canViewAny();
+    }
+
     public static function shouldRegisterNavigation(): bool
     {
         return Auth::user()?->can('sectionkeunggulan_view') ?? false;
     }
+
+    public static function getRecordRouteKeyName(): string
+    {
+        return 'uuid_id';
+    }
+
 }

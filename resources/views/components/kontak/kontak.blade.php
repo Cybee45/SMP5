@@ -1,3 +1,34 @@
+@php
+    $kontakData = \App\Models\Kontak::where('aktif', true)->first();
+    
+    // Data fallback jika belum ada di database
+    $kontak = $kontakData ? [
+        'section_title' => $kontakData->section_title,
+        'section_description' => $kontakData->section_description,
+        'email_title' => $kontakData->email_title,
+        'email_description' => $kontakData->email_description,
+        'email_address' => $kontakData->email_address,
+        'phone_title' => $kontakData->phone_title,
+        'phone_description' => $kontakData->phone_description,
+        'phone_number' => $kontakData->phone_number,
+        'location_title' => $kontakData->location_title,
+        'location_address' => $kontakData->location_address,
+        'map_embed' => $kontakData->map_embed,
+    ] : [
+        'section_title' => 'Hubungi & Kunjungi Kami',
+        'section_description' => 'Punya pertanyaan atau ingin datang langsung? Informasi lengkapnya ada di bawah ini.',
+        'email_title' => 'Email Pertanyaan',
+        'email_description' => 'Untuk pertanyaan umum, pendaftaran, atau informasi lainnya.',
+        'email_address' => 'info@smpn5sangatta.sch.id',
+        'phone_title' => 'Telepon & WhatsApp',
+        'phone_description' => 'Hubungi kami di jam kerja (08:00 - 17:00 WITA).',
+        'phone_number' => '+62 832-8907-4832',
+        'location_title' => 'Kunjungi Sekolah Kami',
+        'location_address' => 'SMP Negeri 5 Sangatta Utara, Jl. Poros Kabo, Swarga Bara, Kec. Sangatta Utara, Kabupaten Kutai Timur, Kalimantan Timur.',
+        'map_embed' => 'https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d5148.134314454969!2d117.53354207598979!3d0.4869592637395554!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x320a359185a0ccdd%3A0xd75f2288aa912a2e!2sSMP%20NEGERI%205%20SANGATTA%20UTARA!5e1!3m2!1sen!2sid!4v1754648855319!5m2!1sen!2sid',
+    ];
+@endphp
+
 <!-- Awal Section Kontak Person & Peta -->
     <section id="kontak-dan-lokasi" class="bg-white">
         <div class="container mx-auto px-4 py-16 md:py-24">
@@ -8,10 +39,10 @@
                  data-aos-duration="800"
                  data-aos-anchor-placement="top-bottom">
                 <h2 class="text-3xl md:text-4xl font-extrabold text-gray-900 tracking-tight">
-                    Hubungi & Kunjungi Kami
+                    {{ $kontak['section_title'] }}
                 </h2>
                 <p class="mt-4 max-w-2xl mx-auto text-lg text-gray-600">
-                    Punya pertanyaan atau ingin datang langsung? Informasi lengkapnya ada di bawah ini.
+                    {{ $kontak['section_description'] }}
                 </p>
             </div>
 
@@ -30,10 +61,10 @@
                             <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z"></path></svg>
                         </div>
                         <div class="ml-4">
-                            <h3 class="text-xl font-bold text-gray-900">Email Pertanyaan</h3>
-                            <p class="mt-1 text-gray-600">Untuk pertanyaan umum, pendaftaran, atau informasi lainnya.</p>
-                            <a href="mailto:info@smpn5sangatta.sch.id" class="mt-4 inline-block font-semibold text-blue-600 group-hover:text-blue-800 transition-colors">
-                                info@smpn5sangatta.sch.id
+                            <h3 class="text-xl font-bold text-gray-900">{{ $kontak['email_title'] }}</h3>
+                            <p class="mt-1 text-gray-600">{{ $kontak['email_description'] }}</p>
+                            <a href="mailto:{{ $kontak['email_address'] }}" class="mt-4 inline-block font-semibold text-blue-600 group-hover:text-blue-800 transition-colors">
+                                {{ $kontak['email_address'] }}
                             </a>
                         </div>
                     </div>
@@ -51,10 +82,10 @@
                             <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 5a2 2 0 012-2h3.28a1 1 0 01.948.684l1.498 4.493a1 1 0 01-.502 1.21l-2.257 1.13a11.042 11.042 0 005.516 5.516l1.13-2.257a1 1 0 011.21-.502l4.493 1.498a1 1 0 01.684.949V19a2 2 0 01-2 2h-1C9.716 21 3 14.284 3 6V5z"></path></svg>
                         </div>
                         <div class="ml-4">
-                            <h3 class="text-xl font-bold text-gray-900">Telepon & WhatsApp</h3>
-                            <p class="mt-1 text-gray-600">Hubungi kami di jam kerja (08:00 - 17:00 WITA).</p>
-                            <a href="tel:+6281234567890" class="mt-4 inline-block font-semibold text-green-600 group-hover:text-green-800 transition-colors">
-                                +62 812-3456-7890
+                            <h3 class="text-xl font-bold text-gray-900">{{ $kontak['phone_title'] }}</h3>
+                            <p class="mt-1 text-gray-600">{{ $kontak['phone_description'] }}</p>
+                            <a href="tel:{{ $kontak['phone_number'] }}" class="mt-4 inline-block font-semibold text-green-600 group-hover:text-green-800 transition-colors">
+                                {{ $kontak['phone_number'] }}
                             </a>
                         </div>
                     </div>
@@ -72,8 +103,8 @@
                             <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z"></path><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 11a3 3 0 11-6 0 3 3 0 016 0z"></path></svg>
                         </div>
                         <div class="ml-4">
-                            <h3 class="text-xl font-bold text-gray-900">Kunjungi Sekolah Kami</h3>
-                            <p class="mt-1 text-gray-600">SMP Negeri 5 Sangatta Utara, Jl. Poros Kabo, Swarga Bara, Kec. Sangatta Utara, Kabupaten Kutai Timur, Kalimantan Timur.</p>
+                            <h3 class="text-xl font-bold text-gray-900">{{ $kontak['location_title'] }}</h3>
+                            <p class="mt-1 text-gray-600">{{ $kontak['location_address'] }}</p>
                         </div>
                     </div>
                     <!-- Peta Disematkan di Sini -->
@@ -83,7 +114,7 @@
                          data-aos-delay="700"
                          data-aos-anchor-placement="top-bottom">
                          <iframe
-                            src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d5148.134314454969!2d117.53354207598979!3d0.4869592637395554!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x320a359185a0ccdd%3A0xd75f2288aa912a2e!2sSMP%20NEGERI%205%20SANGATTA%20UTARA!5e1!3m2!1sen!2sid!4v1754648855319!5m2!1sen!2sid"
+                            src="{{ $kontak['map_embed'] }}"
                             class="w-full h-80"
                             style="border:0;"
                             allowfullscreen=""
