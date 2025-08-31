@@ -37,7 +37,7 @@ class VisiMisi extends Model
      */
     public function getRouteKeyName(): string
     {
-        return 'id';
+        return 'uuid_id';
     }
 
     /**

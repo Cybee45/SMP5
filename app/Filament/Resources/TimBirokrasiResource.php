@@ -2,6 +2,7 @@
 
 namespace App\Filament\Resources;
 
+use App\Support\OrderField;
 use App\Filament\Resources\TimBirokrasiResource\Pages;
 use App\Models\TimBirokrasi;
 use Filament\Forms;
@@ -64,13 +65,9 @@ class TimBirokrasiResource extends Resource
                             ->imageEditor()
                             ->columnSpanFull(),
 
-                        Forms\Components\TextInput::make('urutan')
-                            ->label('Urutan Tampil')
-                            ->numeric()
-                            ->minValue(1)
-                            ->required()
-                            ->default(fn () => (\App\Models\TimBirokrasi::max('urutan') ?? 0) + 1)
-                            ->helperText('Angka kecil akan tampil lebih dulu'),
+                        // Pakai komponen kustom kamu + batasi 1–10
+                        OrderField::make('tim_birokrasis', 'Urutan Tampil', 10)
+                            ->helperText('Angka kecil tampil lebih dulu'),
 
                         Forms\Components\Toggle::make('aktif')
                             ->label('Aktif')
@@ -146,11 +143,12 @@ class TimBirokrasiResource extends Resource
                     ])
                     ->native(false),
 
+                // TernaryFilter tidak punya ->boolean() di Filament v3 — cukup label saja
                 Tables\Filters\TernaryFilter::make('aktif')
                     ->label('Status Aktif')
-                    ->boolean()
                     ->trueLabel('Aktif')
                     ->falseLabel('Tidak Aktif')
+                    ->placeholder('Semua')
                     ->native(false),
             ])
             ->actions([
@@ -171,11 +169,11 @@ class TimBirokrasiResource extends Resource
     }
 
     // Gate / izin
-    public static function canViewAny(): bool     { return Auth::user()?->can('cms_about') ?? false; }
-    public static function canAccess(): bool      { return static::canViewAny(); }
-    public static function canCreate(): bool      { return Auth::user()?->can('cms_about') ?? false; }
-    public static function canEdit($record): bool { return Auth::user()?->can('cms_about') ?? false; }
-    public static function canDelete($record): bool { return Auth::user()?->can('cms_about') ?? false; }
+    public static function canViewAny(): bool        { return Auth::user()?->can('cms_about') ?? false; }
+    public static function canAccess(): bool         { return static::canViewAny(); }
+    public static function canCreate(): bool         { return Auth::user()?->can('cms_about') ?? false; }
+    public static function canEdit($record): bool    { return Auth::user()?->can('cms_about') ?? false; }
+    public static function canDelete($record): bool  { return Auth::user()?->can('cms_about') ?? false; }
     public static function shouldRegisterNavigation(): bool { return Auth::user()?->can('cms_about') ?? false; }
 
     public static function getPages(): array

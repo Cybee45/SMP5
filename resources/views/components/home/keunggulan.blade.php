@@ -7,7 +7,7 @@
     modalIconHtml: '',
   }"
   x-effect="document.body.style.overflow = modalOpen ? 'hidden' : ''"
-  class="py-12 sm:py-16 lg:py-24"
+  class="relative py-12 sm:py-16 lg:py-24 scroll-mt-24 md:scroll-mt-28"
   data-aos="fade-up"
   data-aos-duration="800"
   data-aos-easing="ease-out-cubic"
@@ -15,10 +15,11 @@
   data-aos-anchor-placement="top-bottom">
 
   <div class="absolute top-0 left-0 z-20 h-20 md:h-24 w-full 
-                bg-gradient-to-b from-white/90 via-white/60 to-transparent 
-                backdrop-blur-sm pointer-events-none"></div>
+              bg-gradient-to-b from-white/90 via-white/60 to-transparent 
+              backdrop-blur-sm pointer-events-none"></div>
 
-  <div class="px-4 sm:px-8 lg:px-12">
+  {{-- Tambah padding-top untuk mobile/tablet + padding-bottom KHUSUS mobile --}}
+  <div class="px-4 sm:px-8 lg:px-12 pt-20 sm:pt-24 md:pt-28 lg:pt-0 pb-16 sm:pb-0">
     @php
       $sectionKeunggulan = \App\Models\SectionKeunggulan::where('aktif', true)->first();
     @endphp
@@ -36,8 +37,8 @@
       </p>
     </div>
 
-    <!-- Grid Kartu -->
-    <div class="grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-4 sm:gap-8"
+    <!-- Grid Kartu (lebih rapat & 2 kolom di mobile supaya tidak jumbo) -->
+    <div class="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4 sm:gap-6 lg:gap-8"
          data-aos="fade-up"
          data-aos-delay="80"
          data-aos-duration="700">
@@ -67,13 +68,16 @@
             modalIconHtml = `<div class=&quot;flex items-center justify-center h-20 w-20 rounded-full ring-4 ring-white bg-gradient-to-br {{ $bg }} mx-auto mb-6&quot;>{!! $icon !!}</div>`;
             modalOpen = true;
           "
-          class="group bg-white p-8 rounded-3xl shadow-lg transition-all duration-500 ease-in-out hover:shadow-2xl hover:-translate-y-2 flex flex-col items-center text-center cursor-pointer focus:outline-none focus-visible:ring-2 focus-visible:ring-sky-500 focus-visible:ring-offset-2">
+          class="group bg-white p-5 sm:p-6 lg:p-8 rounded-2xl sm:rounded-3xl shadow-lg transition-all duration-500 ease-in-out
+                 hover:shadow-2xl hover:-translate-y-2 flex flex-col items-center text-center cursor-pointer
+                 focus:outline-none focus-visible:ring-2 focus-visible:ring-sky-500 focus-visible:ring-offset-2">
 
-          <div class="flex items-center justify-center h-20 w-20 rounded-full mb-6 ring-4 ring-white bg-gradient-to-br {{ $bg }}">
+          <div class="flex items-center justify-center h-14 w-14 sm:h-16 sm:w-16 lg:h-20 lg:w-20 mb-4 sm:mb-5
+                      ring-4 ring-white rounded-full bg-gradient-to-br {{ $bg }}">
             {!! html_entity_decode($icon) !!}
           </div>
 
-          <h3 class="text-lg font-semibold text-gray-900">{{ $item->judul }}</h3>
+          <h3 class="text-sm sm:text-base md:text-lg font-semibold text-gray-900">{{ $item->judul }}</h3>
         </button>
       @empty
         <!-- kosong -->
@@ -97,7 +101,7 @@
         x-show="modalOpen"
         x-transition.opacity
         x-transition.scale.origin.center
-        class="relative w-full max-w-lg bg-white rounded-2xl shadow-xl p-8 text-center">
+        class="relative w-full max-w-lg bg-white rounded-2xl shadow-xl p-6 sm:p-8 text-center">
 
         <button
           @click="modalOpen=false"
@@ -110,11 +114,12 @@
 
         <div x-html="modalIconHtml"></div>
 
-        <h3 class="text-2xl font-bold text-gray-900 mb-4" x-text="modalTitle"></h3>
-        <p class="text-base text-gray-600 leading-relaxed" x-text="modalDesc"></p>
+        <h3 class="text-xl sm:text-2xl font-bold text-gray-900 mb-3 sm:mb-4" x-text="modalTitle"></h3>
+        <p class="text-sm sm:text-base text-gray-600 leading-relaxed" x-text="modalDesc"></p>
       </div>
     </div>
   </template>
+
   <div class="absolute bottom-0 left-0 w-full h-20 md:h-24 bg-gradient-to-t from-slate-50/95 via-slate-50/70 to-transparent backdrop-blur-sm pointer-events-none z-20"></div>
 </section>
 @endif

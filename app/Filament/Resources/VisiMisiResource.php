@@ -16,15 +16,11 @@ class VisiMisiResource extends Resource
     protected static ?string $model = VisiMisi::class;
 
     protected static ?string $navigationIcon = 'heroicon-o-eye';
-
     protected static ?string $navigationGroup = 'CMS About';
-
     protected static ?string $navigationLabel = 'Visi & Misi';
-    
     protected static ?int $navigationSort = 2;
 
     protected static ?string $modelLabel = 'Visi & Misi';
-
     protected static ?string $pluralModelLabel = 'Visi & Misi';
 
     public static function form(Form $form): Form
@@ -38,7 +34,7 @@ class VisiMisiResource extends Resource
                             ->required()
                             ->maxLength(255)
                             ->default('Arah & Fokus'),
-                        
+
                         Forms\Components\TextInput::make('judul_section')
                             ->label('Judul Section')
                             ->required()
@@ -49,7 +45,7 @@ class VisiMisiResource extends Resource
                 Forms\Components\Section::make('Konten Visi')
                     ->schema([
                         Forms\Components\Textarea::make('visi')
-                            ->label('Visi Sekolah'->required())
+                            ->label('Visi Sekolah')
                             ->required()
                             ->rows(4)
                             ->columnSpanFull()
@@ -59,13 +55,13 @@ class VisiMisiResource extends Resource
                 Forms\Components\Section::make('Konten Misi')
                     ->schema([
                         Forms\Components\Repeater::make('misi')
-                            ->label('Misi Sekolah'->required())
+                            ->label('Misi Sekolah')
                             ->schema([
                                 Forms\Components\Textarea::make('item')
                                     ->label('Poin Misi')
                                     ->required()
                                     ->rows(2)
-                                    ->placeholder('Tulis satu poin misi...')
+                                    ->placeholder('Tulis satu poin misi...'),
                             ])
                             ->addActionLabel('+ Tambah Misi')
                             ->defaultItems(1)
@@ -81,7 +77,7 @@ class VisiMisiResource extends Resource
                                     ->label('Poin Tujuan')
                                     ->required()
                                     ->rows(2)
-                                    ->placeholder('Tulis satu poin tujuan...')
+                                    ->placeholder('Tulis satu poin tujuan...'),
                             ])
                             ->addActionLabel('+ Tambah Tujuan')
                             ->columnSpanFull(),
@@ -90,7 +86,7 @@ class VisiMisiResource extends Resource
                 Forms\Components\Section::make('Status')
                     ->schema([
                         Forms\Components\Toggle::make('aktif')
-                            ->label('Aktif'->required())
+                            ->label('Aktif')
                             ->default(true)
                             ->helperText('Hanya satu visi misi yang boleh aktif'),
                     ]),
@@ -105,25 +101,25 @@ class VisiMisiResource extends Resource
                     ->label('Sub Judul')
                     ->searchable()
                     ->limit(20),
-                    
+
                 Tables\Columns\TextColumn::make('judul_section')
                     ->label('Judul Section')
                     ->searchable()
                     ->limit(30),
-                    
+
                 Tables\Columns\TextColumn::make('visi')
-                    ->label('Visi'->required())
+                    ->label('Visi')
                     ->limit(50)
                     ->wrap(),
-                    
+
                 Tables\Columns\IconColumn::make('aktif')
-                    ->label('Status'->required())
+                    ->label('Status')
                     ->boolean()
                     ->trueIcon('heroicon-m-check-circle')
                     ->falseIcon('heroicon-m-x-circle')
                     ->trueColor('success')
                     ->falseColor('danger'),
-                    
+
                 Tables\Columns\TextColumn::make('created_at')
                     ->label('Dibuat')
                     ->dateTime('d/m/Y H:i')
@@ -132,7 +128,7 @@ class VisiMisiResource extends Resource
             ])
             ->filters([
                 Tables\Filters\TernaryFilter::make('aktif')
-                    ->label('Status Aktif'->required())
+                    ->label('Status Aktif')
                     ->boolean()
                     ->trueLabel('Aktif')
                     ->falseLabel('Tidak Aktif')
@@ -200,5 +196,4 @@ class VisiMisiResource extends Resource
     {
         return 'uuid_id';
     }
-
 }

@@ -1,0 +1,113 @@
+<?php
+
+namespace App\Filament\Resources;
+
+use App\Filament\Resources\MediaKategoriResource\Pages;
+use App\Models\MediaKategori;
+use Filament\Forms;
+use Filament\Forms\Form;
+use Filament\Resources\Resource;
+use Filament\Tables;
+use Filament\Tables\Table;
+
+class MediaKategoriResource extends Resource
+{
+    protected static ?string $model = MediaKategori::class;
+
+    protected static ?string $navigationIcon  = 'heroicon-o-tag';
+    protected static ?string $navigationGroup = 'CMS Media';
+    protected static ?string $navigationLabel = 'Kategori Galeri';
+    protected static ?int    $navigationSort  = 1;
+
+    public static function form(Form $form): Form
+    {
+        return $form->schema([
+            Forms\Components\Section::make()
+                ->schema([
+                    Forms\Components\TextInput::make('nama')
+                        ->label('Nama')
+                        ->required()
+                        ->maxLength(100)
+                        ->live(onBlur: true),
+
+                    // slug disembunyikan; diasumsikan diisi otomatis di model / observer
+                    Forms\Components\Hidden::make('slug'),
+
+                    Forms\Components\ColorPicker::make('color')
+                        ->label('Warna Badge')
+                        ->nullable(),
+
+                    Forms\Components\TextInput::make('urutan')
+                        ->label('Urutan')
+                        ->numeric()
+                        ->minValue(1)
+                        ->required()
+                        ->default(fn () => (\App\Models\MediaKategori::max('urutan') ?? 0) + 1),
+
+                    Forms\Components\Toggle::make('aktif')
+                        ->label('Aktif')
+                        ->default(true),
+                ])
+                ->columns(2),
+        ]);
+    }
+
+    public static function table(Table $table): Table
+    {
+        return $table->columns([
+            Tables\Columns\TextColumn::make('nama')
+                ->label('Nama')
+                ->sortable()
+                ->searchable(),
+
+            Tables\Columns\TextColumn::make('slug')
+                ->label('Slug')
+                ->toggleable(isToggledHiddenByDefault: true),
+
+            Tables\Columns\TextColumn::make('urutan')
+                ->label('Urutan')
+                ->badge()
+                ->sortable(),
+
+            Tables\Columns\IconColumn::make('aktif')
+                ->label('Aktif')
+                ->boolean(),
+
+            Tables\Columns\TextColumn::make('created_at')
+                ->label('Dibuat')
+                ->dateTime('d/m/Y H:i')
+                ->sortable()
+                ->toggleable(isToggledHiddenByDefault: true),
+        ])
+        ->actions([
+            Tables\Actions\EditAction::make(),
+            Tables\Actions\DeleteAction::make(),
+        ])
+        ->bulkActions([
+            Tables\Actions\BulkActionGroup::make([
+                Tables\Actions\DeleteBulkAction::make(),
+            ]),
+        ])
+        ->defaultSort('urutan', 'asc');
+    }
+
+    public static function getRelations(): array
+    {
+        return [];
+    }
+
+    public static function getPages(): array
+    {
+        return [
+            'index'  => Pages\ListMediaKategoris::route('/'),
+            'create' => Pages\CreateMediaKategori::route('/create'),
+            'edit'   => Pages\EditMediaKategori::route('/{record}/edit'),
+        ];
+    }
+
+    // hapus ini kalau tidak memakai uuid_id sebagai route key di tabel
+    public static function getRecordRouteKeyName(): string
+    {
+        return 'uuid_id';
+    }
+}

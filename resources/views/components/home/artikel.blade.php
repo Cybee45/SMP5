@@ -43,18 +43,22 @@
     <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
 
         {{-- Header --}}
-        <div class="text-center mb-12 lg:mb-16" data-aos="fade-up">
-            <h2 class="text-3xl md:text-4xl font-bold font-heading text-gray-900" 
-            data-aos="fade-up" data-aos-duration="800" data-aos-delay="100" data-aos-easing="ease-out-cubic">{{ $title }}</h2>
+        <div class="text-center mb-10 sm:mb-12 lg:mb-16" data-aos="fade-up">
+            <h2 class="text-3xl md:text-4xl font-bold font-heading text-gray-900"
+                data-aos="fade-up" data-aos-duration="800" data-aos-delay="100" data-aos-easing="ease-out-cubic">
+                {{ $title }}
+            </h2>
             <p class="text-slate-600 mt-3 max-w-2xl mx-auto text-base md:text-lg"
-            data-aos="fade-up" data-aos-duration="800" data-aos-delay="100" data-aos-easing="ease-out-cubic">{{ $subtitle }}</p>
+               data-aos="fade-up" data-aos-duration="800" data-aos-delay="100" data-aos-easing="ease-out-cubic">
+                {{ $subtitle }}
+            </p>
         </div>
 
         @if($featured)
-        {{-- [REDESIGNED] Grid Layout --}}
-        <div class="grid grid-cols-1 gap-8 lg:grid-cols-3">
+        {{-- Grid Layout --}}
+        <div class="grid grid-cols-1 gap-6 md:gap-8 lg:grid-cols-3">
 
-            {{-- [REDESIGNED] FEATURED CARD (Kiri) --}}
+            {{-- FEATURED (kiri, full-width di mobile) --}}
             @php
                 $fImg   = $img($featured);
                 [$fCat, $fCls] = $badge($featured);
@@ -62,31 +66,37 @@
                 $fSlug  = data_get($featured,'slug');
                 $fRing  = data_get($featured,'excerpt') ?? Str::limit(strip_tags((string)data_get($featured,'konten')), 130);
             @endphp
+
             <article
                 class="group relative lg:col-span-2 bg-gray-900 rounded-2xl overflow-hidden shadow-lg transition-all duration-300 hover:shadow-2xl"
                 data-aos="fade-right" data-aos-duration="700">
-                
-                {{-- Background Image --}}
+
+                {{-- BG Image --}}
                 <div class="absolute inset-0">
                     @if($fImg)
                         <img src="{{ $fImg }}" alt="{{ $fJudul }}"
-                            class="w-full h-full object-cover transition-transform duration-500 ease-in-out group-hover:scale-105"
-                            loading="lazy">
+                             class="w-full h-full object-cover transition-transform duration-500 ease-in-out group-hover:scale-105"
+                             loading="lazy">
                     @else
                         <div class="w-full h-full bg-gradient-to-br from-sky-500 to-indigo-600"></div>
                     @endif
                 </div>
 
-                {{-- Gradient Overlay --}}
+                {{-- Overlay --}}
                 <div class="absolute inset-0 bg-gradient-to-t from-black/80 via-black/50 to-transparent"></div>
 
-                {{-- Content --}}
-                <div class="relative h-full flex flex-col justify-end p-6 sm:p-8 min-h-[400px] md:min-h-[450px]">
-                    <div class="flex items-center gap-x-4 text-xs mb-2">
-                        <time datetime="{{ (data_get($featured,'tanggal_publikasi') ?: data_get($featured,'created_at'))->toIso8601String() }}" class="text-gray-300">{{ $tgl($featured) }}</time>
-                        <span class="relative z-10 rounded-full px-3 py-1 font-medium text-white bg-white/10 ring-1 ring-white/20">{{ $fCat }}</span>
+                {{-- Content (tinggi disesuaikan agar tidak jumbo di mobile) --}}
+                <div class="relative h-full flex flex-col justify-end p-5 sm:p-6 md:p-8
+                            min-h-[260px] sm:min-h-[320px] md:min-h-[420px] lg:min-h-[460px]">
+                    <div class="flex items-center gap-x-4 text-[11px] sm:text-xs mb-1.5 sm:mb-2">
+                        <time datetime="{{ (data_get($featured,'tanggal_publikasi') ?: data_get($featured,'created_at'))->toIso8601String() }}"
+                              class="text-gray-300">{{ $tgl($featured) }}</time>
+                        <span class="relative z-10 rounded-full px-2.5 py-1 font-medium text-white bg-white/10 ring-1 ring-white/20">
+                            {{ $fCat }}
+                        </span>
                     </div>
-                    <h3 class="text-2xl lg:text-3xl font-bold leading-tight text-white mb-3 line-clamp-3">
+
+                    <h3 class="text-xl sm:text-2xl lg:text-3xl font-bold leading-tight text-white mb-2.5 sm:mb-3 line-clamp-3">
                         @if($fSlug)
                             <a href="{{ route('blog.show', $fSlug) }}">
                                 <span class="absolute inset-0" aria-hidden="true"></span>
@@ -96,10 +106,10 @@
                             {{ $fJudul }}
                         @endif
                     </h3>
+
                     <p class="text-gray-300 text-sm md:text-base line-clamp-2">{{ $fRing }}</p>
-                    
-                    {{-- [ADDED] Tombol Baca Selengkapnya --}}
-                    <div class="mt-4 inline-flex items-center font-semibold text-white group-hover:text-indigo-300 transition-colors duration-300">
+
+                    <div class="mt-3 sm:mt-4 inline-flex items-center font-semibold text-white group-hover:text-indigo-300 transition-colors duration-300">
                         Baca Selengkapnya
                         <svg class="w-4 h-4 ml-1.5 transition-transform duration-300 group-hover:translate-x-1" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor">
                             <path fill-rule="evenodd" d="M3 10a.75.75 0 01.75-.75h10.638L10.23 5.29a.75.75 0 111.04-1.08l5.5 5.25a.75.75 0 010 1.08l-5.5 5.25a.75.75 0 11-1.04-1.08l4.158-3.96H3.75A.75.75 0 013 10z" clip-rule="evenodd" />
@@ -108,8 +118,8 @@
                 </div>
             </article>
 
-            {{-- [REDESIGNED] Kolom untuk 2 kartu di kanan --}}
-            <div class="flex flex-col gap-8">
+            {{-- Dua kartu kanan (stack di mobile, nggak jumbo) --}}
+            <div class="flex flex-col gap-6 md:gap-8">
                 @foreach($others as $i => $a)
                     @php
                         $aImg   = $img($a);
@@ -117,28 +127,31 @@
                         $aJudul = data_get($a,'judul','Tanpa Judul');
                         $aSlug  = data_get($a,'slug');
                     @endphp
+
                     <article
                         class="group relative flex flex-col bg-white rounded-2xl overflow-hidden shadow-lg transition-all duration-300 hover:shadow-2xl hover:-translate-y-1"
                         data-aos="fade-left" data-aos-duration="700" data-aos-delay="{{ 100 + ($i*100) }}">
-                        
-                        {{-- Image container --}}
-                        <div class="relative h-48 overflow-hidden">
-                             @if($aImg)
+
+                        {{-- Image: tinggi kecil di mobile, naik bertahap --}}
+                        <div class="relative h-36 sm:h-40 md:h-44 overflow-hidden">
+                            @if($aImg)
                                 <img src="{{ $aImg }}" alt="{{ $aJudul }}"
-                                    class="w-full h-full object-cover transition-transform duration-500 ease-in-out group-hover:scale-105"
-                                    loading="lazy">
+                                     class="w-full h-full object-cover transition-transform duration-500 ease-in-out group-hover:scale-105"
+                                     loading="lazy">
                             @else
                                 <div class="w-full h-full bg-gradient-to-br from-sky-400 to-indigo-500"></div>
                             @endif
                         </div>
-                        
+
                         {{-- Content --}}
-                        <div class="p-5 flex flex-col flex-grow">
-                            <div class="flex items-center gap-x-3 text-xs mb-2">
-                                <time datetime="{{ (data_get($a,'tanggal_publikasi') ?: data_get($a,'created_at'))->toIso8601String() }}" class="text-gray-500">{{ $tgl($a) }}</time>
+                        <div class="p-4 sm:p-5 flex flex-col flex-grow">
+                            <div class="flex items-center gap-x-3 text-[11px] sm:text-xs mb-1.5 sm:mb-2">
+                                <time datetime="{{ (data_get($a,'tanggal_publikasi') ?: data_get($a,'created_at'))->toIso8601String() }}"
+                                      class="text-gray-500">{{ $tgl($a) }}</time>
                                 <span class="relative z-10 rounded-full px-3 py-1 font-medium {{ $aCls }}">{{ $aCat }}</span>
                             </div>
-                            <h4 class="text-base font-bold text-gray-900 flex-grow line-clamp-2">
+
+                            <h4 class="text-sm sm:text-base font-bold text-gray-900 flex-grow line-clamp-2">
                                 @if($aSlug)
                                     <a href="{{ route('blog.show', $aSlug) }}">
                                         <span class="absolute inset-0" aria-hidden="true"></span>
@@ -148,8 +161,8 @@
                                     {{ $aJudul }}
                                 @endif
                             </h4>
-                            {{-- [ADDED] Tombol Baca Selengkapnya --}}
-                            <div class="mt-auto pt-2 inline-flex items-center text-sm font-semibold text-indigo-600 group-hover:text-indigo-700 transition-colors duration-300">
+
+                            <div class="mt-2 sm:mt-3 inline-flex items-center text-xs sm:text-sm font-semibold text-indigo-600 group-hover:text-indigo-700 transition-colors duration-300">
                                 Baca Selengkapnya
                                 <svg class="w-4 h-4 ml-1.5 transition-transform duration-300 group-hover:translate-x-1" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor">
                                     <path fill-rule="evenodd" d="M3 10a.75.75 0 01.75-.75h10.638L10.23 5.29a.75.75 0 111.04-1.08l5.5 5.25a.75.75 0 010 1.08l-5.5 5.25a.75.75 0 11-1.04-1.08l4.158-3.96H3.75A.75.75 0 013 10z" clip-rule="evenodd" />
@@ -162,11 +175,10 @@
 
         </div>
 
-        {{-- [ADDED] Tombol "Selengkapnya" --}}
-        <div class="mt-12 text-center" data-aos="fade-up" data-aos-delay="200">
-            {{-- Pastikan route 'blog.index' ada di web.php Anda --}}
-            <a href="{{ route('blog.index') }}" 
-               class="inline-flex items-center justify-center px-6 py-3 border border-transparent text-base font-semibold rounded-lg text-white bg-indigo-600 hover:bg-indigo-700 transition-all duration-300 shadow-lg hover:shadow-indigo-500/40 transform hover:-translate-y-1 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500">
+        {{-- CTA --}}
+        <div class="mt-10 sm:mt-12 text-center" data-aos="fade-up" data-aos-delay="200">
+            <a href="{{ route('blog.index') }}"
+               class="inline-flex items-center justify-center px-6 py-3 border border-transparent text-sm sm:text-base font-semibold rounded-lg text-white bg-indigo-600 hover:bg-indigo-700 transition-all duration-300 shadow-lg hover:shadow-indigo-500/40 transform hover:-translate-y-1 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500">
                 Lihat Semua Berita
                 <svg class="w-5 h-5 ml-2" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor" aria-hidden="true">
                     <path fill-rule="evenodd" d="M3 10a.75.75 0 01.75-.75h10.638L10.23 5.29a.75.75 0 111.04-1.08l5.5 5.25a.75.75 0 010 1.08l-5.5 5.25a.75.75 0 11-1.04-1.08l4.158-3.96H3.75A.75.75 0 013 10z" clip-rule="evenodd" />

@@ -6,6 +6,7 @@ use App\Filament\Resources\ArtikelResource\Pages;
 use App\Models\Artikel;
 use Filament\Forms;
 use Filament\Forms\Form;
+use Filament\Forms\Get;
 use Filament\Resources\Resource;
 use Filament\Tables;
 use Filament\Tables\Table;
@@ -71,10 +72,20 @@ class ArtikelResource extends Resource
                     ->rules(['required', 'exists:kategori_artikels,id'])
                     ->placeholder('— Pilih kategori —'),
 
+                // ⬇️ Fix utama: wajib saat published, default now() jika kosong
                 Forms\Components\DateTimePicker::make('tanggal_publikasi')
                     ->label('Tanggal Publikasi')
-                    ->default(now())
-                    ->nullable(),
+                    ->seconds(false)
+                    ->nullable() // tetap boleh null untuk draft/archived
+                    ->required(fn (Get $get) => $get('status') === 'published')
+                    ->default(fn (Get $get) => $get('status') === 'published' ? now() : null)
+                    ->dehydrateStateUsing(function ($state, Get $get) {
+                        // Safety net: kalau published & state kosong → isi now()
+                        if ($get('status') === 'published' && empty($state)) {
+                            return now();
+                        }
+                        return $state;
+                    }),
 
                 Forms\Components\Select::make('status')
                     ->label('Status Artikel')

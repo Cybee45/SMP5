@@ -2,6 +2,7 @@
 
 namespace App\Filament\Resources;
 
+use App\Support\OrderField;
 use App\Filament\Resources\HeroBlogResource\Pages;
 use App\Models\HeroBlog;
 use Filament\Forms;
@@ -15,10 +16,10 @@ class HeroBlogResource extends Resource
 {
     protected static ?string $model = HeroBlog::class;
 
-    protected static ?string $navigationIcon = 'heroicon-o-document-text';
+    protected static ?string $navigationIcon  = 'heroicon-o-document-text';
     protected static ?string $navigationGroup = 'CMS Konten';
     protected static ?string $navigationLabel = 'Hero Halaman Blog';
-    protected static ?int $navigationSort = 3;
+    protected static ?int    $navigationSort  = 3;
 
     public static function canViewAny(): bool
     {
@@ -42,52 +43,46 @@ class HeroBlogResource extends Resource
 
     public static function form(Form $form): Form
     {
-        return $form
-            ->schema([
-                Forms\Components\Section::make('Hero Blog Information')
-                    ->schema([
-                        Forms\Components\TextInput::make('judul')
-                            ->label('Judul')
-                            ->required()
-                            ->maxLength(255),
+        return $form->schema([
+            Forms\Components\Section::make('Hero Blog Information')
+                ->schema([
+                    Forms\Components\TextInput::make('judul')
+                        ->label('Judul')
+                        ->required()
+                        ->maxLength(255),
 
-                        Forms\Components\TextInput::make('subjudul')
-                            ->label('Sub Judul')
-                            ->maxLength(255),
+                    Forms\Components\TextInput::make('subjudul')
+                        ->label('Sub Judul')
+                        ->maxLength(255),
 
-                        Forms\Components\Textarea::make('deskripsi')
-                            ->label('Deskripsi')
-                            ->rows(3)
-                            ->required(), // hapus jika kolom deskripsi nullable di DB
+                    Forms\Components\Textarea::make('deskripsi')
+                        ->label('Deskripsi')
+                        ->rows(3)
+                        ->required(), // hapus ->required() jika kolom deskripsi nullable di DB
 
-                        Forms\Components\FileUpload::make('gambar_utama')
-                            ->label('Gambar Utama')
-                            ->image()
-                            ->directory('hero-blog'),
+                    Forms\Components\FileUpload::make('gambar_utama')
+                        ->label('Gambar Utama')
+                        ->image()
+                        ->directory('hero-blog'),
 
-                        Forms\Components\FileUpload::make('gambar_dekorasi')
-                            ->label('Gambar Dekorasi')
-                            ->image()
-                            ->directory('hero-blog'),
-
-                        Forms\Components\TextInput::make('urutan')
-                            ->label('Urutan')
-                            ->numeric()
-                            ->minValue(1)
-                            ->required()
-                            ->default(fn () => (\App\Models\HeroBlog::max('urutan') ?? 0) + 1),
-
-                        Forms\Components\Toggle::make('aktif')
-                            ->label('Aktif')
-                            ->default(true),
-                    ]),
-            ]);
+                    // Pakai komponen kustom kamu — table: 'hero_blogs', label: 'Urutan', max 10
+                    OrderField::make('hero_blogs', 'Urutan', 10),
+                    
+                    Forms\Components\Toggle::make('aktif')
+                        ->label('Aktif')
+                        ->default(true),
+                ]),
+        ]);
     }
 
     public static function table(Table $table): Table
     {
         return $table
             ->columns([
+                Tables\Columns\ImageColumn::make('gambar_utama')
+                    ->label('Gambar')
+                    ->circular(),
+
                 Tables\Columns\TextColumn::make('judul')
                     ->label('Judul')
                     ->searchable()
@@ -97,10 +92,6 @@ class HeroBlogResource extends Resource
                     ->label('Sub Judul')
                     ->searchable()
                     ->limit(50),
-
-                Tables\Columns\ImageColumn::make('gambar_utama')
-                    ->label('Gambar')
-                    ->circular(),
 
                 Tables\Columns\TextColumn::make('urutan')
                     ->label('Urutan')
@@ -120,7 +111,6 @@ class HeroBlogResource extends Resource
             ->filters([
                 Tables\Filters\TernaryFilter::make('aktif')
                     ->label('Status')
-                    ->boolean()
                     ->trueLabel('Aktif')
                     ->falseLabel('Tidak Aktif')
                     ->placeholder('Semua'),

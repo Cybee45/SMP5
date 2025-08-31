@@ -2,6 +2,7 @@
 
 namespace App\Filament\Resources;
 
+use App\Support\OrderField;
 use App\Filament\Resources\PrestasiAboutResource\Pages;
 use App\Models\PrestasiAbout;
 use Filament\Forms;
@@ -82,7 +83,7 @@ class PrestasiAboutResource extends Resource
                     ->imageEditor()
                     ->columnSpanFull(),
 
-                Forms\Components\TextInput::make('urutan')
+                OrderField::make('prestasi_abouts', 'Urutan')
                     ->label('Urutan Tampil')
                     ->numeric()
                     ->minValue(1)

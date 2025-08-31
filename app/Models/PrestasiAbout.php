@@ -10,17 +10,14 @@ class PrestasiAbout extends Model
 {
     use HasUuid, AutoOrder;
 
-    // Kolom UUID yang kamu pakai
-    protected $uuidColumn = 'uuid_id';
+    /** kolom UUID yang dipakai */
+    protected string $uuidColumn = 'uuid_id';
 
-    // Kolom urutan (boleh di-skip; default di trait = 'urutan')
-    protected string $orderColumn = 'urutan';
-
-    // Grouping urutan (opsional). Misal: per section akreditasi
-    protected array $orderGroupColumns = ['section_akreditasi_id'];
+    /** routing menggunakan UUID */
+    protected bool $routeKeyUsesUuid = true;
 
     protected $fillable = [
-        'uuid_id',        // pakai nama yang benar sesuai DB-mu
+        'uuid_id',
         'judul',
         'deskripsi',
         'gambar',
@@ -33,11 +30,7 @@ class PrestasiAbout extends Model
         'aktif' => 'boolean',
     ];
 
-    public function getRouteKeyName()
-    {
-        return 'id';
-    }
-
+    // scopes & relasi lain tetap aman
     public function scopeActive($q)  { return $q->where('aktif', true); }
     public function scopeOrdered($q) { return $q->orderBy('urutan'); }
 

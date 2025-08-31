@@ -9,7 +9,6 @@ use Filament\Forms\Form;
 use Filament\Forms\Components\TextInput;
 use Filament\Forms\Components\Textarea;
 use Filament\Forms\Components\Toggle;
-use Filament\Forms\Components\Select;
 use Filament\Forms\Components\FileUpload;
 use Filament\Forms\Components\Hidden;
 use Filament\Resources\Resource;
@@ -24,11 +23,11 @@ class HeroResource extends Resource
 {
     protected static ?string $model = Hero::class;
 
-    protected static ?string $navigationIcon = 'heroicon-o-rectangle-stack';
+    protected static ?string $navigationIcon  = 'heroicon-o-rectangle-stack';
     protected static ?string $navigationLabel = 'Hero Section';
     protected static ?string $pluralModelLabel = 'Hero Section';
     protected static ?string $navigationGroup = 'CMS Home';
-    protected static ?int $navigationSort = 1;
+    protected static ?int    $navigationSort  = 1;
 
     public static function getEloquentQuery(): Builder
     {
@@ -39,7 +38,7 @@ class HeroResource extends Resource
     {
         return $form->schema([
             Hidden::make('tipe')
-                ->default('home'->required()),
+                ->default('home'),
 
             TextInput::make('subjudul')
                 ->label('Subjudul')
@@ -47,7 +46,7 @@ class HeroResource extends Resource
                 ->placeholder('Contoh: Sambutan Hangat Kami'),
 
             TextInput::make('judul')
-                ->label('Judul Utama'->required())
+                ->label('Judul Utama')
                 ->required()
                 ->maxLength(255)
                 ->placeholder('Contoh: Selamat Datang di SMP 5 Sangatta Utara'),
@@ -83,7 +82,7 @@ class HeroResource extends Resource
                 ->nullable(),
 
             Toggle::make('aktif')
-                ->label('Tampilkan di Halaman Home'->required())
+                ->label('Tampilkan di Halaman Home')
                 ->default(true),
         ]);
     }
@@ -99,13 +98,13 @@ class HeroResource extends Resource
                     ->searchable(),
 
                 TextColumn::make('judul')
-                    ->label('Judul'->required())
+                    ->label('Judul')
                     ->limit(50)
                     ->sortable()
                     ->searchable(),
 
                 ToggleColumn::make('aktif')
-                    ->label('Aktif'->required()),
+                    ->label('Aktif'),
             ])
             ->defaultSort('created_at', 'desc');
     }
@@ -113,9 +112,9 @@ class HeroResource extends Resource
     public static function getPages(): array
     {
         return [
-            'index' => Pages\ListHeroes::route('/'),
+            'index'  => Pages\ListHeroes::route('/'),
             'create' => Pages\CreateHero::route('/create'),
-            'edit' => Pages\EditHero::route('/{record}/edit'),
+            'edit'   => Pages\EditHero::route('/{record}/edit'),
         ];
     }
 
@@ -158,5 +157,4 @@ class HeroResource extends Resource
     {
         return 'uuid_id';
     }
-
 }

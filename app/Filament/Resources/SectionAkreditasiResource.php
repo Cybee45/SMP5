@@ -2,6 +2,7 @@
 
 namespace App\Filament\Resources;
 
+use App\Support\OrderField;
 use App\Filament\Resources\SectionAkreditasiResource\Pages;
 use App\Models\SectionAkreditasi;
 use Filament\Forms;
@@ -22,10 +23,9 @@ class SectionAkreditasiResource extends Resource
     protected static ?string $navigationGroup  = 'CMS About';
     protected static ?int    $navigationSort   = 4;
 
-    // (opsional) pakai id agar route edit tidak error {record}
     public static function getRecordRouteKeyName(): string
     {
-        return 'id';
+        return 'uuid_id';
     }
 
     // Permission gate
@@ -86,12 +86,8 @@ class SectionAkreditasiResource extends Resource
             ])->columns(2),
 
             Forms\Components\Section::make('Pengaturan')->schema([
-                Forms\Components\TextInput::make('urutan')
-                    ->label('Urutan')
-                    ->numeric()
-                    ->minValue(1)
-                    ->required()
-                    ->default(fn () => (\App\Models\SectionAkreditasi::max('urutan') ?? 0) + 1),
+                // OrderField kustom (1–10)
+                OrderField::make('section_akreditasis', 'Urutan', 10),
 
                 Forms\Components\Toggle::make('aktif')
                     ->label('Aktif')
@@ -142,10 +138,8 @@ class SectionAkreditasiResource extends Resource
             ->filters([
                 Tables\Filters\TernaryFilter::make('aktif')
                     ->label('Status')
-                    ->boolean()
                     ->trueLabel('Aktif')
-                    ->falseLabel('Tidak Aktif')
-                    ->native(false),
+                    ->falseLabel('Tidak Aktif'),
             ])
             ->actions([
                 Tables\Actions\EditAction::make(),

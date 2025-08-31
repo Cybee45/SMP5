@@ -1,0 +1,178 @@
+<?php
+
+namespace App\Filament\Resources;
+
+
+use App\Support\OrderField;use App\Filament\Resources\SectionAkreditasiResource\Pages;
+use App\Models\SectionAkreditasi;
+use Filament\Forms;
+use Filament\Forms\Form;
+use Filament\Resources\Resource;
+use Filament\Tables;
+use Filament\Tables\Table;
+use Illuminate\Support\Facades\Auth;
+
+class SectionAkreditasiResource extends Resource
+{
+    protected static ?string $model = SectionAkreditasi::class;
+
+    protected static ?string $navigationIcon  = 'heroicon-o-academic-cap';
+    protected static ?string $navigationLabel = 'Section Akreditasi';
+    protected static ?string $modelLabel       = 'Section Akreditasi';
+    protected static ?string $pluralModelLabel = 'Section Akreditasi';
+    protected static ?string $navigationGroup  = 'CMS About';
+    protected static ?int    $navigationSort   = 4;
+
+    /**
+     * PENTING: pakai uuid_id untuk {record} di URL.
+     */
+    public static function getRecordRouteKeyName(): string
+    {
+        return 'uuid_id';
+    }
+
+    // Permission gate
+    public static function canViewAny(): bool
+    {
+        return Auth::check() && Auth::user()->canAny(['cms_about', 'cms_achievements']);
+    }
+
+    public static function shouldRegisterNavigation(): bool
+    {
+        return static::canViewAny();
+    }
+
+    public static function canAccess(): bool
+    {
+        return static::canViewAny();
+    }
+
+    public static function canCreate(): bool
+    {
+        return Auth::check() && Auth::user()->canAny(['cms_about', 'cms_achievements']);
+    }
+
+    public static function canEdit($record): bool
+    {
+        return Auth::check() && Auth::user()->canAny(['cms_about', 'cms_achievements']);
+    }
+
+    public static function canDelete($record): bool
+    {
+        return Auth::check() && Auth::user()->canAny(['cms_about', 'cms_achievements']);
+    }
+
+    public static function form(Form $form): Form
+    {
+        return $form->schema([
+            Forms\Components\Section::make('Informasi Akreditasi')->schema([
+                Forms\Components\TextInput::make('judul_section')
+                    ->label('Judul Section')
+                    ->required()
+                    ->maxLength(255)
+                    ->default('Prestasi & Akreditasi'),
+
+                Forms\Components\Textarea::make('deskripsi_akreditasi')
+                    ->label('Deskripsi Akreditasi')
+                    ->required()
+                    ->rows(4)
+                    ->columnSpanFull(),
+
+                Forms\Components\FileUpload::make('gambar_akreditasi')
+                    ->label('Gambar Akreditasi')
+                    ->image()
+                    ->directory('akreditasi')
+                    ->visibility('public')
+                    ->imageEditor()
+                    ->imageEditorAspectRatios(['1:1','16:9','4:3'])
+                    ->columnSpanFull(),
+            ])->columns(2),
+
+            Forms\Components\Section::make('Pengaturan')->schema([
+                Forms\Components\OrderField::make('section_akreditasis', 'Urutan')
+                    ->label('Urutan')
+                    ->numeric()
+                    ->minValue(1)
+                    ->required()
+                    ->default(fn () => (\App\Models\SectionAkreditasi::max('urutan') ?? 0) + 1),
+
+                Forms\Components\Toggle::make('aktif')
+                    ->label('Aktif')
+                    ->default(true),
+            ])->columns(2),
+        ]);
+    }
+
+    public static function table(Table $table): Table
+    {
+        return $table
+            ->columns([
+                Tables\Columns\TextColumn::make('judul_section')
+                    ->label('Judul Section')
+                    ->searchable(),
+
+                Tables\Columns\TextColumn::make('deskripsi_akreditasi')
+                    ->label('Deskripsi')
+                    ->limit(50)
+                    ->wrap(),
+
+                Tables\Columns\ImageColumn::make('gambar_akreditasi')
+                    ->label('Gambar')
+                    ->square()
+                    ->defaultImageUrl(asset('assets/about/akreditas.png')),
+
+                Tables\Columns\TextColumn::make('urutan')
+                    ->label('Urutan')
+                    ->numeric()
+                    ->sortable(),
+
+                Tables\Columns\IconColumn::make('aktif')
+                    ->label('Status')
+                    ->boolean(),
+
+                Tables\Columns\TextColumn::make('created_at')
+                    ->label('Dibuat')
+                    ->dateTime()
+                    ->sortable()
+                    ->toggleable(isToggledHiddenByDefault: true),
+
+                Tables\Columns\TextColumn::make('updated_at')
+                    ->label('Diubah')
+                    ->dateTime()
+                    ->sortable()
+                    ->toggleable(isToggledHiddenByDefault: true),
+            ])
+            ->filters([
+                Tables\Filters\TernaryFilter::make('aktif')
+                    ->label('Status')
+                    ->boolean()
+                    ->trueLabel('Aktif')
+                    ->falseLabel('Tidak Aktif')
+                    ->native(false),
+            ])
+            ->actions([
+                Tables\Actions\EditAction::make(),
+                Tables\Actions\DeleteAction::make(),
+            ])
+            ->bulkActions([
+                Tables\Actions\BulkActionGroup::make([
+                    Tables\Actions\DeleteBulkAction::make(),
+                ]),
+            ])
+            ->defaultSort('urutan', 'asc');
+    }
+
+    public static function getRelations(): array
+    {
+        return [];
+    }
+
+    public static function getPages(): array
+    {
+        return [
+            'index'  => Pages\ListSectionAkreditasis::route('/'),
+            'create' => Pages\CreateSectionAkreditasi::route('/create'),
+            'edit'   => Pages\EditSectionAkreditasi::route('/{record}/edit'),
+        ];
+    }
+}

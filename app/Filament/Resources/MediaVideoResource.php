@@ -2,6 +2,7 @@
 
 namespace App\Filament\Resources;
 
+use App\Support\OrderField;
 use App\Filament\Resources\MediaVideoResource\Pages;
 use App\Models\MediaVideo;
 use Filament\Forms;
@@ -67,12 +68,8 @@ class MediaVideoResource extends Resource
                     ->imageEditor()
                     ->nullable(),
 
-                Forms\Components\TextInput::make('urutan')
-                    ->label('Urutan')
-                    ->numeric()
-                    ->minValue(1)
-                    ->required()
-                    ->default(fn () => (\App\Models\MediaVideo::max('urutan') ?? 0) + 1),
+                // OrderField kustom (1–10)
+                OrderField::make('media_videos', 'Urutan', 10),
 
                 Forms\Components\Toggle::make('aktif')
                     ->label('Aktif')
@@ -103,7 +100,8 @@ class MediaVideoResource extends Resource
                 Tables\Actions\BulkActionGroup::make([
                     Tables\Actions\DeleteBulkAction::make(),
                 ]),
-            ]);
+            ])
+            ->defaultSort('urutan', 'asc');
     }
 
     public static function getPages(): array
@@ -129,7 +127,7 @@ class MediaVideoResource extends Resource
         foreach ($patterns as $p) {
             if (preg_match($p, $url, $m)) return $m[1];
         }
-        if (preg_match('/^[a-zA-Z0-9_-]{11}$/', $url)) return $url; // kalau user tempel ID langsung
+        if (preg_match('/^[a-zA-Z0-9_-]{11}$/', $url)) return $url;
         return null;
     }
 

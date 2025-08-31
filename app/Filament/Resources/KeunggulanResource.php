@@ -2,6 +2,8 @@
 
 namespace App\Filament\Resources;
 
+
+use App\Support\OrderField;
 use App\Filament\Resources\KeunggulanResource\Pages;
 use App\Models\Keunggulan;
 use Filament\Forms\Form;
@@ -35,10 +37,12 @@ class KeunggulanResource extends Resource
 
             Textarea::make('deskripsi')
                 ->label('Deskripsi')
+                ->required() // ⬅️ WAJIB ISI
                 ->maxLength(1000)
+                ->dehydrateStateUsing(fn ($state) => $state ?? '') // ⬅️ kalau kosong, jadikan '' (bukan null)
                 ->placeholder('Contoh: Sekolah kami memiliki laboratorium, perpustakaan, dan ruang kelas multimedia.'),
 
-            TextInput::make('urutan')
+            OrderField::make('keunggulans', 'Urutan')
                 ->label('Urutan Tampil')
                 ->numeric()
                 ->minValue(1)

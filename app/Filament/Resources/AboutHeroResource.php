@@ -25,7 +25,7 @@ class AboutHeroResource extends Resource
     // 🔧 PENTING: paksa Filament pakai 'id' untuk {record}
     public static function getRecordRouteKeyName(): ?string
     {
-        return 'id';
+        return 'uuid_id';
     }
 
     public static function form(Form $form): Form
@@ -39,7 +39,7 @@ class AboutHeroResource extends Resource
                     ->default('Sekolah Menengah Unggulan di Sangatta Utara'),
 
                 Forms\Components\TextInput::make('judul')
-                    ->label('Judul Utama'->required())
+                    ->label('Judul Utama')
                     ->required()
                     ->maxLength(255)
                     ->placeholder('Gali ilmu, ukir prestasi, sambut masa depan gemilang.'),
@@ -64,7 +64,7 @@ class AboutHeroResource extends Resource
                     ->columnSpanFull(),
 
                 Forms\Components\Toggle::make('aktif')
-                    ->label('Aktif'->required())
+                    ->label('Aktif')
                     ->default(true)
                     ->helperText('Hanya satu hero yang boleh aktif'),
             ]),
@@ -81,7 +81,7 @@ class AboutHeroResource extends Resource
                     ->limit(30),
 
                 Tables\Columns\TextColumn::make('judul')
-                    ->label('Judul Utama'->required())
+                    ->label('Judul Utama')
                     ->searchable()
                     ->limit(40),
 
@@ -91,7 +91,7 @@ class AboutHeroResource extends Resource
                     ->size(50),
 
                 Tables\Columns\IconColumn::make('aktif')
-                    ->label('Status'->required())
+                    ->label('Status')
                     ->boolean()
                     ->trueIcon('heroicon-m-check-circle')
                     ->falseIcon('heroicon-m-x-circle')
@@ -106,7 +106,7 @@ class AboutHeroResource extends Resource
             ])
             ->filters([
                 Tables\Filters\TernaryFilter::make('aktif')
-                    ->label('Status Aktif'->required())
+                    ->label('Status Aktif')
                     ->boolean()
                     ->trueLabel('Aktif')
                     ->falseLabel('Tidak Aktif')

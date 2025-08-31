@@ -8,6 +8,7 @@ use App\Models\Statistik;
 use App\Models\Artikel;
 use App\Models\SectionAkreditasi;
 use App\Models\PrestasiAbout;
+use Illuminate\Http\Request;
 
 class PublicController extends Controller
 {

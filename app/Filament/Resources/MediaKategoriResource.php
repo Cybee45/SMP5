@@ -2,6 +2,7 @@
 
 namespace App\Filament\Resources;
 
+use App\Support\OrderField;
 use App\Filament\Resources\MediaKategoriResource\Pages;
 use App\Models\MediaKategori;
 use Filament\Forms;
@@ -30,19 +31,14 @@ class MediaKategoriResource extends Resource
                         ->maxLength(100)
                         ->live(onBlur: true),
 
-                    // slug disembunyikan; diasumsikan diisi otomatis di model / observer
                     Forms\Components\Hidden::make('slug'),
 
                     Forms\Components\ColorPicker::make('color')
                         ->label('Warna Badge')
                         ->nullable(),
 
-                    Forms\Components\TextInput::make('urutan')
-                        ->label('Urutan')
-                        ->numeric()
-                        ->minValue(1)
-                        ->required()
-                        ->default(fn () => (\App\Models\MediaKategori::max('urutan') ?? 0) + 1),
+                    // OrderField kustom (1–10)
+                    OrderField::make('media_kategoris', 'Urutan', 10),
 
                     Forms\Components\Toggle::make('aktif')
                         ->label('Aktif')
@@ -105,7 +101,6 @@ class MediaKategoriResource extends Resource
         ];
     }
 
-    // hapus ini kalau tidak memakai uuid_id sebagai route key di tabel
     public static function getRecordRouteKeyName(): string
     {
         return 'uuid_id';

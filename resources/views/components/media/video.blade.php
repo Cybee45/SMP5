@@ -87,8 +87,4 @@
       </div>
     </div>
   </div>
-  <!-- Gradasi blur bawah -->
-  <div class="absolute bottom-0 left-0 w-full h-20 md:h-24 
-              bg-gradient-to-t from-white/95 via-white/70 to-transparent 
-              backdrop-blur-sm pointer-events-none z-20"></div>
 </section>

@@ -2,6 +2,7 @@
 
 namespace App\Filament\Resources;
 
+use App\Support\OrderField;
 use App\Filament\Resources\MediaGaleriResource\Pages;
 use App\Models\MediaGaleri;
 use Filament\Forms;
@@ -32,7 +33,6 @@ class MediaGaleriResource extends Resource
                     ->required()
                     ->maxLength(255),
 
-                // Pilih kategori dari master (relasi)
                 Forms\Components\Select::make('media_kategori_id')
                     ->label('Kategori')
                     ->relationship('kategoriRef', 'nama')
@@ -55,12 +55,8 @@ class MediaGaleriResource extends Resource
                     ->imageEditor()
                     ->columnSpanFull(),
 
-                Forms\Components\TextInput::make('urutan')
-                    ->label('Urutan Tampil')
-                    ->numeric()
-                    ->minValue(1)
-                    ->required()
-                    ->default(fn () => (\App\Models\MediaGaleri::max('urutan') ?? 0) + 1),
+                // OrderField kustom (1–10)
+                OrderField::make('media_galeris', 'Urutan Tampil', 10),
 
                 Forms\Components\Toggle::make('aktif')
                     ->label('Aktif')
@@ -81,7 +77,6 @@ class MediaGaleriResource extends Resource
                 ->searchable()
                 ->limit(30),
 
-            // kategori dari relasi master
             Tables\Columns\TextColumn::make('kategoriRef.nama')
                 ->label('Kategori')
                 ->badge()
@@ -116,10 +111,8 @@ class MediaGaleriResource extends Resource
 
             Tables\Filters\TernaryFilter::make('aktif')
                 ->label('Status Aktif')
-                ->boolean()
                 ->trueLabel('Aktif')
-                ->falseLabel('Tidak Aktif')
-                ->native(false),
+                ->falseLabel('Tidak Aktif'),
         ])
         ->actions([
             Tables\Actions\EditAction::make(),

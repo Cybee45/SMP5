@@ -2,6 +2,7 @@
 
 namespace App\Filament\Resources;
 
+use App\Support\OrderField;
 use App\Filament\Resources\SpmhContentResource\Pages;
 use App\Models\SpmhContent;
 use Filament\Forms;
@@ -86,12 +87,8 @@ class SpmhContentResource extends Resource
                         ->placeholder('Deskripsi singkat untuk kartu')
                         ->helperText('Akan ditampilkan di bawah judul kartu'),
 
-                    Forms\Components\TextInput::make('urutan')
-                        ->label('Urutan Tampil')
-                        ->numeric()
-                        ->minValue(1)
-                        ->required()
-                        ->default(fn () => (\App\Models\SpmhContent::max('urutan') ?? 0) + 1)
+                    // OrderField kustom (1–10)
+                    OrderField::make('spmh_contents', 'Urutan Tampil', 10)
                         ->helperText('1 = Persyaratan, 2 = Tata Cara, 3 = Formulir'),
 
                     Forms\Components\Toggle::make('aktif')
@@ -262,7 +259,7 @@ class SpmhContentResource extends Resource
                 ->visible(fn (Forms\Get $get): bool => $get('jenis') === 'tata_cara')
                 ->columnSpanFull(),
 
-            // ========= File & Dokumen (hanya tampil kalau BUKAN "formulir", biar ga dobel) =========
+            // ========= File & Dokumen (non-formulir) =========
             Forms\Components\Section::make('File & Dokumen')
                 ->description('Upload file pendukung untuk konten ini')
                 ->schema([
@@ -289,7 +286,7 @@ class SpmhContentResource extends Resource
                 ->collapsible()
                 ->columnSpanFull(),
 
-            // ========= File Formulir (khusus jenis "formulir") =========
+            // ========= File Formulir (khusus "formulir") =========
             Forms\Components\Section::make('File Formulir')
                 ->description('Upload file PDF formulir pendaftaran')
                 ->schema([
@@ -373,10 +370,8 @@ class SpmhContentResource extends Resource
 
                 Tables\Filters\TernaryFilter::make('aktif')
                     ->label('Status')
-                    ->boolean()
                     ->trueLabel('Aktif')
-                    ->falseLabel('Tidak Aktif')
-                    ->native(false),
+                    ->falseLabel('Tidak Aktif'),
             ])
             ->actions([
                 Tables\Actions\ViewAction::make()

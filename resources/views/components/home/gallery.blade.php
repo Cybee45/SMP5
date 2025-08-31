@@ -23,19 +23,21 @@
         ]);
     }
     
-    // Duplikasi data untuk efek marquee
+    // Duplikasi data untuk efek marquee (fungsi bawaan tetap)
     $galleryItems = $galleryItems->merge($galleryItems);
     
-    // Variabel untuk tracking source data
+    // Tracking sumber data
     $isFromCMS = $mediaGaleris->count() > 0;
     $totalCMSItems = $mediaGaleris->count();
 
-    // Lebar & Tinggi card fix (ubah kalau perlu: w-80=320px, h-96=384px)
-    $cardW = 'w-80'; // <--- setel lebar di sini
-    $cardH = 'h-96'; // <--- setel tinggi di sini
+    // Ukuran card responsif (kecil di mobile, membesar bertahap)
+    // w-44(176) → w-56(224) → w-64(256) → w-72(288) → w-80(320)
+    // h-56(224) → h-64(256) → h-72(288) → h-80(320) → h-96(384)
+    $cardW = 'w-44 sm:w-56 md:w-64 lg:w-72 xl:w-80';
+    $cardH = 'h-56 sm:h-64 md:h-72 lg:h-80 xl:h-96';
 @endphp
 
-{{-- [MODIFIED] Tambahkan x-data untuk state modal --}}
+{{-- Section Media (marquee) --}}
 <section 
     x-data="{ 
         modalOpen: false, 
@@ -63,7 +65,7 @@
         </p>
     </div>
 
-    <!-- Kontainer marquee -->
+    <!-- Kontainer marquee (fungsi & style mask tetap) -->
     <div class="scroller" data-speed="slow" 
          data-aos="fade-up" data-aos-duration="900" data-aos-delay="300" data-aos-easing="ease-out-cubic"
          style="
@@ -79,7 +81,7 @@
       <div class="scroller__inner">
           
           @forelse($galleryItems as $item)
-              <!-- Card Galeri -->
+              <!-- Card Galeri (lebih kecil di mobile, ada jarak samping) -->
               <div 
                   @click="
                     modalOpen = true; 
@@ -87,7 +89,7 @@
                     modalTitle = '{{ addslashes($item['title']) }}';
                     modalDescription = '{{ addslashes($item['desc']) }}';
                   "
-                  class="flex-shrink-0 {{ $cardW }} {{ $cardH }} bg-gray-200 rounded-xl shadow-lg overflow-hidden group cursor-pointer
+                  class="flex-shrink-0 {{ $cardW }} {{ $cardH }} mx-2 sm:mx-3 bg-gray-200 rounded-xl shadow-lg overflow-hidden group cursor-pointer
                           transition-all duration-300 hover:shadow-2xl hover:-translate-y-2"
                   data-aos="zoom-in" data-aos-duration="800" data-aos-delay="400" data-aos-easing="ease-out-cubic">
                   
@@ -98,11 +100,13 @@
                        loading="lazy" decoding="async" draggable="false" />
               </div>
           @empty
-              <div class="flex-shrink-0 {{ $cardW }} {{ $cardH }} bg-white rounded-xl shadow-lg overflow-hidden flex flex-col"
+              <div class="flex-shrink-0 {{ $cardW }} {{ $cardH }} mx-2 sm:mx-3 bg-white rounded-xl shadow-lg overflow-hidden flex flex-col"
                    data-aos="fade-up" data-aos-duration="800" data-aos-delay="500">
                   <div class="relative w-full h-2/3 bg-gradient-to-r from-sky-400 to-blue-500 flex items-center justify-center">
                       <div class="text-center text-white">
-                          <i class="fas fa-camera text-3xl mb-2"></i>
+                          <svg xmlns="http://www.w3.org/2000/svg" class="h-8 w-8 mx-auto mb-2" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V8a2 2 0 00-2-2H5a2 2 0 00-2 2v9a2 2 0 002 2z"/>
+                          </svg>
                           <p class="text-sm">Belum ada galeri</p>
                       </div>
                   </div>

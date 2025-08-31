@@ -63,7 +63,7 @@ html, body {
     width: max-content;
     display: flex;
     flex-wrap: nowrap;
-    animation: scroll 40s linear infinite;
+    animation: scroll 30s linear infinite;
 }
 
 .scroller__inner > div {
@@ -80,7 +80,7 @@ html, body {
 
 @keyframes scroll {
     to {
-        transform: translate(-50%);
+        transform: translate(-60%);
     }
 }
 
@@ -134,3 +134,11 @@ video[controls]::-webkit-media-controls {
         .hover\:bg-instagram-gradient:hover {
             background-image: linear-gradient(to right top, #405de6, #5851db, #833ab4, #c13584, #e1306c, #fd1d1d, #f56040, #f77737, #fcaf45, #ffdc80);
         }
+
+  #media .masonry > * {
+    break-inside: avoid-column;
+    -webkit-column-break-inside: avoid;
+    display: inline-block;
+    width: 100%;
+    vertical-align: top;
+  }

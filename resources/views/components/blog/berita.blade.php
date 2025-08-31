@@ -48,7 +48,7 @@
         ->all();
 @endphp
 
-<!-- ===== Section Berita & Pengumuman (desain baru + fitur lengkap) ===== -->
+<!-- ===== Section Berita & Pengumuman (desain rapi & responsif ala galeri) ===== -->
 <section class="bg-slate-50 py-16 md:py-24 relative"
     x-data="{
         allPosts: {{ json_encode($postsData) }},
@@ -145,34 +145,37 @@
             </div>
         </div>
 
-        <!-- Grid Post (DESAIN BARU: card vertikal, gambar 16:9) -->
-        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+        <!-- Grid Post (rapi di mobile: 2 kolom, tidak jumbo) -->
+        <div class="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4 sm:gap-6">
             <template x-for="(post, index) in paginatedPosts" :key="post.id">
-                <article class="group flex flex-col bg-white rounded-2xl shadow-lg hover:shadow-2xl transition-all duration-300 ease-in-out overflow-hidden"
-                         data-aos="fade-up" :data-aos-delay="100 + (index * 100)">
-                    <!-- Image -->
-                    <div class="relative overflow-hidden">
-                        <a :href="'/blog/' + post.slug" class="block aspect-w-16 aspect-h-9">
+                <article
+                    class="group flex flex-col bg-white rounded-2xl shadow-lg hover:shadow-2xl transition-all duration-300 ease-in-out overflow-hidden"
+                    data-aos="fade-up" :data-aos-delay="100 + (index * 100)">
+                    <!-- Image wrapper: tinggi konsisten per breakpoint -->
+                    <a :href="'/blog/' + post.slug" class="block">
+                        <div class="w-full h-36 sm:h-40 md:h-44 lg:h-48 overflow-hidden">
                             <img :src="post.img"
                                  :alt="post.title"
                                  onerror="this.onerror=null;this.src='https://images.unsplash.com/photo-1556761175-5973dc0f32e7?q=80&w=2232&auto=format&fit=crop';"
                                  class="w-full h-full object-cover transition-transform duration-500 group-hover:scale-105">
-                        </a>
-                    </div>
+                        </div>
+                    </a>
+
                     <!-- Content -->
-                    <div class="p-6 flex flex-col justify-between flex-grow">
+                    <div class="p-4 sm:p-5 flex flex-col justify-between flex-grow">
                         <div>
-                            <div class="flex justify-between items-center mb-3">
-                                <span class="inline-block bg-indigo-100 text-indigo-800 text-xs font-semibold px-3 py-1 rounded-full" x-text="post.category"></span>
-                                <span class="text-xs text-gray-500" x-text="post.date"></span>
+                            <div class="flex justify-between items-center mb-2">
+                                <span class="inline-block bg-indigo-100 text-indigo-800 text-[11px] sm:text-xs font-semibold px-2.5 py-1 rounded-full"
+                                      x-text="post.category"></span>
+                                <span class="text-[11px] sm:text-xs text-gray-500" x-text="post.date"></span>
                             </div>
-                            <h3 class="text-lg font-bold text-gray-900 line-clamp-2 mb-2">
+                            <h3 class="text-sm sm:text-base font-bold text-gray-900 line-clamp-2 mb-1.5">
                                 <a :href="'/blog/' + post.slug" class="hover:text-indigo-600 transition-colors" x-text="post.title"></a>
                             </h3>
-                            <p class="text-sm text-gray-600 line-clamp-3" x-text="post.content"></p>
+                            <p class="text-xs sm:text-sm text-gray-600 line-clamp-3" x-text="post.content"></p>
                         </div>
-                        <div class="mt-4">
-                            <a :href="'/blog/' + post.slug" class="text-sm font-semibold text-indigo-600 hover:text-indigo-700 transition-colors group-hover:underline">
+                        <div class="mt-3">
+                            <a :href="'/blog/' + post.slug" class="text-xs sm:text-sm font-semibold text-indigo-600 hover:text-indigo-700 transition-colors group-hover:underline">
                                 Baca Selengkapnya <span class="inline-block transition-transform group-hover:translate-x-1">&rarr;</span>
                             </a>
                         </div>
@@ -182,27 +185,27 @@
 
             <!-- Tidak ada hasil -->
             <template x-if="paginatedPosts.length === 0">
-                <div class="text-center py-12 md:col-span-2 lg:col-span-3">
+                <div class="text-center py-12 col-span-2 md:col-span-3 lg:col-span-4">
                     <p class="text-gray-500">Tidak ada berita yang ditemukan untuk kategori ini.</p>
                 </div>
             </template>
         </div>
 
         <!-- Pagination -->
-        <nav class="mt-12 flex items-center justify-center gap-2" x-show="totalPages > 1">
+        <nav class="mt-10 sm:mt-12 flex items-center justify-center gap-2" x-show="totalPages > 1">
             <button @click="currentPage--" :disabled="currentPage === 1"
-                    class="inline-flex items-center justify-center w-10 h-10 rounded-lg border bg-white text-gray-700 hover:bg-gray-100 disabled:opacity-50 disabled:cursor-not-allowed transition">
+                    class="inline-flex items-center justify-center w-9 h-9 sm:w-10 sm:h-10 rounded-lg border bg-white text-gray-700 hover:bg-gray-100 disabled:opacity-50 disabled:cursor-not-allowed transition">
                 <svg class="w-5 h-5" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor"><path fill-rule="evenodd" d="M12.79 5.23a.75.75 0 01-.02 1.06L8.832 10l3.938 3.71a.75.75 0 11-1.04 1.08l-4.5-4.25a.75.75 0 010-1.08l4.5-4.25a.75.75 0 011.06.02z" clip-rule="evenodd" /></svg>
             </button>
             <template x-for="p in totalPages" :key="p">
                 <button @click="currentPage = p"
                         :class="p === currentPage ? 'bg-indigo-600 text-white' : 'border bg-white text-gray-700 hover:bg-gray-100'"
-                        class="w-10 h-10 rounded-lg text-sm font-medium transition">
+                        class="w-9 h-9 sm:w-10 sm:h-10 rounded-lg text-sm font-medium transition">
                     <span x-text="p"></span>
                 </button>
             </template>
             <button @click="currentPage++" :disabled="currentPage === totalPages"
-                    class="inline-flex items-center justify-center w-10 h-10 rounded-lg border bg-white text-gray-700 hover:bg-gray-100 disabled:opacity-50 disabled:cursor-not-allowed transition">
+                    class="inline-flex items-center justify-center w-9 h-9 sm:w-10 sm:h-10 rounded-lg border bg-white text-gray-700 hover:bg-gray-100 disabled:opacity-50 disabled:cursor-not-allowed transition">
                 <svg class="w-5 h-5" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor"><path fill-rule="evenodd" d="M7.21 14.77a.75.75 0 01.02-1.06L11.168 10 7.23 6.29a.75.75 0 111.04-1.08l4.5 4.25a.75.75 0 010 1.08l-4.5 4.25a.75.75 0 01-1.06-.02z" clip-rule="evenodd" /></svg>
             </button>
         </nav>

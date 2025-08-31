@@ -2,6 +2,7 @@
 
 namespace App\Filament\Resources;
 
+use App\Support\OrderField;
 use App\Filament\Resources\KategoriArtikelResource\Pages;
 use App\Models\KategoriArtikel;
 use Filament\Forms;
@@ -46,12 +47,8 @@ class KategoriArtikelResource extends Resource
                         ->rows(3)
                         ->nullable(),
 
-                    Forms\Components\TextInput::make('urutan')
-                        ->label('Urutan')
-                        ->numeric()
-                        ->minValue(1)
-                        ->required()
-                        ->default(fn () => (KategoriArtikel::max('urutan') ?? 0) + 1),
+                    // Pakai komponen kustom kamu, batasi 1–10
+                    OrderField::make('kategori_artikels', 'Urutan', 10),
 
                     Forms\Components\Toggle::make('aktif')
                         ->label('Aktif')
@@ -86,9 +83,10 @@ class KategoriArtikelResource extends Resource
                     ->boolean()
                     ->sortable(),
 
-                Tables\Columns\TextColumn::make('artikel_count')
+                // Hitung relasi secara efisien & sortable
+                Tables\Columns\TextColumn::make('artikels_count')
                     ->label('Jumlah Artikel')
-                    ->state(fn (KategoriArtikel $record) => $record->artikels()->count())
+                    ->counts('artikels')
                     ->sortable()
                     ->alignRight(),
 
@@ -114,7 +112,8 @@ class KategoriArtikelResource extends Resource
                 Tables\Actions\BulkActionGroup::make([
                     Tables\Actions\DeleteBulkAction::make(),
                 ]),
-            ]);
+            ])
+            ->defaultSort('urutan');
     }
 
     public static function getPages(): array

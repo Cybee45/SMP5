@@ -11,8 +11,16 @@ class FooterSetting extends Model
 
     protected $casts = [
         'menu_items' => 'array',
-        'aktif' => 'boolean',
+        'aktif'      => 'boolean',
     ];
+
+    /**
+     * Pakai uuid_id untuk route model binding
+     */
+    public function getRouteKeyName(): string
+    {
+        return 'uuid_id';
+    }
 
     protected static function boot()
     {
@@ -20,7 +28,7 @@ class FooterSetting extends Model
 
         static::creating(function ($model) {
             if (empty($model->uuid_id)) {
-                $model->uuid_id = Str::uuid();
+                $model->uuid_id = (string) Str::uuid();
             }
         });
     }

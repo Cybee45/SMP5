@@ -99,11 +99,6 @@
     }"
     @keydown.escape.window="modalOpen = false">
 
-    <!-- Gradasi Blur Atas -->
-    <div class="absolute top-0 left-0 w-full h-20 md:h-24 
-                bg-gradient-to-b from-white/95 via-white/70 to-transparent 
-                backdrop-blur-sm pointer-events-none z-20"></div>
-
     <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
         <!-- Header -->
         <div class="text-center mb-12" data-aos="fade-up">
@@ -169,20 +164,24 @@
             </div>
         </div>
 
-        <!-- Grid Galeri -->
-        <div id="gallery-grid" class="relative grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-8">
+        <!-- Galeri: ubah ke Masonry Columns (tanpa mengubah Alpine logic) -->
+        <div id="gallery-grid"
+             class="relative masonry columns-2 sm:columns-2 md:columns-3 lg:columns-4 gap-4 [column-fill:_balance]">
             <template x-for="(item, index) in paginatedItems" :key="(item.img || 'fallback') + index">
                 <div
                     @click="openModal(item)"
-                    class="relative z-0 aspect-[4/5] bg-gray-200 rounded-2xl shadow-lg overflow-hidden group cursor-pointer transition-all duration-300 hover:shadow-2xl hover:-translate-y-2"
+                    class="relative z-0 bg-gray-200 rounded-2xl shadow-lg overflow-hidden group cursor-pointer
+                           transition-all duration-300 hover:shadow-2xl hover:-translate-y-2
+                           mb-4 break-inside-avoid"
                     data-aos="fade-up"
                     :data-aos-delay="100 + (index * 50)">
 
                     <img :src="item.img || '{{ asset('assets/galery/smp_5-12.jpg') }}'"
                          :alt="item.title"
                          onerror="this.onerror=null;this.src='{{ asset('assets/galery/smp_5-12.jpg') }}';"
-                         class="absolute inset-0 w-full h-full object-cover transition-transform duration-500 ease-in-out group-hover:scale-110"
-                         loading="lazy">
+                         class="w-full h-auto object-cover transition-transform duration-500 ease-in-out group-hover:scale-110"
+                         loading="lazy"
+                         sizes="(max-width: 640px) 50vw, (max-width: 1024px) 33vw, 25vw">
 
                     <!-- Overlay hover -->
                     <div class="absolute inset-0 bg-gradient-to-t from-black/70 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300 flex flex-col justify-end p-5">
@@ -192,7 +191,7 @@
             </template>
 
             <template x-if="paginatedItems.length === 0">
-                <div class="text-center py-12 sm:col-span-2 lg:col-span-3">
+                <div class="text-center py-12">
                     <p class="text-gray-500">Tidak ada galeri yang ditemukan untuk kategori ini.</p>
                 </div>
             </template>
@@ -250,9 +249,4 @@
             </div>
         </div>
     </div>
-
-    <!-- Gradasi Blur Bawah -->
-    <div class="absolute bottom-0 left-0 w-full h-20 md:h-24 
-                bg-gradient-to-t from-white/95 via-white/70 to-transparent 
-                backdrop-blur-sm pointer-events-none z-20"></div>
 </section>

@@ -2,6 +2,7 @@
 
 namespace App\Filament\Resources;
 
+use App\Support\OrderField;
 use App\Filament\Resources\KontakResource\Pages;
 use App\Models\Kontak;
 use Filament\Forms;
@@ -114,12 +115,8 @@ class KontakResource extends Resource
                 Forms\Components\Section::make('Settings')
                     ->description('Pengaturan tampilan')
                     ->schema([
-                        Forms\Components\TextInput::make('urutan')
-                            ->label('Urutan')
-                            ->numeric()
-                            ->minValue(1)
-                            ->required()
-                            ->default(fn () => (\App\Models\Kontak::max('urutan') ?? 0) + 1)
+                        // Pakai komponen kustom OrderField (batas 1–10)
+                        OrderField::make('kontaks', 'Urutan', 10)
                             ->helperText('Urutan tampilan (semakin kecil, semakin atas)'),
 
                         Forms\Components\Toggle::make('aktif')
